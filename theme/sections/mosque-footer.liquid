@@ -1,0 +1,62 @@
+{{ 'mosque-design.css' | asset_url | stylesheet_tag }}
+{{ 'mosque-update.css' | asset_url | stylesheet_tag }}
+<div id="mcc-app">
+<div class="mcc-divider-stars" style="background:var(--green-900); padding:36px 0;" aria-hidden="true">
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+</div>
+
+<footer>
+  <div class="mcc-wrap">
+    <div class="mcc-foot-grid">
+      <div>
+        <div class="mcc-foot-logo">MosqueCarpetsCanada.ca</div>
+        <p class="mcc-ar" style="max-width:34ch; color:var(--brass-light); font-size:15px; margin-bottom:14px;">جزاكم الله خيرا</p>
+        <p style="max-width:34ch;">{{ section.settings.tagline }}</p>
+        {%- if section.settings.phone != blank -%}<p>{{ section.settings.phone }}</p>{%- endif -%}
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="{{ routes.root_url }}#sizes">By hall size</a>
+        <a href="{{ routes.root_url }}#colors">Colorways</a>
+        <a href="{{ routes.root_url }}#calculator">Fit calculator</a>
+      </div>
+      <div>
+        <h4>Ordering</h4>
+        <a href="/pages/contact">Request a quote</a>
+        <a href="/pages/contact?need=site-visit">Request a site visit</a>
+        <a href="/pages/contact?need=samples">Samples</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="/pages/installation">Installation</a>
+        <a href="/pages/about">About us</a>
+        <a href="{{ routes.root_url }}#faq">FAQ</a>
+      </div>
+    </div>
+    <div class="mcc-foot-bottom">
+      <span>© {{ "now" | date: "%Y" }} MosqueCarpetsCanada.ca</span>
+      <span>Prices in {{ cart.currency.iso_code }}</span>
+    </div>
+  </div>
+</footer>
+</div>
+{% schema %}
+{
+  "name": "Mosque footer",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Luxury prayer-hall carpet, sourced from specialist mills, then supplied and installed for mosque committees across Canada."
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone (optional)"
+    }
+  ]
+}
+{% endschema %}

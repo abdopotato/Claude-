@@ -1,0 +1,165 @@
+/* Site update v2: styles for new sections. Loaded after mosque-design.css. */
+#mcc-app .mcc-btn-primary{display:inline-block; border:none; cursor:pointer; font-family:'Work Sans',sans-serif;}
+#mcc-app .mcc-btn-sm{padding:10px 20px; font-size:14px;}
+#mcc-app .mcc-btn-outline{display:block; text-align:center; border:1px solid var(--green-800); color:var(--green-800); padding:14px 28px; border-radius:999px; font-weight:600; font-size:15px;}
+#mcc-app .mcc-eyebrow{display:block; color:var(--brass); font-family:'Amiri',serif; font-style:italic; font-size:15px; margin-bottom:10px;}
+
+/* header */
+#mcc-app .mcc-navlinks{margin-right:28px;}
+#mcc-app .mcc-navtools{gap:12px;}
+@media (max-width:840px){#mcc-app .mcc-navtools .mcc-btn-primary{display:none;}}
+@media (max-width:560px){#mcc-app .mcc-nav{padding:14px 16px;} #mcc-app .mcc-logo{font-size:16px;} #mcc-app .mcc-logo-ar{display:none;}}
+#mcc-app .mcc-mobile-nav{display:none; border-top:1px solid var(--line); padding:10px 16px; gap:18px; overflow-x:auto; font-size:14px; color:var(--text-dim); white-space:nowrap;}
+@media (max-width:840px){#mcc-app .mcc-mobile-nav{display:flex;}}
+
+/* hall cards */
+#mcc-app .mcc-size-card{position:relative;}
+#mcc-app .mcc-size-card.mcc-pop{border-color:var(--brass);}
+#mcc-app .mcc-pop-tag{position:absolute; top:-12px; right:22px; background:var(--brass); color:var(--green-900); font-size:11px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; padding:4px 10px; border-radius:999px;}
+#mcc-app .mcc-incl{list-style:none; display:flex; flex-direction:column; gap:6px; font-size:13.5px;}
+#mcc-app .mcc-incl li{display:flex; gap:8px; align-items:flex-start;}
+#mcc-app .mcc-incl li::before{content:''; flex-shrink:0; width:14px; height:14px; margin-top:4px; border-radius:50%; background:radial-gradient(circle,var(--brass) 35%,transparent 40%); border:1px solid var(--brass);}
+
+/* sourcing */
+#mcc-app .mcc-source{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+#mcc-app .mcc-source-visual{border-radius:20px; overflow:hidden; background:var(--green-900); aspect-ratio:5/4; border:1px solid var(--line);}
+#mcc-app .mcc-source-visual svg, #mcc-app .mcc-source-visual img{width:100%; height:100%; object-fit:cover; display:block;}
+#mcc-app .mcc-pillars{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:28px;}
+#mcc-app .mcc-pillar{border-top:2px solid var(--brass); padding-top:14px;}
+#mcc-app .mcc-pillar strong{font-family:'Amiri',serif; font-size:18px; display:block;}
+#mcc-app .mcc-pillar span{font-size:14px; color:var(--text-dim);}
+@media (max-width:900px){#mcc-app .mcc-source{grid-template-columns:1fr;} #mcc-app .mcc-pillars{grid-template-columns:1fr;}}
+
+/* steps */
+#mcc-app .mcc-process{background:var(--plaster-dim);}
+#mcc-app .mcc-steps{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+#mcc-app .mcc-step{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px 22px;}
+#mcc-app .mcc-step-num{font-family:'Amiri',serif; font-size:40px; color:var(--brass); line-height:1;}
+#mcc-app .mcc-step h3{font-size:18px; margin:10px 0 6px;}
+#mcc-app .mcc-step p{font-size:14px; color:var(--text-dim);}
+#mcc-app .mcc-step .mcc-when{display:inline-block; margin-top:12px; font-size:12px; color:var(--green-700); background:color-mix(in srgb,var(--sage) 18%,transparent); padding:3px 10px; border-radius:999px;}
+@media (max-width:900px){#mcc-app .mcc-steps{grid-template-columns:1fr 1fr;}}
+@media (max-width:560px){#mcc-app .mcc-steps{grid-template-columns:1fr;}}
+
+/* installation teaser */
+#mcc-app .mcc-install{display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:start;}
+#mcc-app .mcc-install-list{list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+#mcc-app .mcc-install-list li{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px;}
+#mcc-app .mcc-install-list strong{display:block; font-size:15px; margin-bottom:4px;}
+#mcc-app .mcc-install-list span{font-size:13.5px; color:var(--text-dim);}
+#mcc-app .mcc-install-card{background:var(--green-900); color:var(--plaster); border-radius:20px; padding:34px;}
+#mcc-app .mcc-install-card h3{font-size:24px; color:var(--brass-light);}
+#mcc-app .mcc-install-card p{color:#C9D2CB; font-size:14.5px; margin:10px 0 18px;}
+#mcc-app .mcc-opt{display:flex; justify-content:space-between; gap:12px; padding:14px 0; border-top:1px solid rgba(243,238,226,.14); font-size:14.5px;}
+#mcc-app .mcc-opt span:last-child{color:var(--brass-light); text-align:right;}
+#mcc-app .mcc-install-card .mcc-btn-primary{margin-top:20px;}
+@media (max-width:900px){#mcc-app .mcc-install{grid-template-columns:1fr;} #mcc-app .mcc-install-list{grid-template-columns:1fr;}}
+
+/* calculator */
+#mcc-app .mcc-calc-result .mcc-btn-primary{margin-top:20px; align-self:flex-start;}
+@media (max-width:840px){#mcc-app .mcc-calc{padding:28px;}}
+
+/* faq */
+#mcc-app .mcc-faq{max-width:820px;}
+#mcc-app .mcc-faq details{border-bottom:1px solid var(--line); padding:18px 0;}
+#mcc-app .mcc-faq summary{cursor:pointer; font-family:'Amiri',serif; font-size:19px; font-weight:700; list-style:none; display:flex; justify-content:space-between; gap:16px;}
+#mcc-app .mcc-faq summary::-webkit-details-marker{display:none;}
+#mcc-app .mcc-faq summary::after{content:'+'; color:var(--brass); font-size:22px; line-height:1;}
+#mcc-app .mcc-faq details[open] summary::after{content:'–';}
+#mcc-app .mcc-faq details p{margin-top:10px; color:var(--text-dim); font-size:15px; max-width:68ch;}
+
+/* closing cta */
+#mcc-app .mcc-cta{background:var(--green-900); color:var(--plaster); border-radius:24px; padding:56px; display:grid; grid-template-columns:1.3fr .7fr; gap:32px; align-items:center; max-width:1180px; margin:0 auto 96px;}
+#mcc-app .mcc-cta h2{font-size:clamp(26px,3vw,36px); color:var(--plaster);}
+#mcc-app .mcc-cta p{color:#C9D2CB; margin-top:12px; max-width:50ch;}
+#mcc-app .mcc-cta-actions{display:flex; flex-direction:column; gap:14px; align-items:flex-start;}
+#mcc-app .mcc-cta .mcc-btn-ghost{color:var(--plaster);}
+@media (max-width:1236px){#mcc-app .mcc-cta{margin-left:28px; margin-right:28px;}}
+@media (max-width:900px){#mcc-app .mcc-cta{grid-template-columns:1fr; padding:34px 24px; margin-left:16px; margin-right:16px;}}
+
+/* page hero + content pages */
+#mcc-app .mcc-phero{padding:72px 0 40px;}
+#mcc-app .mcc-phero h1{font-size:clamp(34px,4vw,50px); max-width:18ch;}
+#mcc-app .mcc-phero p{margin-top:16px; max-width:58ch; color:var(--text-dim); font-size:17px;}
+#mcc-app .mcc-two{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start;}
+@media (max-width:900px){#mcc-app .mcc-two{grid-template-columns:1fr;}}
+#mcc-app .mcc-checklist{list-style:none; display:flex; flex-direction:column; gap:12px;}
+#mcc-app .mcc-checklist li{display:flex; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:14.5px;}
+#mcc-app .mcc-checklist li::before{content:'✓'; color:var(--green-700); font-weight:700;}
+#mcc-app .mcc-prose h2{font-size:clamp(26px,3vw,34px);}
+#mcc-app .mcc-prose p{color:var(--text-dim); font-size:16px; margin-top:14px; max-width:62ch;}
+#mcc-app .mcc-values{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+#mcc-app .mcc-value{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px;}
+#mcc-app .mcc-value h3{font-size:20px; margin-bottom:6px;}
+#mcc-app .mcc-value p{font-size:14.5px; color:var(--text-dim);}
+@media (max-width:900px){#mcc-app .mcc-values{grid-template-columns:1fr;}}
+#mcc-app .mcc-rte{color:var(--text-dim); font-size:16px; max-width:68ch;}
+#mcc-app .mcc-rte p{margin-top:12px;}
+
+/* product page */
+#mcc-app .mcc-crumbs{font-size:13px; color:var(--text-dim); padding-top:24px;}
+#mcc-app .mcc-crumbs a{border-bottom:1px solid var(--line);}
+#mcc-app .mcc-pdp{display:grid; grid-template-columns:1.05fr .95fr; gap:52px; padding:28px 0 80px; align-items:start;}
+#mcc-app .mcc-gallery{position:sticky; top:110px;}
+#mcc-app .mcc-gal-main{border-radius:20px; overflow:hidden; border:1px solid var(--line); background:var(--surface);}
+#mcc-app .mcc-gal-main svg, #mcc-app .mcc-gal-main img{width:100%; display:block;}
+#mcc-app .mcc-gal-thumbs{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px;}
+#mcc-app .mcc-gal-thumbs img{border-radius:10px; border:1px solid var(--line); aspect-ratio:1; object-fit:cover; width:100%;}
+#mcc-app .mcc-pdp h1{font-size:clamp(28px,3vw,40px);}
+#mcc-app .mcc-pdp .mcc-sub{display:flex; gap:10px; margin-top:8px; color:var(--text-dim); font-size:14px; flex-wrap:wrap;}
+#mcc-app .mcc-p-price{font-family:'Amiri',serif; font-size:30px; margin-top:18px;}
+#mcc-app .mcc-p-price small{font-family:'Work Sans',sans-serif; font-size:13px; color:var(--text-dim); margin-left:8px;}
+#mcc-app .mcc-opt-group{margin-top:26px; border:none;}
+#mcc-app .mcc-opt-label{font-size:13px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; color:var(--text-dim); display:flex; justify-content:space-between; gap:12px; margin-bottom:10px;}
+#mcc-app .mcc-opt-label span{text-transform:none; font-weight:400; letter-spacing:0;}
+#mcc-app .mcc-chips{display:flex; gap:10px; flex-wrap:wrap;}
+#mcc-app .mcc-chip input, #mcc-app .mcc-cdot input{position:absolute; opacity:0; pointer-events:none;}
+#mcc-app .mcc-chip{position:relative; border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:12px 16px; font-size:14px; cursor:pointer; min-width:92px;}
+#mcc-app .mcc-chip b{display:block; font-family:'Amiri',serif; font-size:18px;}
+#mcc-app .mcc-chip small{color:var(--text-dim); font-size:12px;}
+#mcc-app .mcc-chip:has(input:checked){border-color:var(--green-800); box-shadow:0 0 0 1px var(--green-800); background:#fff;}
+#mcc-app .mcc-chip:has(input:disabled){opacity:.45; cursor:not-allowed;}
+#mcc-app .mcc-chip:has(input:focus-visible), #mcc-app .mcc-cdot:has(input:focus-visible){outline:2px solid var(--brass); outline-offset:2px;}
+#mcc-app .mcc-dots-row{display:flex; gap:10px; flex-wrap:wrap;}
+#mcc-app .mcc-cdot{position:relative; width:40px; height:40px; border-radius:50%; border:1px solid var(--line); cursor:pointer;}
+#mcc-app .mcc-cdot:has(input:checked){box-shadow:0 0 0 3px var(--surface), 0 0 0 5px var(--brass);}
+#mcc-app .mcc-radio{display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:14px 16px; cursor:pointer; margin-bottom:10px;}
+#mcc-app .mcc-radio input{margin-top:5px; accent-color:var(--green-800);}
+#mcc-app .mcc-radio strong{display:block; font-size:15px;}
+#mcc-app .mcc-radio span{font-size:13px; color:var(--text-dim);}
+#mcc-app .mcc-buy{display:flex; flex-direction:column; gap:12px; margin-top:26px;}
+#mcc-app .mcc-buy .mcc-btn-primary{text-align:center; width:100%;}
+#mcc-app .mcc-buy .mcc-btn-primary:disabled{opacity:.5; cursor:not-allowed;}
+#mcc-app .mcc-assure{list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin-top:22px; font-size:13.5px; color:var(--text-dim);}
+#mcc-app .mcc-assure li::before{content:'✦ '; color:var(--brass);}
+#mcc-app .mcc-acc{margin-top:30px; border-top:1px solid var(--line);}
+#mcc-app .mcc-acc details{border-bottom:1px solid var(--line); padding:16px 0;}
+#mcc-app .mcc-acc summary{cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between;}
+#mcc-app .mcc-acc summary::-webkit-details-marker{display:none;}
+#mcc-app .mcc-acc summary::after{content:'+'; color:var(--brass);}
+#mcc-app .mcc-acc details[open] summary::after{content:'–';}
+#mcc-app .mcc-acc .mcc-body{margin-top:10px; font-size:14.5px; color:var(--text-dim);}
+#mcc-app .mcc-acc .mcc-body p + p{margin-top:8px;}
+#mcc-app .mcc-acc .mcc-body a{border-bottom:1px solid var(--brass);}
+#mcc-app .mcc-spec{width:100%; border-collapse:collapse; font-size:14px;}
+#mcc-app .mcc-spec td{padding:8px 0; border-bottom:1px dashed var(--line); vertical-align:top;}
+#mcc-app .mcc-spec td:first-child{color:var(--text-dim); width:42%;}
+#mcc-app .mcc-form-error{background:#fbeaea; color:#7a2020; border-radius:10px; padding:12px 14px; font-size:14px; margin-top:14px;}
+@media (max-width:900px){#mcc-app .mcc-pdp{grid-template-columns:1fr;} #mcc-app .mcc-gallery{position:static;} #mcc-app .mcc-assure{grid-template-columns:1fr;}}
+
+/* quote form */
+#mcc-app .mcc-quote-grid{display:grid; grid-template-columns:1.4fr .6fr; gap:28px; align-items:start; padding-bottom:96px;}
+#mcc-app .mcc-form{background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:36px; display:grid; grid-template-columns:1fr 1fr; gap:16px 20px;}
+#mcc-app .mcc-form .mcc-full{grid-column:1/-1;}
+#mcc-app .mcc-form label{display:block; font-size:13px; color:var(--text-dim); margin-bottom:6px;}
+#mcc-app .mcc-form input, #mcc-app .mcc-form select, #mcc-app .mcc-form textarea{width:100%; padding:12px 14px; font:inherit; font-size:15px; border:1px solid var(--line); background:var(--bg); border-radius:10px; color:var(--text);}
+#mcc-app .mcc-form textarea{min-height:110px; resize:vertical;}
+#mcc-app .mcc-form .mcc-fine{font-size:12.5px; color:var(--text-dim);}
+#mcc-app .mcc-form-ok{background:#e7f2ea; color:#1d5a34; border-radius:12px; padding:16px 18px; font-size:15px;}
+#mcc-app .mcc-side{background:var(--green-900); color:var(--plaster); border-radius:20px; padding:32px;}
+#mcc-app .mcc-side h3{color:var(--brass-light); font-size:22px; margin-bottom:12px;}
+#mcc-app .mcc-side ol{padding-left:20px; display:flex; flex-direction:column; gap:12px; color:#C9D2CB; font-size:14.5px;}
+#mcc-app .mcc-side ol b{color:var(--plaster);}
+#mcc-app .mcc-side .mcc-contact-line{margin-top:20px; color:#C9D2CB; font-size:14px;}
+@media (max-width:900px){#mcc-app .mcc-form{grid-template-columns:1fr; padding:24px;} #mcc-app .mcc-quote-grid{grid-template-columns:1fr;}}
+@media (max-width:560px){#mcc-app .mcc-wrap{padding:0 16px;} #mcc-app .mcc-section{padding-left:0; padding-right:0;}}

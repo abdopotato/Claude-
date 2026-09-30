@@ -1,0 +1,55 @@
+{{ 'mosque-design.css' | asset_url | stylesheet_tag }}
+{{ 'mosque-update.css' | asset_url | stylesheet_tag }}
+<div id="mcc-app">
+<section class="mcc-phero"><div class="mcc-wrap">
+  <span class="mcc-eyebrow">Installation service</span>
+  <h1>{{ section.settings.heading }}</h1>
+  <p>{{ section.settings.intro }}</p>
+  <div class="mcc-hero-actions"><a href="/pages/contact?need=site-visit" class="mcc-btn-primary">Book a site visit</a><a href="{{ routes.root_url }}#calculator" class="mcc-btn-ghost">Try the fit calculator</a></div>
+</div></section>
+
+{%- if page.content != blank -%}
+<section style="padding:0 0 40px;"><div class="mcc-wrap mcc-rte">{{ page.content }}</div></section>
+{%- endif -%}
+
+<section class="mcc-section mcc-process" style="padding-top:72px; padding-bottom:72px;"><div class="mcc-wrap">
+  <div class="mcc-section-head"><h2>What happens on install day</h2></div>
+  <div class="mcc-steps">
+    <div class="mcc-step"><div class="mcc-step-num">1</div><h3>Set out</h3><p>We mark a true line off the qibla wall. Every row is measured from it, not from the room's walls.</p></div>
+    <div class="mcc-step"><div class="mcc-step-num">2</div><h3>Prepare</h3><p>We lift the old carpet if you've added removal, then clean and check the subfloor.</p></div>
+    <div class="mcc-step"><div class="mcc-step-num">3</div><h3>Lay &amp; seam</h3><p>Rolls go down with seams placed between prayer rows, and the lines are matched across every join.</p></div>
+    <div class="mcc-step"><div class="mcc-step-num">4</div><h3>Finish &amp; hand over</h3><p>We trim the edges, fit the thresholds, vacuum and walk the hall with your committee.</p></div>
+  </div>
+</div></section>
+
+<section class="mcc-section"><div class="mcc-wrap mcc-two">
+  <div class="mcc-prose">
+    <h2>Supply + install, or supply only</h2>
+    <p>Every quote shows both prices. Many committees have us do the full job. Some have a trusted local installer, and that's fine too. We'll send a layout drawing showing the seam positions and saff lines for your installer to follow.</p>
+    <p>Service area: {{ section.settings.service_area }}.</p>
+  </div>
+  <div>
+    <h3 style="font-family:'Amiri',serif; font-size:22px; margin-bottom:14px;">Before we arrive: a checklist for your committee</h3>
+    <ul class="mcc-checklist">
+      <li>Clear the hall of shelves, Qur'an stands and chairs</li>
+      <li>Agree install days that avoid Jumu'ah and janazah</li>
+      <li>Arrange access for the crew and a place to park near the door</li>
+      <li>Point out any heating vents, floor boxes or the minbar base</li>
+      <li>Let the congregation know about a temporary prayer space</li>
+    </ul>
+  </div>
+</div></section>
+
+<section class="mcc-cta"><div><h2>Book a free site visit</h2><p>We'll measure, recommend a spacing and send an itemised quote.</p></div><div class="mcc-cta-actions"><a href="/pages/contact?need=site-visit" class="mcc-btn-primary">Request a site visit</a></div></section>
+</div>
+{% schema %}
+{
+  "name": "Installation page",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Fitted by a crew that knows where the saff should fall" },
+    { "type": "textarea", "id": "intro", "label": "Intro", "default": "Carpet is only half the job. We measure your hall, plan the roll layout so seams sit between rows, and fit everything with the prayer lines squared to the qibla wall, on a schedule that works around salah." },
+    { "type": "text", "id": "service_area", "label": "Service area", "default": "we install across Canada, and any travel is itemised in your quote" }
+  ],
+  "presets": [{ "name": "Installation page" }]
+}
+{% endschema %}

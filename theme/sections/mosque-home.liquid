@@ -1,0 +1,367 @@
+{{ 'mosque-design.css' | asset_url | stylesheet_tag }}
+{{ 'mosque-update.css' | asset_url | stylesheet_tag }}
+{%- assign star = '<svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass)"/></svg>' -%}
+<div id="mcc-app">
+<section class="mcc-hero">
+  <div class="mcc-hero-skyline" aria-hidden="true">
+    <svg viewBox="0 0 1400 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 220 V150 L40 150 L40 120 A20 20 0 0 1 80 120 L80 150 L110 150 L110 90 A55 55 0 0 1 220 90 L220 150 L260 150 L260 130 L280 100 L300 130 L300 150 L360 150 L360 60 A70 70 0 0 1 500 60 L500 150 L540 150 L540 125 L560 95 L580 125 L580 150 L660 150 L660 40 A85 85 0 0 1 830 40 L830 150 L870 150 L870 128 L890 98 L910 128 L910 150 L980 150 L980 75 A60 60 0 0 1 1100 75 L1100 150 L1140 150 L1140 132 L1160 100 L1180 132 L1180 150 L1400 150 V220 Z" fill="var(--green-900)"/>
+      <circle cx="80" cy="112" r="6" fill="var(--brass)" opacity="0.4"/>
+      <circle cx="430" cy="52" r="7" fill="var(--brass)" opacity="0.4"/>
+      <circle cx="745" cy="32" r="8" fill="var(--brass)" opacity="0.4"/>
+      <circle cx="1040" cy="67" r="6" fill="var(--brass)" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="mcc-hero-inner">
+    <div class="mcc-hero-copy">
+      <div class="mcc-trust-badge"><span class="mcc-dot"></span>{{ section.settings.trust_text }}</div>
+      <div class="mcc-kicker">{{ section.settings.kicker }}</div>
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.text }}</p>
+      <div class="mcc-hero-actions">
+        <a href="/pages/contact" class="mcc-btn-primary">Request a free quote</a>
+        <a href="#sizes" class="mcc-btn-ghost">Shop by hall size</a>
+      </div>
+      <div class="mcc-hero-mini-stats">
+        <div><strong>{{ section.settings.stat_1_value }}</strong><span>{{ section.settings.stat_1_label }}</span></div>
+        <div><strong>{{ section.settings.stat_2_value }}</strong><span>{{ section.settings.stat_2_label }}</span></div>
+        <div><strong>{{ section.settings.stat_3_value }}</strong><span>{{ section.settings.stat_3_label }}</span></div>
+      </div>
+    </div>
+
+    <div class="mcc-hero-card" style="--r:0deg;">
+      <svg viewBox="0 0 280 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="archfill2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#204A40"/><stop offset="100%" stop-color="#0F2822"/></linearGradient>
+          <pattern id="saffLines2" width="280" height="20" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="280" y2="0" stroke="#B8892F" stroke-width="1" opacity="0.5"/></pattern>
+        </defs>
+        <rect x="0" y="0" width="280" height="340" rx="20" fill="url(#archfill2)"/>
+        <rect x="0" y="0" width="280" height="340" rx="20" fill="url(#saffLines2)"/>
+        <path d="M40 300 V160 C40 90 85 45 140 45 C195 45 240 90 240 160 V300" fill="none" stroke="#D7AE5C" stroke-width="1.4" opacity="0.6"/>
+        <g transform="translate(56,268)">
+          <rect x="0" y="0" width="168" height="42" rx="6" fill="#5C2A2A"/>
+          <rect x="0" y="0" width="168" height="42" rx="6" fill="none" stroke="#B8892F" stroke-width="1.3"/>
+          <ellipse cx="4" cy="21" rx="9" ry="21" fill="#7A3434"/>
+          <ellipse cx="4" cy="21" rx="9" ry="21" fill="none" stroke="#D7AE5C" stroke-width="1.2"/>
+          <ellipse cx="164" cy="21" rx="9" ry="21" fill="#4E2323"/>
+        </g>
+      </svg>
+      <div class="mcc-hero-card-tag">95cm spacing<span class="mcc-ar">— جاهز للفرش</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="mcc-divider-stars" aria-hidden="true">{{ star }}{{ star }}{{ star }}</div>
+
+<div class="mcc-strip">
+  <div class="mcc-wrap">
+    <div class="mcc-strip-item"><strong>Woven-in saff lines</strong>True 90 / 95 / 100cm spacing, woven in and never printed</div>
+    <div class="mcc-strip-item"><strong>Professional installation</strong>Measured, seamed and fitted by our crew</div>
+    <div class="mcc-strip-item"><strong>Fire rated</strong>{{ section.settings.fire_rating }}</div>
+    <div class="mcc-strip-item"><strong>Committee invoicing</strong>{{ section.settings.payment_text }}</div>
+  </div>
+</div>
+
+<section class="mcc-section" id="sizes" style="padding-top:24px;">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head">
+      <h2>{{ section.settings.sizes_heading }}</h2>
+      <p>{{ section.settings.sizes_text }}</p>
+    </div>
+    <div class="mcc-grid-by-size">
+      {%- for block in section.blocks -%}
+        {%- if block.type != 'hall_size' -%}{%- continue -%}{%- endif -%}
+        {%- assign p = block.settings.product -%}
+        <a class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" href="{% if p != blank %}{{ p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" {{ block.shopify_attributes }}>
+          {%- if block.settings.popular -%}<span class="mcc-pop-tag">Most ordered</span>{%- endif -%}
+          <div class="mcc-size-head">
+            <div class="mcc-dims">{{ block.settings.dims }}<span> {{ block.settings.unit }}</span></div>
+            {%- if block.settings.arabic != blank -%}<div class="mcc-dims-ar">{{ block.settings.arabic }}</div>{%- endif -%}
+          </div>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.description }}</p>
+          {%- if block.settings.include_1 != blank or block.settings.include_2 != blank -%}
+            <ul class="mcc-incl">
+              {%- if block.settings.include_1 != blank -%}<li>{{ block.settings.include_1 }}</li>{%- endif -%}
+              {%- if block.settings.include_2 != blank -%}<li>{{ block.settings.include_2 }}</li>{%- endif -%}
+            </ul>
+          {%- endif -%}
+          <div class="mcc-size-foot">
+            <div class="mcc-rows">{{ block.settings.rows }}</div>
+            <div class="mcc-price">{% if p != blank %}from {{ p.price_min | money_with_currency }}{% else %}{{ block.settings.price_text }}{% endif %}</div>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<section class="mcc-section" id="sourcing" style="padding-top:24px;">
+  <div class="mcc-wrap mcc-source">
+    <div class="mcc-source-visual">
+      {%- if section.settings.sourcing_image != blank -%}
+        {{ section.settings.sourcing_image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: section.settings.sourcing_image.alt }}
+      {%- else -%}
+        <svg viewBox="0 0 500 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="500" height="400" fill="#0F2822"/>
+          <g transform="translate(70,120)">
+            <rect x="0" y="120" width="300" height="56" rx="6" fill="#5C2A2A"/><ellipse cx="300" cy="148" rx="14" ry="28" fill="#7A3434" stroke="#D7AE5C"/><g stroke="#B8892F" opacity=".5"><line x1="0" y1="134" x2="300" y2="134"/><line x1="0" y1="162" x2="300" y2="162"/></g>
+            <rect x="30" y="60" width="300" height="56" rx="6" fill="#16352E"/><ellipse cx="330" cy="88" rx="14" ry="28" fill="#204A40" stroke="#D7AE5C"/><g stroke="#B8892F" opacity=".5"><line x1="30" y1="74" x2="330" y2="74"/><line x1="30" y1="102" x2="330" y2="102"/></g>
+            <rect x="60" y="0" width="300" height="56" rx="6" fill="#1B2A4A"/><ellipse cx="360" cy="28" rx="14" ry="28" fill="#27406B" stroke="#D7AE5C"/><g stroke="#B8892F" opacity=".5"><line x1="60" y1="14" x2="360" y2="14"/><line x1="60" y1="42" x2="360" y2="42"/></g>
+          </g>
+          <g stroke="#B8892F" stroke-width="1" opacity=".3" fill="none"><path d="M0 360 Q250 300 500 360"/><path d="M0 380 Q250 320 500 380"/></g></svg>
+      {%- endif -%}
+    </div>
+    <div>
+      <span class="mcc-eyebrow">{{ section.settings.sourcing_kicker }}</span>
+      <h2 style="font-size:clamp(28px,3.2vw,38px);">{{ section.settings.sourcing_heading }}</h2>
+      <p style="margin-top:14px; color:var(--text-dim); max-width:50ch;">{{ section.settings.sourcing_text }}</p>
+      <div class="mcc-pillars">
+        <div class="mcc-pillar"><strong>Hand-selected mills</strong><span>Partners chosen for consistent quality, run after run</span></div>
+        <div class="mcc-pillar"><strong>Inspected on arrival</strong><span>Every roll is checked before it's cut</span></div>
+        <div class="mcc-pillar"><strong>Import handled</strong><span>Freight, duties and customs are itemised in your quote</span></div>
+        <div class="mcc-pillar"><strong>The right carpet, not the nearest</strong><span>We match the mill to your hall's needs and budget</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mcc-section mcc-process">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head"><span class="mcc-eyebrow">From the mill to your masjid</span><h2>Four steps. One team.</h2></div>
+    <div class="mcc-steps">
+      <div class="mcc-step"><div class="mcc-step-num">1</div><h3>Measure &amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class="mcc-when">Free, itemised quote</span></div>
+      <div class="mcc-step"><div class="mcc-step-num">2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class="mcc-when">See it before you commit</span></div>
+      <div class="mcc-step"><div class="mcc-step-num">3</div><h3>We import &amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class="mcc-when">{{ section.settings.lead_time_text }}</span></div>
+      <div class="mcc-step"><div class="mcc-step-num">4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class="mcc-when">Scheduled around salah</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="mcc-saff-section" id="saff">
+  <div class="mcc-wrap">
+    <div class="mcc-saff-copy">
+      <span class="mcc-ar mcc-saff-kicker">الصف</span>
+      <h2>The line spacing is the whole point</h2>
+      <p>A carpet that looks right in a photo but crowds the saff makes every rak'ah harder. Every roll we supply comes in three woven spacings, and we'll help you choose the right one before you order.</p>
+      <ul class="mcc-saff-facts">
+        <li class="mcc-saff-fact"><span class="mcc-saff-fact-num">90</span><div class="mcc-saff-fact-body"><strong>90cm</strong><span>Tight halls, high midweek attendance, smaller-framed congregations</span></div></li>
+        <li class="mcc-saff-fact mcc-saff-fact-rec"><span class="mcc-saff-fact-num">95</span><div class="mcc-saff-fact-body"><strong>95cm <em class="mcc-saff-fact-tag">Recommended</em></strong><span>The standard we recommend for most mosques: comfortable sujood without wasted floor</span></div></li>
+        <li class="mcc-saff-fact"><span class="mcc-saff-fact-num">100</span><div class="mcc-saff-fact-body"><strong>100cm</strong><span>Jumu'ah and Eid halls where rows need extra room for movement</span></div></li>
+      </ul>
+    </div>
+    <div class="mcc-saff-diagram-wrap">
+      <svg class="mcc-saff-diagram" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="0" y="0" width="480" height="300" fill="#0F2822"/>
+        <g stroke="#B8892F" stroke-width="1.4">
+          {%- for y in (0..4) -%}<line x1="30" y1="{{ y | times: 57 | plus: 40 }}" x2="450" y2="{{ y | times: 57 | plus: 40 }}"/>{%- endfor -%}
+        </g>
+        <g fill="#7C9A87" opacity="0.85">
+          {%- for r in (0..3) -%}{%- for c in (0..5) -%}<ellipse cx="{{ c | times: 60 | plus: 70 }}" cy="{{ r | times: 57 | plus: 62 }}" rx="14" ry="7"/>{%- endfor -%}{%- endfor -%}
+        </g>
+      </svg>
+      <div class="mcc-saff-diagram-tag">95cm spacing</div>
+    </div>
+  </div>
+</section>
+
+<section class="mcc-section" id="install">
+  <div class="mcc-wrap mcc-install">
+    <div>
+      <div class="mcc-section-head" style="margin-bottom:28px;"><span class="mcc-eyebrow">Fitted, not just delivered</span><h2>Installation by people who understand a prayer hall</h2><p>A luxury carpet only looks luxurious if it's laid right. Our installers square the saff lines to the qibla wall first, then work outwards, so every row runs true.</p></div>
+      <ul class="mcc-install-list">
+        <li><strong>Qibla alignment</strong><span>Lines squared to the qibla wall, not to the room</span></li>
+        <li><strong>Hidden seams</strong><span>Joins placed between rows, where no one kneels</span></li>
+        <li><strong>Old carpet removal</strong><span>Can be added to your quote</span></li>
+        <li><strong>Minimal disruption</strong><span>Scheduled around salah times and Jumu'ah</span></li>
+      </ul>
+    </div>
+    <aside class="mcc-install-card">
+      <h3>Two ways to order</h3>
+      <p>Every quote shows both options, so your committee can compare.</p>
+      <div class="mcc-opt"><span>Supply + install</span><span>Our carpet, fitted by our crew</span></div>
+      <div class="mcc-opt"><span>Supply only</span><span>Our carpet, your installer</span></div>
+      <div class="mcc-opt"><span>Where</span><span>{{ section.settings.service_area }}</span></div>
+      <a href="/pages/installation" class="mcc-btn-primary">How installation works</a>
+    </aside>
+  </div>
+</section>
+
+<section class="mcc-section" id="colors" style="padding-top:0;">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head">
+      <h2>Colorways</h2>
+      <p>Each colourway is dyed and woven as one production run at the mill, so pile depth and line contrast match across your whole order. Tap a shade to ask about samples.</p>
+    </div>
+    <div class="mcc-colorways">
+      <button type="button" class="mcc-swatch" data-name="Masjid Green" aria-pressed="false"><div class="mcc-block" style="background:#0F2822"></div><p>Masjid Green</p><div class="mcc-ar-name">أخضر</div><span>Our most-ordered shade</span></button>
+      <button type="button" class="mcc-swatch" data-name="Maroon" aria-pressed="false"><div class="mcc-block" style="background:#5C2A2A"></div><p>Maroon</p><div class="mcc-ar-name">عنابي</div><span>Traditional, low-glare</span></button>
+      <button type="button" class="mcc-swatch" data-name="Deep Indigo" aria-pressed="false"><div class="mcc-block" style="background:#1B2A4A"></div><p>Deep Indigo</p><div class="mcc-ar-name">نيلي</div><span>Evening-lit halls</span></button>
+      <button type="button" class="mcc-swatch" data-name="Walnut Brown" aria-pressed="false"><div class="mcc-block" style="background:#3B2A17"></div><p>Walnut Brown</p><div class="mcc-ar-name">بني</div><span>Hides daily foot traffic</span></button>
+      <button type="button" class="mcc-swatch" data-name="Camel Gold" aria-pressed="false"><div class="mcc-block" style="background:#8A6A2E"></div><p>Camel Gold</p><div class="mcc-ar-name">ذهبي</div><span>Bright, south-facing halls</span></button>
+    </div>
+    <p class="mcc-colorway-preview" id="mccColorwayPreview" aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="mcc-section" id="calculator" style="padding-top:0;">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head">
+      <h2>Fit calculator</h2>
+      <p>Enter your hall's floor size for a rough row count and price range, then send the numbers to us for an exact quote.</p>
+    </div>
+    <div class="mcc-calc">
+      <div class="mcc-calc-form">
+        <label for="hw">Hall width (metres)</label>
+        <input type="number" id="hw" value="12" min="1" step="0.1">
+        <label for="hl">Hall length, front to back (metres)</label>
+        <input type="number" id="hl" value="8" min="1" step="0.1">
+        <label for="sp">Row spacing</label>
+        <select id="sp">
+          <option value="90">90cm, tighter halls</option>
+          <option value="95" selected>95cm, recommended</option>
+          <option value="100">100cm, Jumu'ah &amp; Eid halls</option>
+        </select>
+      </div>
+      <div class="mcc-calc-result">
+        <div class="mcc-num" id="rowCount">8</div>
+        <div class="mcc-label">prayer rows fit at this spacing</div>
+        <div class="mcc-note" id="calcNote"></div>
+        <a href="/pages/contact" class="mcc-btn-primary" id="calcSend">Send these numbers for a quote</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- if section.settings.testimonial_quote != blank -%}
+<section class="mcc-testimonial">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H7V7zm9 0h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H16V7z"/></svg>
+  <p>{{ section.settings.testimonial_quote }}</p>
+  <cite>{{ section.settings.testimonial_author }}</cite>
+</section>
+{%- endif -%}
+
+<section class="mcc-section" id="faq" style="padding-top:0;">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head"><h2>Questions committees ask us</h2></div>
+    <div class="mcc-faq">
+      {%- for block in section.blocks -%}
+        {%- if block.type != 'faq' -%}{%- continue -%}{%- endif -%}
+        <details {% if forloop.first %}open{% endif %} {{ block.shopify_attributes }}><summary>{{ block.settings.question }}</summary><p>{{ block.settings.answer }}</p></details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<section class="mcc-cta">
+  <div><h2>{{ section.settings.cta_heading }}</h2><p>{{ section.settings.cta_text }}</p></div>
+  <div class="mcc-cta-actions"><a href="/pages/contact" class="mcc-btn-primary">Request a free quote</a><a href="/pages/contact?need=samples" class="mcc-btn-ghost">Ask about samples</a></div>
+</section>
+</div>
+<script>
+  (function(){
+    try{
+      var hw = document.getElementById('hw'), hl = document.getElementById('hl'), sp = document.getElementById('sp');
+      var rowCount = document.getElementById('rowCount'), calcNote = document.getElementById('calcNote'), send = document.getElementById('calcSend');
+      function recalc(){
+        var width = parseFloat(hw.value) || 0, length = parseFloat(hl.value) || 0, spacing = parseFloat(sp.value) / 100;
+        var rows = spacing > 0 ? Math.max(0, Math.floor(length / spacing)) : 0;
+        var area = width * length;
+        rowCount.textContent = rows;
+        calcNote.textContent = '≈ ' + area.toFixed(0) + 'm² of carpet, typically CAD $' + Math.round(area * 34).toLocaleString() + '–$' + Math.round(area * 44).toLocaleString() + ' including a seamed, fitted install.';
+        send.href = '/pages/contact?w=' + encodeURIComponent(hw.value) + '&l=' + encodeURIComponent(hl.value) + '&s=' + encodeURIComponent(sp.value);
+      }
+      [hw, hl, sp].forEach(function(el){ el.addEventListener('input', recalc); });
+      recalc();
+    }catch(e){ console.error('Calculator error', e); }
+  })();
+
+  (function(){
+    try{
+      var swatches = document.querySelectorAll('.mcc-swatch');
+      var preview = document.getElementById('mccColorwayPreview');
+      swatches.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          swatches.forEach(function(b){ b.setAttribute('aria-pressed', 'false'); b.classList.remove('mcc-swatch-pulse'); });
+          btn.setAttribute('aria-pressed', 'true');
+          void btn.offsetWidth;
+          btn.classList.add('mcc-swatch-pulse');
+          if (preview) {
+            preview.innerHTML = 'Selected: <strong>' + btn.dataset.name + '</strong> · <a href="/pages/contact?need=samples&colour=' + encodeURIComponent(btn.dataset.name) + '" style="border-bottom:1px solid var(--brass)">Ask about samples →</a>';
+            preview.classList.add('is-visible');
+          }
+        });
+      });
+    }catch(e){ console.error('Colorway selector error', e); }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Mosque carpet home",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "trust_text", "label": "Badge above heading", "default": "Imported luxury prayer carpet, supplied & installed for Canadian mosques" },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Chosen for the saff, not the showroom" },
+    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Luxury carpet rolls for your prayer hall, fitted by our own team" },
+    { "type": "textarea", "id": "text", "label": "Hero text", "default": "We source premium wall-to-wall rolls from specialist mills overseas, with prayer lines woven in at 90, 95 or 100cm. Then we import them, measure your hall and install. You deal with one team from the quote to the first salah." },
+    { "type": "text", "id": "stat_1_value", "label": "Stat 1 value", "default": "3" },
+    { "type": "text", "id": "stat_1_label", "label": "Stat 1 label", "default": "row spacings" },
+    { "type": "text", "id": "stat_2_value", "label": "Stat 2 value", "default": "1.5–6m" },
+    { "type": "text", "id": "stat_2_label", "label": "Stat 2 label", "default": "roll widths" },
+    { "type": "text", "id": "stat_3_value", "label": "Stat 3 value", "default": "Supply + fit" },
+    { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "one team, one invoice" },
+    { "type": "header", "content": "Trust strip" },
+    { "type": "text", "id": "fire_rating", "label": "Fire rating text", "default": "CAN/ULC-S102 & ASTM E648 certified pile" },
+    { "type": "text", "id": "payment_text", "label": "Payment text", "default": "PO and bank transfer accepted" },
+    { "type": "header", "content": "Hall sizes" },
+    { "type": "text", "id": "sizes_heading", "label": "Hall size heading", "default": "Shop by hall size" },
+    { "type": "textarea", "id": "sizes_text", "label": "Hall size text", "default": "Every hall is different, so treat these as starting points. Pick the closest size and we'll confirm exact measurements before anything is cut." },
+    { "type": "header", "content": "Sourcing" },
+    { "type": "image_picker", "id": "sourcing_image", "label": "Photo (replaces the illustration)" },
+    { "type": "text", "id": "sourcing_kicker", "label": "Kicker", "default": "Sourced, not manufactured, and that's the point" },
+    { "type": "text", "id": "sourcing_heading", "label": "Heading", "default": "We source it. We check it. We bring it home." },
+    { "type": "textarea", "id": "sourcing_text", "label": "Text", "default": "We don't own a loom, so we're never tied to one factory's range. We work with specialist prayer-carpet mills overseas and choose each roll for pile density, colourfastness and how straight its lines run. Then we import it, inspect it in Canada and deliver it to your door." },
+    { "type": "header", "content": "Process & installation" },
+    { "type": "text", "id": "lead_time_text", "label": "Step 3 badge (lead time)", "default": "Lead time confirmed in your quote" },
+    { "type": "text", "id": "service_area", "label": "Service area", "default": "Across Canada, with travel itemised" },
+    { "type": "header", "content": "Testimonial (hidden until filled in)" },
+    { "type": "textarea", "id": "testimonial_quote", "label": "Quote" },
+    { "type": "text", "id": "testimonial_author", "label": "Attribution" },
+    { "type": "header", "content": "Closing call-to-action" },
+    { "type": "text", "id": "cta_heading", "label": "Heading", "default": "Ready to re-carpet your musalla?" },
+    { "type": "textarea", "id": "cta_text", "label": "Text", "default": "Send your hall dimensions or a floor plan. We'll reply with a spacing recommendation, a roll layout and an itemised quote covering supply, import and installation." }
+  ],
+  "blocks": [
+    {
+      "type": "hall_size",
+      "name": "Hall size card",
+      "settings": [
+        { "type": "text", "id": "dims", "label": "Dimensions", "default": "4 × 6" },
+        { "type": "text", "id": "unit", "label": "Unit label", "default": "m room" },
+        { "type": "text", "id": "arabic", "label": "Arabic label" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Musalla, small" },
+        { "type": "textarea", "id": "description", "label": "Description" },
+        { "type": "text", "id": "include_1", "label": "Included line 1" },
+        { "type": "text", "id": "include_2", "label": "Included line 2" },
+        { "type": "checkbox", "id": "popular", "label": "Show \"Most ordered\" tag", "default": false },
+        { "type": "text", "id": "rows", "label": "Rows line", "default": "≈ 5 prayer rows at 95cm spacing" },
+        { "type": "text", "id": "price_text", "label": "Price text (used until a product is linked)", "default": "from CAD $1,150" },
+        { "type": "product", "id": "product", "label": "Linked product" }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Question" },
+        { "type": "textarea", "id": "answer", "label": "Answer", "default": "Answer" }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    { "name": "Mosque carpet home" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,187 @@
+{{ 'mosque-design.css' | asset_url | stylesheet_tag }}
+{{ 'mosque-update.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign arabic = ''
+  assign rows_line = ''
+  assign coverage = ''
+  assign price_note = section.settings.price_note
+  assign includes_visit = false
+  if product.tags contains 'musalla'
+    assign arabic = 'مصلى صغير'
+    assign rows_line = '≈ 5 prayer rows at 95cm'
+    assign coverage = 'Approx. 4 × 6 m (24 m²)'
+  elsif product.tags contains 'main-hall'
+    assign arabic = 'القاعة الرئيسية'
+    assign rows_line = '≈ 10 prayer rows at 95cm'
+    assign coverage = 'Approx. 8 × 12 m (96 m²)'
+  elsif product.tags contains 'jumuah'
+    assign arabic = 'قاعة الجمعة'
+    assign rows_line = '≈ 19 prayer rows at 95cm'
+    assign coverage = 'Approx. 15 × 22 m (330 m²)'
+    assign price_note = 'site visit & floor template included'
+    assign includes_visit = true
+  endif
+-%}
+<div id="mcc-app">
+<div class="mcc-wrap">
+  <div class="mcc-crumbs"><a href="{{ routes.root_url }}">Home</a> / <a href="{{ routes.root_url }}#sizes">Hall sizes</a> / {{ product.title }}</div>
+  <div class="mcc-pdp">
+    <div class="mcc-gallery">
+      <div class="mcc-gal-main">
+        {%- if product.featured_media -%}
+          {%- assign alt = product.featured_media.alt | default: product.title -%}
+          {{ product.featured_media.preview_image | image_url: width: 1200 | image_tag: loading: 'eager', alt: alt }}
+        {%- else -%}
+          <svg viewBox="0 0 600 600" role="img" aria-label="Illustration of the carpet layout">
+            <rect width="600" height="600" fill="#F3EEE2"/>
+            <g transform="translate(60,70)">
+              <rect id="mccArtCarpet" width="480" height="420" rx="6" fill="#0F2822"/>
+              <g id="mccArtLines" stroke="#B8892F" stroke-width="2" opacity=".75"></g>
+              <rect x="190" y="-30" width="100" height="30" rx="4" fill="none" stroke="#B8892F" stroke-dasharray="4 4"/>
+              <text x="240" y="-10" font-family="Work Sans, sans-serif" font-size="12" fill="#5B6560" text-anchor="middle">qibla wall</text>
+            </g>
+            <text x="300" y="545" font-family="Amiri, serif" font-size="22" fill="#1B211E" text-anchor="middle" id="mccArtCap">Illustration</text>
+          </svg>
+        {%- endif -%}
+      </div>
+      {%- if product.media.size > 1 -%}
+        <div class="mcc-gal-thumbs">
+          {%- for m in product.media offset: 1 limit: 4 -%}
+            {%- assign alt = m.alt | default: product.title -%}
+            {{ m.preview_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: alt }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div>
+      {%- if arabic != blank -%}<div class="mcc-dims-ar" style="font-size:16px;">{{ arabic }}</div>{%- endif -%}
+      <h1>{{ product.title }}</h1>
+      {%- if rows_line != blank -%}<div class="mcc-sub"><span>{{ rows_line }}</span></div>{%- endif -%}
+      <div class="mcc-p-price"><span id="mccPrice">{{ current.price | money_with_currency }}</span> <small>{{ price_note }}</small></div>
+
+      {%- form 'product', product, id: 'mcc-product-form' -%}
+        {%- if product.has_only_default_variant -%}
+          <input type="hidden" name="id" value="{{ current.id }}">
+        {%- else -%}
+          <fieldset class="mcc-opt-group">
+            <legend class="mcc-opt-label" style="width:100%;">Row spacing <span>Not sure? 95cm suits most mosques</span></legend>
+            <div class="mcc-chips">
+              {%- for v in product.variants -%}
+                {%- assign hint = '' -%}
+                {%- if v.title contains '90' -%}{%- assign hint = 'Tighter halls' -%}{%- elsif v.title contains '95' -%}{%- assign hint = 'Recommended' -%}{%- elsif v.title contains '100' -%}{%- assign hint = "Jumu'ah & Eid" -%}{%- endif -%}
+                <label class="mcc-chip">
+                  <input type="radio" name="id" value="{{ v.id }}" data-price="{{ v.price | money_with_currency | escape }}" data-spacing="{{ v.title | remove: 'cm' | strip }}" {% if v.id == current.id %}checked{% endif %} {% unless v.available %}disabled{% endunless %}>
+                  <b>{{ v.title }}</b><small>{{ hint }}</small>
+                </label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endif -%}
+
+        <fieldset class="mcc-opt-group">
+          <legend class="mcc-opt-label" style="width:100%;">Colourway <span id="mccCwName">Masjid Green</span></legend>
+          <div class="mcc-dots-row">
+            {%- assign cws = 'Masjid Green:#0F2822,Maroon:#5C2A2A,Deep Indigo:#1B2A4A,Walnut Brown:#3B2A17,Camel Gold:#8A6A2E' | split: ',' -%}
+            {%- for cw in cws -%}
+              {%- assign parts = cw | split: ':' -%}
+              <label class="mcc-cdot" style="background:{{ parts[1] }}" title="{{ parts[0] }}">
+                <input type="radio" name="properties[Colourway]" value="{{ parts[0] }}" data-colour="{{ parts[1] }}" {% if forloop.first %}checked{% endif %} aria-label="{{ parts[0] }}">
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+
+        <fieldset class="mcc-opt-group">
+          <legend class="mcc-opt-label">Installation</legend>
+          <label class="mcc-radio"><input type="radio" name="properties[Installation]" value="Supply + installation" checked><div><strong>Supply + professional installation</strong><span>{% if includes_visit %}Site visit and floor template included. We'll confirm the install details with you{% else %}We'll contact you to measure and confirm the install price before anything is cut{% endif %}</span></div></label>
+          <label class="mcc-radio"><input type="radio" name="properties[Installation]" value="Supply only"><div><strong>Supply only</strong><span>Delivered to your mosque, ready for your own installer</span></div></label>
+        </fieldset>
+
+        <div class="mcc-buy">
+          <button type="submit" name="add" class="mcc-btn-primary" {% unless current.available %}disabled{% endunless %}>{% if current.available %}Add to order{% else %}Currently unavailable{% endif %}</button>
+          <a href="/pages/contact?product={{ product.handle | url_encode }}" class="mcc-btn-outline">Get an exact quote first</a>
+        </div>
+        {%- if form.errors -%}<div class="mcc-form-error">{{ form.errors | default_errors }}</div>{%- endif -%}
+      {%- endform -%}
+
+      <ul class="mcc-assure">
+        <li>Measurements confirmed before cutting</li>
+        <li>Invoice in your mosque's name</li>
+        <li>Fire-rated pile, certificates on request</li>
+        <li>Saff lines squared to the qibla</li>
+      </ul>
+
+      <div class="mcc-acc">
+        <details open><summary>About this carpet</summary><div class="mcc-body">{{ product.description }}</div></details>
+        <details><summary>Specifications</summary><div class="mcc-body"><table class="mcc-spec">
+          {%- if coverage != blank -%}<tr><td>Coverage</td><td>{{ coverage }}</td></tr>{%- endif -%}
+          <tr><td>Roll widths</td><td>1.5–6 m, cut to your hall</td></tr>
+          <tr><td>Row spacing</td><td>90, 95 or 100cm, woven in</td></tr>
+          <tr><td>Pile</td><td>{{ section.settings.pile }}</td></tr>
+          <tr><td>Fire rating</td><td>{{ section.settings.fire_rating }}</td></tr>
+        </table></div></details>
+        <details><summary>Delivery &amp; lead time</summary><div class="mcc-body"><p>{{ section.settings.delivery_text }}</p></div></details>
+        <details><summary>Installation</summary><div class="mcc-body"><p>Our crew squares the saff lines to the qibla wall, places seams between rows and works around your salah times. Removing the old carpet can be added to your quote. <a href="/pages/installation">How installation works →</a></p></div></details>
+        <details><summary>Payment for committees</summary><div class="mcc-body"><p>{{ section.settings.payment_text }}</p></div></details>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="mcc-section mcc-process" style="padding-top:64px; padding-bottom:64px;">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" style="margin-bottom:28px;"><h2>Other hall sizes</h2></div>
+    <div class="mcc-grid-by-size">
+      {%- assign shown = 0 -%}
+      {%- for p in collections.all.products -%}
+        {%- if p.id == product.id or shown >= 2 -%}{%- continue -%}{%- endif -%}
+        {%- assign shown = shown | plus: 1 -%}
+        <a class="mcc-size-card" href="{{ p.url }}"><h3>{{ p.title }}</h3><div class="mcc-size-foot"><div class="mcc-price">from {{ p.price_min | money_with_currency }}</div></div></a>
+      {%- endfor -%}
+      <a class="mcc-size-card" href="/pages/contact"><div class="mcc-dims">Custom<span> any hall</span></div><h3>Something else?</h3><p>L-shaped rooms, women's galleries, stairs. Send us the plan.</p><div class="mcc-size-foot"><div class="mcc-price">Quoted to measure</div></div></a>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+(function(){
+  try{
+    var form = document.getElementById('mcc-product-form');
+    if(!form) return;
+    var price = document.getElementById('mccPrice'), cwName = document.getElementById('mccCwName');
+    var carpet = document.getElementById('mccArtCarpet'), lines = document.getElementById('mccArtLines'), cap = document.getElementById('mccArtCap');
+    var coverage = {{ coverage | json }};
+    function sel(name){ return form.querySelector('input[name="' + name + '"]:checked'); }
+    function update(){
+      var v = sel('id'), c = sel('properties[Colourway]');
+      if(v && v.dataset.price){ price.textContent = v.dataset.price; }
+      if(c){ cwName.textContent = c.value; }
+      if(carpet && lines){
+        var spacing = v && v.dataset.spacing ? parseFloat(v.dataset.spacing) : 95, step = spacing / 100 * 33, s = '';
+        for(var y = step; y < 420; y += step){ s += '<line x1="0" y1="' + y.toFixed(1) + '" x2="480" y2="' + y.toFixed(1) + '"/>'; }
+        lines.innerHTML = s;
+        if(c){ carpet.setAttribute('fill', c.dataset.colour); }
+        cap.textContent = (coverage ? coverage.replace('Approx. ', '').replace(/ \(.*\)/, '') + ' · ' : '') + spacing + 'cm spacing · ' + (c ? c.value : '');
+      }
+    }
+    form.addEventListener('change', update);
+    update();
+  }catch(e){ console.error('Product page error', e); }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Mosque product page",
+  "settings": [
+    { "type": "text", "id": "price_note", "label": "Note next to price", "default": "carpet supply · installation quoted with your order" },
+    { "type": "text", "id": "pile", "label": "Pile", "default": "Fire-rated wool blend" },
+    { "type": "text", "id": "fire_rating", "label": "Fire rating", "default": "CAN/ULC-S102, ASTM E648" },
+    { "type": "textarea", "id": "delivery_text", "label": "Delivery text", "default": "Your delivery window is confirmed in writing with your order, before anything is cut." },
+    { "type": "textarea", "id": "payment_text", "label": "Payment text", "default": "Pay online, or by purchase order or bank transfer. We invoice in your mosque's registered name." }
+  ]
+}
+{% endschema %}

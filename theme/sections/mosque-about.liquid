@@ -1,0 +1,45 @@
+{{ 'mosque-design.css' | asset_url | stylesheet_tag }}
+{{ 'mosque-update.css' | asset_url | stylesheet_tag }}
+<div id="mcc-app">
+<section class="mcc-phero"><div class="mcc-wrap">
+  <span class="mcc-eyebrow mcc-ar" style="font-style:normal;">سجاد المساجد</span>
+  <h1>{{ section.settings.heading }}</h1>
+  <p>{{ section.settings.intro }}</p>
+</div></section>
+
+<section class="mcc-section" style="padding-top:24px;"><div class="mcc-wrap mcc-two">
+  <div class="mcc-prose">
+    <h2>Why we don't make carpet</h2>
+    <p>We're suppliers, not manufacturers, and we think that's better for you. Because we aren't tied to one factory, we can choose the mill whose pile, colour and line accuracy best suit your hall and your budget.</p>
+    <p>We import the rolls, inspect them here and install them ourselves, so the company that recommended the carpet is the one responsible for how it looks on the floor.</p>
+  </div>
+  <div class="mcc-prose">
+    <h2>Why the saff matters to us</h2>
+    <p>A prayer-hall carpet is a working surface. Rows that wander, or spacing that crowds sujood, make every salah a little harder. So we start from how your congregation prays, then choose the carpet.</p>
+    {%- if section.settings.founder_line != blank -%}<p>{{ section.settings.founder_line }}</p>{%- endif -%}
+    {%- if page.content != blank -%}<div class="mcc-rte">{{ page.content }}</div>{%- endif -%}
+  </div>
+</div></section>
+
+<section class="mcc-section mcc-process" style="padding-top:72px; padding-bottom:72px;"><div class="mcc-wrap">
+  <div class="mcc-section-head"><h2>What we promise every committee</h2></div>
+  <div class="mcc-values">
+    <div class="mcc-value"><h3>Straight answers</h3><p>Itemised quotes that separate carpet, import and installation, with nothing hidden in "misc."</p></div>
+    <div class="mcc-value"><h3>Measured before cut</h3><p>Nothing is cut until your hall's dimensions are confirmed.</p></div>
+    <div class="mcc-value"><h3>Respect for the space</h3><p>Installs scheduled around salah, a clean site, and a walk-through with your committee at the end.</p></div>
+  </div>
+</div></section>
+
+<section class="mcc-cta" style="margin-top:72px;"><div><h2>Tell us about your hall</h2><p>We'll recommend a spacing and a layout at no cost.</p></div><div class="mcc-cta-actions"><a href="/pages/contact" class="mcc-btn-primary">Request a quote</a></div></section>
+</div>
+{% schema %}
+{
+  "name": "About page",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "A Canadian supplier of prayer-hall carpet" },
+    { "type": "textarea", "id": "intro", "label": "Intro", "default": "MosqueCarpetsCanada.ca exists for one kind of room: the prayer hall. We supply and install luxury carpet rolls for mosques, musallas and Islamic centres across Canada." },
+    { "type": "textarea", "id": "founder_line", "label": "Who we are (optional)", "info": "e.g. Founded in [year] by [names] in [city]." }
+  ],
+  "presets": [{ "name": "About page" }]
+}
+{% endschema %}
