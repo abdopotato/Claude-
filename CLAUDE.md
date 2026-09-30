@@ -15,3 +15,9 @@ Store: `tqtwwj-3a.myshopify.com` (Basic plan, CAD, Canada), accessed through the
 Shopify reference skills live in `.claude/skills/` (theme-development, liquid-templating, api-graphql,
 app-development, checkout-customization, shopify-functions, headless-hydrogen, cli-tools). MIT licensed — see
 `.claude/skills/LICENSE-shopify-agent-skills`.
+
+## Open questions
+
+`OPEN-QUESTIONS.md` tracks everything we still need from the owner. When something is unknown, use safe wording
+that makes no claim, mark it "To confirm" in previews, add it to that file, and end each update to the owner with
+a short reminder of what's still open. `CHANGE-PLAN.md` lists what will be applied once approved.
