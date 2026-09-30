@@ -1,6 +1,6 @@
 # Change plan: site update v2
 
-Status: **PREVIEW ONLY. Nothing has been applied to the store.**
+Status: **Step A done (2026-09-30)**. Unpublished theme "MosqueCarpetsCanada — Site update v2" (gid://shopify/OnlineStoreTheme/130977333294) built from `theme/`. The live theme is untouched. **Step B has not been applied yet.**
 Preview: `previews/site-preview.html` (tabs: Home, Product page, Installation, About, Request a quote).
 
 Live theme: `MosqueCarpetsCanada — Hero spacing` (gid://shopify/OnlineStoreTheme/130961637422).
