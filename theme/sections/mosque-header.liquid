@@ -24,29 +24,67 @@
         <span class="mcc-logo-ar">سجاد المساجد</span>
       </div>
     </a>
+    {%- liquid
+      assign p = request.path
+      assign on_install = false
+      assign on_about = false
+      if p contains '/pages/installation'
+        assign on_install = true
+      elsif p contains '/pages/about'
+        assign on_about = true
+      endif
+    -%}
     <nav class="mcc-navlinks" aria-label="Main">
       <a href="{{ routes.root_url }}#sizes">Shop by hall size</a>
-      <a href="/pages/installation">Installation</a>
-      <a href="/pages/about">About</a>
+      <a href="/pages/installation"{% if on_install %} aria-current="page"{% endif %}>Installation</a>
+      <a href="/pages/about"{% if on_about %} aria-current="page"{% endif %}>About</a>
       <a href="{{ routes.root_url }}#faq">FAQ</a>
     </nav>
     <div class="mcc-navtools">
       <a class="mcc-btn-primary mcc-btn-sm" href="/pages/contact">Request a quote</a>
-      <a class="mcc-cart-btn" href="{{ routes.cart_url }}" aria-label="Cart, {{ cart.item_count }} items">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
-        Cart ({{ cart.item_count }})
+      <a class="mcc-cart-btn" href="{{ routes.cart_url }}" aria-label="Cart, {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+        <span class="mcc-cart-label">Cart</span>
+        <span class="mcc-cart-count" data-count="{{ cart.item_count }}" aria-hidden="true">{{ cart.item_count }}</span>
       </a>
     </div>
   </div>
   <nav class="mcc-mobile-nav" aria-label="Main (mobile)">
     <a href="{{ routes.root_url }}#sizes">Hall sizes</a>
-    <a href="/pages/installation">Installation</a>
-    <a href="/pages/about">About</a>
+    <a href="/pages/installation"{% if on_install %} aria-current="page"{% endif %}>Installation</a>
+    <a href="/pages/about"{% if on_about %} aria-current="page"{% endif %}>About</a>
     <a href="{{ routes.root_url }}#faq">FAQ</a>
-    <a href="/pages/contact" style="color:var(--brass); font-weight:600;">Request a quote</a>
   </nav>
 </header>
+{%- unless request.page_type == 'product' or request.path contains '/pages/contact' -%}
+  <div class="mcc-mobile-cta" id="mccMobileCta"><a class="mcc-btn-primary" href="/pages/contact">Request a quote</a></div>
+{%- endunless -%}
 </div>
+<script>
+  (function(){
+    try{
+      var root = document.documentElement;
+      root.classList.add('mcc-js');
+      var header = document.querySelector('#mcc-app header');
+      var bar = document.getElementById('mccMobileCta');
+      function onScroll(){
+        if(header){ header.classList.toggle('is-scrolled', window.scrollY > 8); }
+        if(bar){ bar.classList.toggle('is-visible', window.scrollY > 480); }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      function reveal(){
+        var items = document.querySelectorAll('#mcc-app [data-reveal]');
+        if(!('IntersectionObserver' in window)){ items.forEach(function(el){ el.classList.add('is-in'); }); return; }
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+        items.forEach(function(el){ io.observe(el); });
+      }
+      if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', reveal); } else { reveal(); }
+    }catch(e){ document.documentElement.classList.remove('mcc-js'); console.error('Header script error', e); }
+  })();
+</script>
 {% schema %}
 {
   "name": "Mosque header",

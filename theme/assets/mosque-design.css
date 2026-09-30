@@ -1,0 +1,130 @@
+#mcc-app{--green-900:#0F2822; --green-800:#16352E; --green-700:#204A40; --brass:#B8892F; --brass-light:#D7AE5C; --plaster:#F3EEE2; --plaster-dim:#EAE2CF; --maroon:#5C2A2A; --sage:#7C9A87; --ink:#1B211E; --bg:var(--plaster); --surface:#FFFDF8; --text:var(--ink); --text-dim:#5B6560; --line:#DCD3BC; --arch:var(--green-800);}
+#mcc-app *{box-sizing:border-box; margin:0; padding:0;}
+#mcc-app{background:var(--bg); color:var(--text); font-family:'Work Sans', sans-serif; font-weight:400; line-height:1.6; overflow-x:hidden;}
+#mcc-app img{max-width:100%; display:block;}
+#mcc-app a{color:inherit; text-decoration:none;}
+#mcc-app .mcc-wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+#mcc-app h1, #mcc-app h2, #mcc-app h3{font-family:'Amiri', serif; font-weight:700; line-height:1.15; letter-spacing:0.2px;}
+#mcc-app header{position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+#mcc-app .mcc-nav{display:flex; align-items:center; padding:20px 28px; max-width:1180px; margin:0 auto;}
+#mcc-app .mcc-logo{display:flex; align-items:center; gap:12px; font-family:'Amiri', serif; font-weight:700; font-size:19px; color:var(--text); white-space:nowrap;}
+#mcc-app .mcc-logo-mark{width:34px; height:34px; flex-shrink:0; background:var(--green-800); border-radius:9px; display:flex; align-items:center; justify-content:center;}
+#mcc-app .mcc-logo-mark svg{width:20px; height:20px;}
+#mcc-app .mcc-navlinks{display:flex; gap:34px; font-size:15px; color:var(--text-dim); margin-left:auto; margin-right:48px;}
+#mcc-app .mcc-navlinks a:hover{color:var(--brass);}
+#mcc-app .mcc-navtools{display:flex; align-items:center; gap:20px;}
+#mcc-app .mcc-cart-btn{display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text); border:1px solid var(--line); padding:9px 18px; border-radius:999px;}
+@media (max-width:840px){#mcc-app .mcc-navlinks{display:none;}}
+#mcc-app .mcc-hero{position:relative; padding:40px 0 0; overflow:hidden;}
+#mcc-app .mcc-hero-skyline{position:absolute; left:0; right:0; bottom:0; height:82px; opacity:0.5; pointer-events:none;}
+#mcc-app .mcc-hero-skyline svg{width:100%; height:100%; display:block;}
+#mcc-app .mcc-hero-inner{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 28px 110px; display:grid; grid-template-columns:1.15fr 0.85fr; align-items:center; gap:40px;}
+#mcc-app .mcc-trust-badge{display:inline-flex; align-items:center; gap:9px; font-size:13px; color:var(--text-dim); border:1px solid var(--line); border-radius:999px; padding:7px 16px 7px 12px; margin-bottom:22px; background:var(--surface);}
+#mcc-app .mcc-trust-badge .mcc-dot{width:7px; height:7px; border-radius:50%; background:var(--brass); box-shadow:0 0 0 3px color-mix(in srgb, var(--brass) 25%, transparent);}
+#mcc-app .mcc-hero-copy .mcc-kicker{color:var(--brass); font-size:15px; font-style:italic; font-family:'Amiri', serif; margin-bottom:18px;}
+#mcc-app .mcc-hero-copy h1{font-size:clamp(34px, 4.2vw, 54px); max-width:12ch; color:var(--text);}
+#mcc-app .mcc-hero-copy p{margin-top:18px; max-width:42ch; color:var(--text-dim); font-size:17px;}
+#mcc-app .mcc-hero-actions{display:flex; gap:16px; margin-top:26px; align-items:center; flex-wrap:wrap;}
+#mcc-app .mcc-btn-primary{background:var(--brass); color:var(--green-900); padding:15px 30px; font-size:15px; font-weight:600; border-radius:999px; transition:transform .18s ease, background .18s ease, box-shadow .18s ease; box-shadow:0 6px 20px -8px rgba(184,137,47,0.55);}
+#mcc-app .mcc-btn-primary:hover{background:var(--brass-light); transform:translateY(-1px); box-shadow:0 10px 26px -8px rgba(184,137,47,0.65);}
+#mcc-app .mcc-btn-ghost{color:var(--text); font-size:15px; border-bottom:1px solid var(--brass); padding-bottom:3px;}
+#mcc-app .mcc-hero-mini-stats{display:flex; gap:32px; margin-top:28px; padding-top:18px; border-top:1px solid var(--line); max-width:440px;}
+#mcc-app .mcc-hero-mini-stats div{display:flex; flex-direction:column; gap:4px;}
+#mcc-app .mcc-hero-mini-stats strong{font-family:'Amiri', serif; font-size:22px; color:var(--text);}
+#mcc-app .mcc-hero-mini-stats span{font-size:12.5px; color:var(--text-dim);}
+#mcc-app .mcc-hero-card{position:relative; max-width:280px; margin:0 auto; transform:rotate(var(--r, 0deg)); filter:drop-shadow(0 30px 50px -20px rgba(15,40,34,0.5));}
+#mcc-app .mcc-hero-card svg{width:100%; height:auto; display:block; border-radius:20px;}
+#mcc-app .mcc-hero-card-tag{position:absolute; left:50%; bottom:-18px; transform:translateX(-50%) rotate(calc(var(--r,0deg) * -1)); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:8px 18px; font-size:12.5px; color:var(--text); white-space:nowrap; display:flex; align-items:center; gap:8px; box-shadow:0 10px 24px -10px rgba(15,40,34,0.3);}
+#mcc-app .mcc-hero-card-tag .mcc-ar{font-size:12px; color:var(--text-dim);}
+@media (max-width:900px){#mcc-app .mcc-hero-inner{grid-template-columns:1fr; padding-bottom:88px;}
+#mcc-app .mcc-hero-card{margin-top:20px;}
+#mcc-app .mcc-hero-skyline{height:60px;}}
+#mcc-app .mcc-strip{margin-top:0; background:var(--plaster-dim); border-radius:16px; max-width:1180px; margin-left:auto; margin-right:auto; transform:translateY(-70px);}
+#mcc-app .mcc-strip .mcc-wrap{display:flex; flex-wrap:wrap; gap:0; padding:22px 28px; max-width:none;}
+#mcc-app .mcc-strip-item{flex:1 1 220px; padding:10px 24px; border-right:1px solid var(--line); font-size:13.5px; color:var(--text-dim);}
+#mcc-app .mcc-strip-item:last-child{border-right:none;}
+#mcc-app .mcc-strip-item strong{display:block; color:var(--text); font-size:14px; margin-bottom:2px;}
+#mcc-app .mcc-section{padding:96px 28px;}
+#mcc-app .mcc-section-head{max-width:600px; margin-bottom:52px;}
+#mcc-app .mcc-section-head h2{font-size:clamp(28px,3.2vw,38px); color:var(--text);}
+#mcc-app .mcc-section-head p{margin-top:14px; color:var(--text-dim); font-size:16px; max-width:48ch;}
+#mcc-app .mcc-grid-by-size{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+#mcc-app .mcc-size-card{background:var(--surface); padding:38px 30px; display:flex; flex-direction:column; gap:16px; border:1px solid var(--line); border-radius:18px; transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;}
+#mcc-app .mcc-size-card:hover{transform:translateY(-4px); box-shadow:0 20px 40px -24px rgba(15,40,34,0.35); border-color:var(--brass);}
+#mcc-app .mcc-size-head{display:flex; flex-direction:column; gap:5px;}
+#mcc-app .mcc-size-card .mcc-dims{font-family:'Amiri', serif; font-size:30px; color:var(--brass); line-height:1.2;}
+#mcc-app .mcc-size-card .mcc-dims span{font-size:15px; color:var(--text-dim); font-family:'Work Sans',sans-serif;}
+#mcc-app .mcc-size-card h3{font-size:19px; color:var(--text); font-weight:700;}
+#mcc-app .mcc-size-card p{font-size:14.5px; color:var(--text-dim); flex:1; line-height:1.55;}
+#mcc-app .mcc-size-foot{display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--line); padding-top:14px;}
+#mcc-app .mcc-size-card .mcc-rows{font-size:13px; color:var(--sage);}
+#mcc-app .mcc-size-card .mcc-price{font-size:15px; color:var(--text); font-weight:600;}
+@media (max-width:900px){#mcc-app .mcc-grid-by-size{grid-template-columns:1fr;}}
+#mcc-app .mcc-saff-section{background: radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--brass) 16%, transparent), transparent 55%), var(--green-800); color:var(--plaster); padding:96px 28px;}
+#mcc-app .mcc-saff-section .mcc-wrap{display:grid; grid-template-columns:0.9fr 1.1fr; gap:60px; align-items:center;}
+#mcc-app .mcc-saff-section h2{color:var(--plaster); font-size:clamp(26px,3vw,34px);}
+#mcc-app .mcc-saff-kicker{color:var(--brass-light); font-size:15px; font-style:italic; margin-bottom:12px; display:block;}
+#mcc-app .mcc-saff-section p{color:#C9D2CB; margin-top:16px; font-size:16px; max-width:44ch;}
+#mcc-app .mcc-saff-facts{list-style:none; margin-top:26px; display:flex; flex-direction:column; gap:12px;}
+#mcc-app .mcc-saff-fact{display:flex; gap:16px; align-items:flex-start; background:rgba(243,238,226,0.05); border:1px solid rgba(243,238,226,0.12); border-radius:14px; padding:16px 18px; transition:background .2s ease, border-color .2s ease;}
+#mcc-app .mcc-saff-fact:hover{background:rgba(243,238,226,0.09); border-color:rgba(184,137,47,0.4);}
+#mcc-app .mcc-saff-fact-rec{border-color:rgba(184,137,47,0.5); background:rgba(184,137,47,0.09);}
+#mcc-app .mcc-saff-fact-num{flex-shrink:0; width:40px; height:40px; border-radius:50%; background:var(--brass); color:var(--green-900); font-family:'Amiri',serif; font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center;}
+#mcc-app .mcc-saff-fact-rec .mcc-saff-fact-num{background:var(--brass-light);}
+#mcc-app .mcc-saff-fact-body{display:flex; flex-direction:column; gap:4px;}
+#mcc-app .mcc-saff-fact-body strong{font-family:'Amiri',serif; font-size:17px; color:var(--brass-light); display:flex; align-items:center; gap:8px;}
+#mcc-app .mcc-saff-fact-tag{font-family:'Work Sans',sans-serif; font-style:normal; font-size:10.5px; font-weight:600; letter-spacing:0.4px; text-transform:uppercase; color:var(--green-900); background:var(--brass-light); padding:2px 8px; border-radius:999px;}
+#mcc-app .mcc-saff-fact-body span{font-size:14px; color:#C9D2CB; line-height:1.5;}
+#mcc-app .mcc-saff-diagram-wrap{position:relative; border-radius:20px; overflow:hidden; border:1px solid rgba(184,137,47,0.25); box-shadow:0 30px 60px -30px rgba(0,0,0,0.5);}
+#mcc-app .mcc-saff-diagram{width:100%; display:block;}
+#mcc-app .mcc-saff-diagram-tag{position:absolute; top:16px; right:16px; background:var(--surface); color:var(--green-900); font-size:12.5px; font-weight:600; padding:7px 14px; border-radius:999px; box-shadow:0 8px 20px -8px rgba(0,0,0,0.35);}
+@media (max-width:900px){#mcc-app .mcc-saff-section .mcc-wrap{grid-template-columns:1fr;}}
+#mcc-app .mcc-colorways{display:grid; grid-template-columns:repeat(5,1fr); gap:18px;}
+#mcc-app .mcc-swatch{display:flex; flex-direction:column; gap:10px; cursor:pointer; border:none; background:none; padding:0; text-align:left; font:inherit; width:100%;}
+#mcc-app .mcc-swatch[aria-pressed="true"] .mcc-block{box-shadow:0 0 0 3px var(--surface), 0 0 0 5px var(--brass);}
+#mcc-app .mcc-swatch-pulse .mcc-block{animation:mcc-swatch-pop .45s ease;}
+@keyframes mcc-swatch-pop{
+    0%{transform:scale(1);}
+    45%{transform:scale(1.06);}
+    100%{transform:scale(1);}
+  }
+#mcc-app .mcc-swatch .mcc-block{aspect-ratio:1; border-radius:14px; background-size:cover; background-position:center; border:1px solid var(--line); position:relative; overflow:hidden; transition:transform .2s ease;}
+#mcc-app .mcc-swatch:hover .mcc-block{transform:translateY(-3px) scale(1.02);}
+#mcc-app .mcc-swatch .mcc-block::after{content:''; position:absolute; inset:0; background: repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 34px);}
+#mcc-app .mcc-swatch p{font-size:13.5px; color:var(--text); font-weight:500;}
+#mcc-app .mcc-swatch span{font-size:12px; color:var(--text-dim);}
+#mcc-app .mcc-colorway-preview{margin-top:22px; text-align:center; font-size:14px; color:var(--text-dim); opacity:0; transition:opacity .25s ease; min-height:20px;}
+#mcc-app .mcc-colorway-preview.is-visible{opacity:1;}
+#mcc-app .mcc-colorway-preview strong{color:var(--text); font-weight:600;}
+@media (max-width:900px){#mcc-app .mcc-colorways{grid-template-columns:repeat(2,1fr);}}
+#mcc-app .mcc-calc{background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:48px; display:grid; grid-template-columns:1fr 1fr; gap:44px;}
+#mcc-app .mcc-calc-form label{display:block; font-size:13px; color:var(--text-dim); margin-bottom:8px; margin-top:20px;}
+#mcc-app .mcc-calc-form label:first-child{margin-top:0;}
+#mcc-app .mcc-calc-form input, #mcc-app .mcc-calc-form select{width:100%; padding:12px 14px; font-size:15px; border:1px solid var(--line); background:var(--bg); color:var(--text); border-radius:10px; font-family:'Work Sans',sans-serif;}
+#mcc-app .mcc-calc-result{background:var(--plaster-dim); border-left:3px solid var(--brass); border-radius:14px; padding:28px; display:flex; flex-direction:column; justify-content:center;}
+#mcc-app .mcc-calc-result .mcc-num{font-family:'Amiri',serif; font-size:44px; color:var(--green-800); line-height:1;}
+#mcc-app .mcc-calc-result .mcc-label{font-size:13px; color:var(--text-dim); margin-top:8px;}
+#mcc-app .mcc-calc-result .mcc-note{font-size:13px; color:var(--text-dim); margin-top:18px; border-top:1px solid var(--line); padding-top:16px;}
+@media (max-width:840px){#mcc-app .mcc-calc{grid-template-columns:1fr;}}
+#mcc-app .mcc-testimonial{max-width:760px; margin:0 auto; text-align:center; padding:100px 28px;}
+#mcc-app .mcc-testimonial svg{width:34px; margin:0 auto 28px; opacity:0.5;}
+#mcc-app .mcc-testimonial p{font-family:'Amiri', serif; font-style:italic; font-size:clamp(20px,2.4vw,27px); color:var(--text); line-height:1.5;}
+#mcc-app .mcc-testimonial cite{display:block; margin-top:26px; font-style:normal; font-size:14px; color:var(--text-dim);}
+#mcc-app footer{background:var(--green-900); color:#C9D2CB; padding:64px 28px 32px;}
+#mcc-app .mcc-foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:40px; border-bottom:1px solid rgba(243,238,226,0.12);}
+#mcc-app .mcc-foot-grid h4{font-size:13px; color:var(--brass-light); margin-bottom:16px; font-weight:600;}
+#mcc-app .mcc-foot-grid a, #mcc-app .mcc-foot-grid p{font-size:14px; color:#B7C1BA; display:block; margin-bottom:10px;}
+#mcc-app .mcc-foot-logo{font-family:'Amiri',serif; font-size:20px; color:var(--plaster); margin-bottom:14px;}
+#mcc-app .mcc-foot-bottom{display:flex; justify-content:space-between; padding-top:24px; font-size:12.5px; color:#7E8B83; flex-wrap:wrap; gap:12px;}
+@media (max-width:840px){#mcc-app .mcc-foot-grid{grid-template-columns:1fr 1fr;}}
+@media (prefers-reduced-motion: reduce){#mcc-app *{transition:none !important; scroll-behavior:auto !important;}}
+#mcc-app .mcc-ar{font-family:'Amiri', serif; direction:rtl; unicode-bidi:isolate; letter-spacing:normal; line-height:1.9;}
+#mcc-app .mcc-bismillah-bar{background:var(--green-900); color:var(--brass-light); text-align:center; padding:10px 12px; font-size:16px;}
+#mcc-app .mcc-logo-ar{font-family:'Amiri', serif; direction:rtl; font-size:13px; color:var(--text-dim); margin-top:1px; font-weight:400;}
+#mcc-app .mcc-logo-stack{display:flex; flex-direction:column; gap:1px;}
+#mcc-app .mcc-star8{display:inline-flex;}
+#mcc-app .mcc-star8 svg{width:1em; height:1em; vertical-align:-0.12em;}
+#mcc-app .mcc-divider-stars{display:flex; align-items:center; justify-content:center; gap:26px; padding:6px 0 0;}
+#mcc-app .mcc-divider-stars svg{width:22px; height:22px; opacity:0.55;}
+#mcc-app .mcc-dims-ar{font-family:'Amiri', serif; direction:rtl; font-size:14px; color:var(--sage);}
+#mcc-app .mcc-swatch .mcc-ar-name{font-family:'Amiri', serif; direction:rtl; font-size:12.5px; color:var(--text-dim);}

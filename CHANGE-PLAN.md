@@ -23,12 +23,19 @@ Duplicate the live theme as **"MosqueCarpetsCanada — Site update v2"** (unpubl
 
 All copy lives in section settings, so it can be edited later in the theme editor without code.
 
+## Step A.2: detail pass (v3), awaiting approval
+
+Built in `theme/` and previewed in `previews/v3/preview-all.html`. Not uploaded yet. When approved, re-upload to the
+same **unpublished** theme: `assets/mosque-update.css`, `assets/mosque-design.css` (unchanged copy),
+all 7 `sections/mosque-*.liquid`, and `templates/index.json`.
+
 ## Step B: store data (changes the live site immediately, needs separate approval)
 
 1. **Pages:** create `Installation` (/pages/installation); publish `About Us`; rename `Contact` → "Request a quote" (keep handle `contact`).
 2. **Products:** rewrite the 3 descriptions (below); rename option to "Row spacing"; add SEO titles/descriptions; publish when the owner is ready (currently DRAFT).
 3. **Collection:** create "Prayer hall carpet rolls" containing the 3 products.
 4. **Store name:** "My Store" → "MosqueCarpetsCanada.ca" (owner does this in Settings → Store details if the connector can't).
+5. **Homepage SEO:** set the store's meta title and description (currently empty, so Google shows no summary).
 
 ## Proposed product descriptions
 

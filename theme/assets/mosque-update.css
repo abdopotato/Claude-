@@ -163,3 +163,184 @@
 #mcc-app .mcc-side .mcc-contact-line{margin-top:20px; color:#C9D2CB; font-size:14px;}
 @media (max-width:900px){#mcc-app .mcc-form{grid-template-columns:1fr; padding:24px;} #mcc-app .mcc-quote-grid{grid-template-columns:1fr;}}
 @media (max-width:560px){#mcc-app .mcc-wrap{padding:0 16px;} #mcc-app .mcc-section{padding-left:0; padding-right:0;}}
+
+/* ==========================================================================
+   Detail pass (v3): tokens, contrast, rhythm, navigation, CTAs, images, motion
+   ========================================================================== */
+#mcc-app{
+  --brass-text:#7F5B1C;          /* gold for text on light backgrounds (5.3:1 on plaster) */
+  --sage-text:#4F6B5A;           /* green-grey for small text (5.8:1 on surface) */
+  --muted-on-dark:#9AA69F;       /* small text on green-900 (6.2:1) */
+  --section-y:clamp(64px, 8vw, 104px);
+  --gap:24px;
+  --radius-sm:10px; --radius-md:14px; --radius-lg:20px;
+  --shadow-1:0 1px 2px rgba(15,40,34,.06), 0 2px 8px -2px rgba(15,40,34,.08);
+  --shadow-2:0 18px 40px -22px rgba(15,40,34,.38);
+  --dur:200ms; --ease:cubic-bezier(.4,0,.2,1);
+  --header-offset:112px;
+  font-size:16px;
+}
+@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth;} }
+#mcc-app [id]{scroll-margin-top:var(--header-offset);}
+
+/* focus: always visible for keyboard users */
+#mcc-app a:focus-visible, #mcc-app button:focus-visible, #mcc-app summary:focus-visible,
+#mcc-app input:focus-visible, #mcc-app select:focus-visible, #mcc-app textarea:focus-visible{
+  outline:3px solid var(--green-800); outline-offset:3px; border-radius:6px;
+}
+#mcc-app .mcc-saff-section a:focus-visible, #mcc-app .mcc-cta a:focus-visible, #mcc-app .mcc-install-card a:focus-visible,
+#mcc-app .mcc-footer a:focus-visible, #mcc-app .mcc-side a:focus-visible{outline-color:var(--brass-light);}
+
+/* contrast fixes: gold / sage used as TEXT on light backgrounds */
+#mcc-app .mcc-hero-copy .mcc-kicker, #mcc-app .mcc-eyebrow, #mcc-app .mcc-size-card .mcc-dims,
+#mcc-app .mcc-step-num, #mcc-app .mcc-faq summary::after, #mcc-app .mcc-acc summary::after{color:var(--brass-text);}
+#mcc-app .mcc-size-card .mcc-rows, #mcc-app .mcc-dims-ar{color:var(--sage-text);}
+#mcc-app .mcc-navlinks a:hover{color:var(--brass-text);}
+
+/* type floor: nothing below 14px except uppercase micro-labels */
+#mcc-app .mcc-trust-badge, #mcc-app .mcc-hero-mini-stats span, #mcc-app .mcc-strip-item,
+#mcc-app .mcc-swatch span, #mcc-app .mcc-swatch .mcc-ar-name, #mcc-app .mcc-calc-form label,
+#mcc-app .mcc-calc-result .mcc-label, #mcc-app .mcc-calc-result .mcc-note, #mcc-app .mcc-hero-card-tag,
+#mcc-app .mcc-foot-bottom, #mcc-app .mcc-crumbs, #mcc-app .mcc-form label, #mcc-app .mcc-chip small,
+#mcc-app .mcc-radio span, #mcc-app .mcc-step .mcc-when, #mcc-app .mcc-size-card .mcc-rows{font-size:14px;}
+#mcc-app .mcc-dims-ar{font-size:15px; text-align:left;}
+#mcc-app .mcc-price, #mcc-app .mcc-p-price, #mcc-app .mcc-dims, #mcc-app .mcc-num{font-variant-numeric:tabular-nums lining-nums;}
+
+/* vertical rhythm: one section spacing value, set by token */
+#mcc-app .mcc-section{padding:var(--section-y) 0;}
+#mcc-app .mcc-section.mcc-tight-top{padding-top:calc(var(--section-y) * .4);}
+#mcc-app .mcc-section.mcc-flush-top{padding-top:0;}
+#mcc-app .mcc-saff-section{padding:var(--section-y) 0;}
+#mcc-app .mcc-section-head{margin-bottom:clamp(32px, 4vw, 48px);}
+#mcc-app .mcc-section-head p{max-width:56ch;}
+#mcc-app .mcc-grid-by-size, #mcc-app .mcc-steps, #mcc-app .mcc-values, #mcc-app .mcc-install-list,
+#mcc-app .mcc-colorways{gap:var(--gap);}
+#mcc-app .mcc-size-card{padding:28px; gap:14px; border-radius:var(--radius-lg); box-shadow:var(--shadow-1);}
+#mcc-app .mcc-size-card:hover{box-shadow:var(--shadow-2);}
+#mcc-app .mcc-step, #mcc-app .mcc-value, #mcc-app .mcc-install-list li{padding:24px; border-radius:var(--radius-md);}
+#mcc-app .mcc-testimonial{padding:var(--section-y) 28px;}
+
+/* ---------- header & navigation ---------- */
+#mcc-app header{transition:box-shadow var(--dur) var(--ease);}
+#mcc-app header.is-scrolled{box-shadow:0 8px 24px -16px rgba(15,40,34,.35);}
+#mcc-app .mcc-nav{padding:14px 28px; gap:20px;}
+#mcc-app .mcc-navlinks{gap:6px; margin-right:12px;}
+#mcc-app .mcc-navlinks a, #mcc-app .mcc-mobile-nav a{position:relative; display:inline-flex; align-items:center; min-height:44px; padding:0 12px; border-radius:8px;}
+#mcc-app .mcc-navlinks a[aria-current="page"], #mcc-app .mcc-mobile-nav a[aria-current="page"]{color:var(--text); font-weight:500;}
+#mcc-app .mcc-navlinks a[aria-current="page"]::after, #mcc-app .mcc-mobile-nav a[aria-current="page"]::after{content:''; position:absolute; left:12px; right:12px; bottom:6px; height:2px; border-radius:2px; background:var(--brass);}
+#mcc-app .mcc-cart-btn{position:relative; min-height:44px; padding:0 16px;}
+#mcc-app .mcc-cart-count{display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--green-800); color:#fff; font-size:12px; font-weight:600;}
+#mcc-app .mcc-cart-count[data-count="0"]{background:var(--plaster-dim); color:var(--text-dim);}
+#mcc-app .mcc-mobile-nav{justify-content:space-between; padding:0 8px; gap:0; font-size:15px;}
+@media (max-width:840px){
+  #mcc-app .mcc-navtools .mcc-btn-primary{display:inline-flex;}
+  #mcc-app .mcc-navtools{margin-left:auto;}
+}
+@media (max-width:560px){
+  #mcc-app{--header-offset:128px;}
+  #mcc-app .mcc-logo{gap:10px; font-size:15px;}
+  #mcc-app .mcc-logo-mark{width:30px; height:30px;}
+  #mcc-app .mcc-navtools{gap:8px;}
+  #mcc-app .mcc-navtools .mcc-btn-primary{padding:0 14px; min-height:40px; font-size:14px;}
+  #mcc-app .mcc-cart-btn{padding:0 10px; border:none;}
+  #mcc-app .mcc-cart-label{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+}
+@media (max-width:380px){ #mcc-app .mcc-logo-stack > span:first-child > span{display:none;} }
+
+/* ---------- buttons: one system ---------- */
+#mcc-app .mcc-btn-primary, #mcc-app .mcc-btn-secondary{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 28px; border-radius:999px; font-size:15px; font-weight:600; line-height:1.2; text-align:center; transition:transform var(--dur) var(--ease), background var(--dur) var(--ease), box-shadow var(--dur) var(--ease), color var(--dur) var(--ease);}
+#mcc-app .mcc-btn-primary:active, #mcc-app .mcc-btn-secondary:active{transform:translateY(0) scale(.98);}
+#mcc-app .mcc-btn-sm{min-height:44px; padding:0 20px; font-size:14px;}
+#mcc-app .mcc-btn-secondary{background:transparent; color:var(--green-800); border:1.5px solid var(--green-800); cursor:pointer;}
+#mcc-app .mcc-btn-secondary:hover{background:var(--green-800); color:var(--plaster);}
+#mcc-app .mcc-on-dark .mcc-btn-secondary{color:var(--plaster); border-color:rgba(243,238,226,.5);}
+#mcc-app .mcc-on-dark .mcc-btn-secondary:hover{background:var(--plaster); color:var(--green-900);}
+#mcc-app .mcc-btn-ghost{display:inline-flex; align-items:center; gap:6px; min-height:44px; border-bottom:none; padding:0; background:linear-gradient(var(--brass),var(--brass)) left calc(100% - 10px) / 100% 1px no-repeat; transition:background-size var(--dur) var(--ease);}
+#mcc-app .mcc-btn-ghost::after{content:'→'; transition:transform var(--dur) var(--ease);}
+#mcc-app .mcc-btn-ghost:hover::after{transform:translateX(3px);}
+#mcc-app .mcc-btn-primary[aria-busy="true"]{opacity:.7; pointer-events:none;}
+#mcc-app .mcc-cta-note{font-size:14px; color:var(--text-dim); margin-top:10px;}
+#mcc-app .mcc-on-dark .mcc-cta-note{color:var(--muted-on-dark);}
+
+/* ---------- hero ---------- */
+#mcc-app .mcc-hero-copy h1{max-width:16ch; font-size:clamp(36px, 4.6vw, 58px); line-height:1.08;}
+#mcc-app .mcc-hero-copy p{max-width:48ch;}
+#mcc-app .mcc-hero-mini-stats{gap:28px; flex-wrap:wrap;}
+@media (max-width:600px){
+  #mcc-app .mcc-hero-card{display:none;}
+  #mcc-app .mcc-hero-inner{padding:0 16px 96px;}
+  #mcc-app .mcc-hero-actions{gap:8px 20px;}
+}
+@media (max-width:700px){
+  #mcc-app .mcc-strip{margin-left:16px; margin-right:16px; transform:translateY(-56px);}
+  #mcc-app .mcc-strip .mcc-wrap{padding:8px 4px;}
+  #mcc-app .mcc-strip-item{border-right:none; border-bottom:1px solid var(--line); padding:14px 18px;}
+  #mcc-app .mcc-strip-item:last-child{border-bottom:none;}
+}
+
+/* ---------- hall cards: image slot keeps every card the same shape ---------- */
+#mcc-app .mcc-card-media{margin:-28px -28px 4px; aspect-ratio:16/9; overflow:hidden; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--green-900);}
+#mcc-app .mcc-card-media img, #mcc-app .mcc-card-media svg{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s var(--ease);}
+#mcc-app .mcc-size-card:hover .mcc-card-media img, #mcc-app .mcc-size-card:hover .mcc-card-media svg{transform:scale(1.04);}
+#mcc-app .mcc-size-card .mcc-pop-tag{z-index:2;}
+#mcc-app .mcc-size-foot{flex-direction:row; justify-content:space-between; align-items:flex-end; gap:12px;}
+#mcc-app .mcc-card-link{font-size:14px; font-weight:600; color:var(--green-700); white-space:nowrap;}
+#mcc-app .mcc-card-link::after{content:' →'; display:inline-block; transition:transform var(--dur) var(--ease);}
+#mcc-app .mcc-size-card:hover .mcc-card-link::after{transform:translateX(3px);}
+
+/* ---------- colourways ---------- */
+#mcc-app .mcc-swatch .mcc-block{aspect-ratio:4/3;}
+#mcc-app .mcc-swatch p{font-size:15px;}
+#mcc-app .mcc-swatch:focus-visible{outline:3px solid var(--green-800); outline-offset:4px; border-radius:var(--radius-md);}
+
+/* ---------- product gallery ---------- */
+#mcc-app .mcc-gal-main{aspect-ratio:1/1; position:relative;}
+#mcc-app .mcc-gal-main img, #mcc-app .mcc-gal-main svg{width:100%; height:100%; object-fit:cover;}
+#mcc-app .mcc-gal-main img{transition:transform .5s var(--ease);}
+@media (hover:hover){ #mcc-app .mcc-gal-main:hover img{transform:scale(1.04);} }
+#mcc-app .mcc-gal-caption{position:absolute; left:14px; top:14px; background:rgba(255,253,248,.92); color:var(--text-dim); font-size:13px; padding:6px 12px; border-radius:999px;}
+#mcc-app .mcc-gal-thumbs{grid-template-columns:repeat(5,1fr);}
+#mcc-app .mcc-thumb{padding:0; border:1px solid var(--line); border-radius:var(--radius-sm); overflow:hidden; aspect-ratio:1; cursor:pointer; background:var(--surface);}
+#mcc-app .mcc-thumb img{width:100%; height:100%; object-fit:cover; border:none; border-radius:0;}
+#mcc-app .mcc-thumb[aria-current="true"]{border-color:var(--green-800); box-shadow:0 0 0 1px var(--green-800);}
+#mcc-app .mcc-pdp .mcc-dims-ar{margin-bottom:4px;}
+#mcc-app .mcc-cdot{width:44px; height:44px;}
+#mcc-app .mcc-chip{min-height:64px;}
+
+/* ---------- forms ---------- */
+#mcc-app .mcc-form input, #mcc-app .mcc-form select, #mcc-app .mcc-calc-form input, #mcc-app .mcc-calc-form select{min-height:48px; font-size:16px;}
+#mcc-app .mcc-req{color:#8E2B2B; margin-left:2px;}
+#mcc-app .mcc-form input:user-invalid{border-color:#8E2B2B;}
+#mcc-app .mcc-form-ok:focus{outline:none;}
+
+/* ---------- footer ---------- */
+#mcc-app .mcc-footer{background:var(--green-900); color:#C9D2CB; padding:64px 0 32px;}
+#mcc-app .mcc-foot-grid a{display:inline-flex; align-items:center; min-height:36px; margin-bottom:2px;}
+#mcc-app .mcc-foot-grid a:hover{color:var(--plaster);}
+#mcc-app .mcc-foot-grid h4{font-size:13px; letter-spacing:.6px; text-transform:uppercase;}
+#mcc-app .mcc-foot-bottom{color:var(--muted-on-dark);}
+
+/* ---------- motion: reveal on scroll (content stays visible without JS) ---------- */
+@media (prefers-reduced-motion:no-preference){
+  html.mcc-js #mcc-app [data-reveal]{opacity:0; transform:translateY(14px); transition:opacity .6s var(--ease), transform .6s var(--ease);}
+  html.mcc-js #mcc-app [data-reveal].is-in{opacity:1; transform:none;}
+}
+
+/* Sticky header: the header sits inside its own section wrapper, so stickiness has to be on
+   the header group. The Bismillah bar (fixed 44px) scrolls away; the nav stays pinned. */
+html body #header-group{position:sticky; top:-44px; z-index:40;}
+#mcc-app .mcc-bismillah-bar{height:44px; padding:0 12px; display:flex; align-items:center; justify-content:center; line-height:1;}
+#mcc-app header{position:relative; top:auto;}
+@media print{ html.mcc-js #mcc-app [data-reveal]{opacity:1; transform:none;} }
+
+/* Mobile: quote button moves from the crowded header to a bar pinned to the bottom of the screen,
+   shown once the visitor scrolls past the hero. Hidden on product pages (own CTAs) and the quote page. */
+#mcc-app .mcc-mobile-cta{display:none;}
+@media (max-width:560px){
+  #mcc-app .mcc-navtools .mcc-btn-primary{display:none;}
+  #mcc-app .mcc-mobile-cta{display:block; position:fixed; left:0; right:0; bottom:0; z-index:60; padding:10px 16px calc(10px + env(safe-area-inset-bottom)); background:color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid var(--line); transform:translateY(110%); transition:transform var(--dur) var(--ease);}
+  #mcc-app .mcc-mobile-cta.is-visible{transform:none;}
+  #mcc-app .mcc-mobile-cta .mcc-btn-primary{width:100%;}
+  html body:has(.mcc-mobile-cta){padding-bottom:76px;}
+}
+#mcc-app .mcc-size-card .mcc-rows{margin-top:-4px;}

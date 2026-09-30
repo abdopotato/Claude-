@@ -10,16 +10,16 @@
 <div class="mcc-wrap mcc-quote-grid">
   {%- form 'contact', id: 'mcc-quote-form', class: 'mcc-form' -%}
     {%- if form.posted_successfully? -%}
-      <div class="mcc-form-ok mcc-full" role="status">Thank you. We've received your request and will reply by email with next steps.</div>
+      <div class="mcc-form-ok mcc-full" role="status" tabindex="-1" id="mccQuoteOk">Thank you. We've received your request and will reply by email with next steps.</div>
     {%- endif -%}
     {%- if form.errors -%}
       <div class="mcc-form-error mcc-full" role="alert">{{ form.errors | default_errors }}</div>
     {%- endif -%}
-    <div><label for="q-name">Your name</label><input id="q-name" name="contact[name]" autocomplete="name" required></div>
+    <div><label for="q-name">Your name<span class="mcc-req" aria-hidden="true">*</span></label><input id="q-name" name="contact[name]" autocomplete="name" required></div>
     <div><label for="q-org">Mosque / organisation</label><input id="q-org" name="contact[Mosque or organisation]" autocomplete="organization"></div>
-    <div><label for="q-email">Email</label><input id="q-email" type="email" name="contact[email]" autocomplete="email" required></div>
+    <div><label for="q-email">Email<span class="mcc-req" aria-hidden="true">*</span></label><input id="q-email" type="email" name="contact[email]" autocomplete="email" required></div>
     <div><label for="q-phone">Phone</label><input id="q-phone" type="tel" name="contact[phone]" autocomplete="tel"></div>
-    <div><label for="q-city">City &amp; province</label><input id="q-city" name="contact[City and province]"></div>
+    <div><label for="q-city">City &amp; province</label><input id="q-city" name="contact[City and province]" autocomplete="address-level2" placeholder="e.g. Mississauga, ON"></div>
     <div><label for="q-need">What do you need?</label>
       <select id="q-need" name="contact[Request type]">
         <option value="Quote: supply + install">Quote: supply + install</option>
@@ -27,8 +27,8 @@
         <option value="Site visit">Site visit</option>
         <option value="Samples">Samples</option>
       </select></div>
-    <div><label for="q-w">Hall width (m)</label><input id="q-w" type="number" step="0.1" min="0" name="contact[Hall width (m)]"></div>
-    <div><label for="q-l">Hall length, front to back (m)</label><input id="q-l" type="number" step="0.1" min="0" name="contact[Hall length (m)]"></div>
+    <div><label for="q-w">Hall width (m)</label><input id="q-w" type="number" step="0.1" min="0" inputmode="decimal" name="contact[Hall width (m)]" placeholder="e.g. 12"></div>
+    <div><label for="q-l">Hall length, front to back (m)</label><input id="q-l" type="number" step="0.1" min="0" inputmode="decimal" name="contact[Hall length (m)]" placeholder="e.g. 8"></div>
     <div><label for="q-s">Row spacing</label>
       <select id="q-s" name="contact[Row spacing]">
         <option value="Not sure">Not sure, recommend one</option>
@@ -42,7 +42,7 @@
       </select></div>
     <input type="hidden" id="q-product" name="contact[Product]" value="">
     <div class="mcc-full"><label for="q-body">Anything else? (old carpet removal, timing, floor plan link)</label><textarea id="q-body" name="contact[body]"></textarea></div>
-    <div class="mcc-full" style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;"><button class="mcc-btn-primary" type="submit">Send request</button><span class="mcc-fine">We reply by email with next steps.</span></div>
+    <div class="mcc-full" style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;"><button class="mcc-btn-primary" type="submit">Request a quote</button><span class="mcc-fine"><span class="mcc-req" aria-hidden="true">*</span> Required. We reply by email with next steps.</span></div>
   {%- endform -%}
 
   <aside class="mcc-side">
@@ -68,6 +68,10 @@
     set('q-product', q.get('product'));
     var need = { 'samples': 'Samples', 'site-visit': 'Site visit' }[q.get('need')];
     set('q-need', need);
+    var ok = document.getElementById('mccQuoteOk');
+    if(ok){ ok.focus(); }
+    var f = document.getElementById('mcc-quote-form');
+    if(f){ f.addEventListener('submit', function(){ var b = f.querySelector('button[type="submit"]'); if(b){ b.setAttribute('aria-busy', 'true'); b.textContent = 'Sending…'; } }); }
   }catch(e){ console.error('Quote form prefill error', e); }
 })();
 </script>

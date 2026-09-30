@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installation · Site Preview</title>
+<style>body{margin:0}.pv{position:relative;z-index:100;background:#111;color:#eee;font:13px/1.4 system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 14px}
+.pv b{color:#fff}.pv a{color:#ddd;padding:4px 9px;border:1px solid #444;border-radius:6px;text-decoration:none}.pv a[aria-current]{background:#fff;color:#111}
+.skip{position:absolute;left:8px;top:-60px;z-index:200;background:#0F2822;color:#fff;padding:10px 14px;border-radius:8px}.skip:focus{top:8px}</style>
+</head><body>
+<a class="skip" href="#MainContent">Skip to content</a>
+<div class="pv"><b>PREVIEW v3, not live.</b> Rendered from the theme files in <code>theme/</code>. <a href="index.html">Home</a><a href="product.html">Product page</a><a href="installation.html" aria-current="page">Installation</a><a href="about.html">About</a><a href="quote.html">Request a quote</a></div>
+<div id="header-group"><link rel="stylesheet" href="../../theme/assets/mosque-design.css">
+<link rel="stylesheet" href="../../theme/assets/mosque-update.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<div id="mcc-app">
+<div class="mcc-bismillah-bar mcc-ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+
+<header>
+  <div class="mcc-nav">
+    <a class="mcc-logo" href="index.html">
+      <div class="mcc-logo-mark">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <rect x="7" y="23" width="26" height="12" rx="1" fill="#FFFFFF"/>
+          <path d="M13 23C13 15.8 16.5 11 20 11C23.5 11 27 15.8 27 23Z" fill="#FFFFFF"/>
+          <rect x="19.2" y="6" width="1.6" height="5" fill="#FFFFFF"/>
+          <circle cx="20" cy="5" r="1.5" fill="#FFFFFF"/>
+          <rect x="30" y="17" width="3.2" height="18" fill="#FFFFFF"/>
+          <path d="M30 17 L31.6 12.5 L33.2 17Z" fill="#FFFFFF"/>
+        </svg>
+      </div>
+      <div class="mcc-logo-stack">
+        <span>MosqueCarpetsCanada<span style="color:var(--brass);">.ca</span></span>
+        <span class="mcc-logo-ar">سجاد المساجد</span>
+      </div>
+    </a><nav class="mcc-navlinks" aria-label="Main">
+      <a href="index.html#sizes">Shop by hall size</a>
+      <a href="installation.html" aria-current="page">Installation</a>
+      <a href="about.html">About</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="mcc-navtools">
+      <a class="mcc-btn-primary mcc-btn-sm" href="quote.html">Request a quote</a>
+      <a class="mcc-cart-btn" href="/cart" aria-label="Cart, 0 items">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+        <span class="mcc-cart-label">Cart</span>
+        <span class="mcc-cart-count" data-count="0" aria-hidden="true">0</span>
+      </a>
+    </div>
+  </div>
+  <nav class="mcc-mobile-nav" aria-label="Main (mobile)">
+    <a href="index.html#sizes">Hall sizes</a>
+    <a href="installation.html" aria-current="page">Installation</a>
+    <a href="about.html">About</a>
+    <a href="index.html#faq">FAQ</a>
+  </nav>
+</header><div class="mcc-mobile-cta" id="mccMobileCta"><a class="mcc-btn-primary" href="quote.html">Request a quote</a></div></div>
+<script>
+  (function(){
+    try{
+      var root = document.documentElement;
+      root.classList.add('mcc-js');
+      var header = document.querySelector('#mcc-app header');
+      var bar = document.getElementById('mccMobileCta');
+      function onScroll(){
+        if(header){ header.classList.toggle('is-scrolled', window.scrollY > 8); }
+        if(bar){ bar.classList.toggle('is-visible', window.scrollY > 480); }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      function reveal(){
+        var items = document.querySelectorAll('#mcc-app [data-reveal]');
+        if(!('IntersectionObserver' in window)){ items.forEach(function(el){ el.classList.add('is-in'); }); return; }
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+        items.forEach(function(el){ io.observe(el); });
+      }
+      if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', reveal); } else { reveal(); }
+    }catch(e){ document.documentElement.classList.remove('mcc-js'); console.error('Header script error', e); }
+  })();
+</script>
+
+</div>
+<main id="MainContent"><link rel="stylesheet" href="../../theme/assets/mosque-design.css">
+<link rel="stylesheet" href="../../theme/assets/mosque-update.css">
+<div id="mcc-app">
+<section class="mcc-phero"><div class="mcc-wrap">
+  <span class="mcc-eyebrow">Installation service</span>
+  <h1>Fitted by a crew that knows where the saff should fall</h1>
+  <p>Carpet is only half the job. We measure your hall, plan the roll layout so seams sit between rows, and fit everything with the prayer lines squared to the qibla wall, on a schedule that works around salah.</p>
+  <div class="mcc-hero-actions"><a href="quote.html?need=site-visit" class="mcc-btn-primary">Book a site visit</a><a href="index.html#calculator" class="mcc-btn-ghost">Try the fit calculator</a></div>
+</div></section><section class="mcc-section mcc-process"><div class="mcc-wrap">
+  <div class="mcc-section-head" data-reveal><h2>What happens on install day</h2></div>
+  <div class="mcc-steps">
+    <div class="mcc-step" data-reveal><div class="mcc-step-num">1</div><h3>Set out</h3><p>We mark a true line off the qibla wall. Every row is measured from it, not from the room's walls.</p></div>
+    <div class="mcc-step" data-reveal><div class="mcc-step-num">2</div><h3>Prepare</h3><p>We lift the old carpet if you've added removal, then clean and check the subfloor.</p></div>
+    <div class="mcc-step" data-reveal><div class="mcc-step-num">3</div><h3>Lay &amp; seam</h3><p>Rolls go down with seams placed between prayer rows, and the lines are matched across every join.</p></div>
+    <div class="mcc-step" data-reveal><div class="mcc-step-num">4</div><h3>Finish &amp; hand over</h3><p>We trim the edges, fit the thresholds, vacuum and walk the hall with your committee.</p></div>
+  </div>
+</div></section>
+
+<section class="mcc-section"><div class="mcc-wrap mcc-two">
+  <div class="mcc-prose">
+    <h2>Supply + install, or supply only</h2>
+    <p>Every quote shows both prices. Many committees have us do the full job. Some have a trusted local installer, and that's fine too. We'll send a layout drawing showing the seam positions and saff lines for your installer to follow.</p>
+    <p>Service area: we install across Canada, and any travel is itemised in your quote.</p>
+  </div>
+  <div>
+    <h3 style="font-family:'Amiri',serif; font-size:22px; margin-bottom:14px;">Before we arrive: a checklist for your committee</h3>
+    <ul class="mcc-checklist">
+      <li>Clear the hall of shelves, Qur'an stands and chairs</li>
+      <li>Agree install days that avoid Jumu'ah and janazah</li>
+      <li>Arrange access for the crew and a place to park near the door</li>
+      <li>Point out any heating vents, floor boxes or the minbar base</li>
+      <li>Let the congregation know about a temporary prayer space</li>
+    </ul>
+  </div>
+</div></section>
+
+<section class="mcc-cta mcc-on-dark" data-reveal><div><h2>Book a free site visit</h2><p>We'll measure, recommend a spacing and send an itemised quote.</p></div><div class="mcc-cta-actions"><a href="quote.html?need=site-visit" class="mcc-btn-primary">Book a site visit</a><p class="mcc-cta-note">Free and itemised, with no obligation.</p></div></section>
+</div>
+
+</main>
+<link rel="stylesheet" href="../../theme/assets/mosque-design.css">
+<link rel="stylesheet" href="../../theme/assets/mosque-update.css">
+<div id="mcc-app">
+<div class="mcc-divider-stars" style="background:var(--green-900); padding:36px 0;" aria-hidden="true">
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+</div>
+
+<div class="mcc-footer">
+  <div class="mcc-wrap">
+    <div class="mcc-foot-grid">
+      <div>
+        <div class="mcc-foot-logo">MosqueCarpetsCanada.ca</div>
+        <p class="mcc-ar" style="max-width:34ch; color:var(--brass-light); font-size:15px; margin-bottom:14px;">جزاكم الله خيرا</p>
+        <p style="max-width:34ch;">Luxury prayer-hall carpet, sourced from specialist mills, then supplied and installed for mosque committees across Canada.</p></div>
+      <div>
+        <h4>Shop</h4>
+        <a href="index.html#sizes">By hall size</a>
+        <a href="index.html#colours">Colourways</a>
+        <a href="index.html#calculator">Fit calculator</a>
+      </div>
+      <div>
+        <h4>Ordering</h4>
+        <a href="quote.html">Request a quote</a>
+        <a href="quote.html?need=site-visit">Request a site visit</a>
+        <a href="quote.html?need=samples">Samples</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="installation.html">Installation</a>
+        <a href="about.html">About us</a>
+        <a href="index.html#faq">FAQ</a>
+      </div>
+    </div>
+    <div class="mcc-foot-bottom">
+      <span>© 2026 MosqueCarpetsCanada.ca</span>
+      <span>Prices in CAD</span>
+    </div>
+  </div>
+</div>
+</div>
+
+
+</body></html>

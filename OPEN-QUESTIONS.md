@@ -24,7 +24,7 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | 10 | Do you offer an installation warranty? How long? | Not mentioned |
 | 11 | Are samples free, paid, or refundable against an order? | "Samples are available" |
 | 12 | Does the colourway change the price or availability? | Same price for all colourways, chosen on the product page |
-| 13 | Checkout: pay in full online, pay a deposit, or quote first? | Both "Add to order" and "Get an exact quote first" |
+| 13 | Checkout: pay in full online, pay a deposit, or quote first? | Both "Add to cart" and "Request a quote instead" |
 | 14 | Do you sell only to mosques, or also homes, hotels, offices? | Mosques and musallas only |
 
 ## Content we need
@@ -32,7 +32,7 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | # | Item | Used where |
 |---|------|------------|
 | 15 | Business phone / WhatsApp and a business email (store email is currently a personal Gmail) | Quote page, footer |
-| 16 | Photos: rolls, pile close-up, seams, installed halls (with a public link for each) | Product pages, sourcing section |
+| 16 | Photos, following the shot list in `PHOTO-GUIDE.md` (a public link for each, or upload in Shopify admin) | Product pages, hall cards, sourcing section |
 | 17 | A testimonial from a mosque committee (name, role, masjid, city) | Home page (hidden until added) |
 | 18 | One line about who runs the business (founder, year, city) | About page |
 | 19 | Rename the store from **"My Store"** to **"MosqueCarpetsCanada.ca"**? | Browser tab, emails, Google results |

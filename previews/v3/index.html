@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · Site Preview</title>
+<style>body{margin:0}.pv{position:relative;z-index:100;background:#111;color:#eee;font:13px/1.4 system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 14px}
+.pv b{color:#fff}.pv a{color:#ddd;padding:4px 9px;border:1px solid #444;border-radius:6px;text-decoration:none}.pv a[aria-current]{background:#fff;color:#111}
+.skip{position:absolute;left:8px;top:-60px;z-index:200;background:#0F2822;color:#fff;padding:10px 14px;border-radius:8px}.skip:focus{top:8px}</style>
+</head><body>
+<a class="skip" href="#MainContent">Skip to content</a>
+<div class="pv"><b>PREVIEW v3, not live.</b> Rendered from the theme files in <code>theme/</code>. <a href="index.html" aria-current="page">Home</a><a href="product.html">Product page</a><a href="installation.html">Installation</a><a href="about.html">About</a><a href="quote.html">Request a quote</a></div>
+<div id="header-group"><link rel="stylesheet" href="../../theme/assets/mosque-design.css">
+<link rel="stylesheet" href="../../theme/assets/mosque-update.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<div id="mcc-app">
+<div class="mcc-bismillah-bar mcc-ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+
+<header>
+  <div class="mcc-nav">
+    <a class="mcc-logo" href="index.html">
+      <div class="mcc-logo-mark">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <rect x="7" y="23" width="26" height="12" rx="1" fill="#FFFFFF"/>
+          <path d="M13 23C13 15.8 16.5 11 20 11C23.5 11 27 15.8 27 23Z" fill="#FFFFFF"/>
+          <rect x="19.2" y="6" width="1.6" height="5" fill="#FFFFFF"/>
+          <circle cx="20" cy="5" r="1.5" fill="#FFFFFF"/>
+          <rect x="30" y="17" width="3.2" height="18" fill="#FFFFFF"/>
+          <path d="M30 17 L31.6 12.5 L33.2 17Z" fill="#FFFFFF"/>
+        </svg>
+      </div>
+      <div class="mcc-logo-stack">
+        <span>MosqueCarpetsCanada<span style="color:var(--brass);">.ca</span></span>
+        <span class="mcc-logo-ar">سجاد المساجد</span>
+      </div>
+    </a><nav class="mcc-navlinks" aria-label="Main">
+      <a href="index.html#sizes">Shop by hall size</a>
+      <a href="installation.html">Installation</a>
+      <a href="about.html">About</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="mcc-navtools">
+      <a class="mcc-btn-primary mcc-btn-sm" href="quote.html">Request a quote</a>
+      <a class="mcc-cart-btn" href="/cart" aria-label="Cart, 0 items">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+        <span class="mcc-cart-label">Cart</span>
+        <span class="mcc-cart-count" data-count="0" aria-hidden="true">0</span>
+      </a>
+    </div>
+  </div>
+  <nav class="mcc-mobile-nav" aria-label="Main (mobile)">
+    <a href="index.html#sizes">Hall sizes</a>
+    <a href="installation.html">Installation</a>
+    <a href="about.html">About</a>
+    <a href="index.html#faq">FAQ</a>
+  </nav>
+</header><div class="mcc-mobile-cta" id="mccMobileCta"><a class="mcc-btn-primary" href="quote.html">Request a quote</a></div></div>
+<script>
+  (function(){
+    try{
+      var root = document.documentElement;
+      root.classList.add('mcc-js');
+      var header = document.querySelector('#mcc-app header');
+      var bar = document.getElementById('mccMobileCta');
+      function onScroll(){
+        if(header){ header.classList.toggle('is-scrolled', window.scrollY > 8); }
+        if(bar){ bar.classList.toggle('is-visible', window.scrollY > 480); }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      function reveal(){
+        var items = document.querySelectorAll('#mcc-app [data-reveal]');
+        if(!('IntersectionObserver' in window)){ items.forEach(function(el){ el.classList.add('is-in'); }); return; }
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+        items.forEach(function(el){ io.observe(el); });
+      }
+      if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', reveal); } else { reveal(); }
+    }catch(e){ document.documentElement.classList.remove('mcc-js'); console.error('Header script error', e); }
+  })();
+</script>
+
+</div>
+<main id="MainContent"><link rel="stylesheet" href="../../theme/assets/mosque-design.css">
+<link rel="stylesheet" href="../../theme/assets/mosque-update.css"><div id="mcc-app">
+<section class="mcc-hero">
+  <div class="mcc-hero-skyline" aria-hidden="true">
+    <svg viewBox="0 0 1400 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 220 V150 L40 150 L40 120 A20 20 0 0 1 80 120 L80 150 L110 150 L110 90 A55 55 0 0 1 220 90 L220 150 L260 150 L260 130 L280 100 L300 130 L300 150 L360 150 L360 60 A70 70 0 0 1 500 60 L500 150 L540 150 L540 125 L560 95 L580 125 L580 150 L660 150 L660 40 A85 85 0 0 1 830 40 L830 150 L870 150 L870 128 L890 98 L910 128 L910 150 L980 150 L980 75 A60 60 0 0 1 1100 75 L1100 150 L1140 150 L1140 132 L1160 100 L1180 132 L1180 150 L1400 150 V220 Z" fill="var(--green-900)"/>
+      <circle cx="80" cy="112" r="6" fill="var(--brass)" opacity="0.4"/>
+      <circle cx="430" cy="52" r="7" fill="var(--brass)" opacity="0.4"/>
+      <circle cx="745" cy="32" r="8" fill="var(--brass)" opacity="0.4"/>
+      <circle cx="1040" cy="67" r="6" fill="var(--brass)" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="mcc-hero-inner">
+    <div class="mcc-hero-copy">
+      <div class="mcc-trust-badge"><span class="mcc-dot"></span>Imported luxury prayer carpet, supplied & installed for Canadian mosques</div>
+      <div class="mcc-kicker">Chosen for the saff, not the showroom</div>
+      <h1>Luxury carpet rolls for your prayer hall, fitted by our own team</h1>
+      <p>We source premium wall-to-wall rolls from specialist mills overseas, with prayer lines woven in at 90, 95 or 100cm. Then we import them, measure your hall and install. You deal with one team from the quote to the first salah.</p>
+      <div class="mcc-hero-actions">
+        <a href="quote.html" class="mcc-btn-primary">Request a quote</a>
+        <a href="#sizes" class="mcc-btn-ghost">Shop by hall size</a>
+      </div>
+      <p class="mcc-cta-note" style="margin-top:12px;">Free and itemised, with no obligation.</p>
+      <div class="mcc-hero-mini-stats">
+        <div><strong>3</strong><span>row spacings</span></div>
+        <div><strong>1.5–6m</strong><span>roll widths</span></div>
+        <div><strong>Supply + fit</strong><span>one team, one invoice</span></div>
+      </div>
+    </div>
+
+    <div class="mcc-hero-card" style="--r:0deg;">
+      <svg viewBox="0 0 280 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="archfill2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#204A40"/><stop offset="100%" stop-color="#0F2822"/></linearGradient>
+          <pattern id="saffLines2" width="280" height="20" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="280" y2="0" stroke="#B8892F" stroke-width="1" opacity="0.5"/></pattern>
+        </defs>
+        <rect x="0" y="0" width="280" height="340" rx="20" fill="url(#archfill2)"/>
+        <rect x="0" y="0" width="280" height="340" rx="20" fill="url(#saffLines2)"/>
+        <path d="M40 300 V160 C40 90 85 45 140 45 C195 45 240 90 240 160 V300" fill="none" stroke="#D7AE5C" stroke-width="1.4" opacity="0.6"/>
+        <g transform="translate(56,268)">
+          <rect x="0" y="0" width="168" height="42" rx="6" fill="#5C2A2A"/>
+          <rect x="0" y="0" width="168" height="42" rx="6" fill="none" stroke="#B8892F" stroke-width="1.3"/>
+          <ellipse cx="4" cy="21" rx="9" ry="21" fill="#7A3434"/>
+          <ellipse cx="4" cy="21" rx="9" ry="21" fill="none" stroke="#D7AE5C" stroke-width="1.2"/>
+          <ellipse cx="164" cy="21" rx="9" ry="21" fill="#4E2323"/>
+        </g>
+      </svg>
+      <div class="mcc-hero-card-tag">95cm spacing<span class="mcc-ar">— جاهز للفرش</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="mcc-divider-stars" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass)"/></svg><svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass)"/></svg><svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass)"/></svg></div>
+
+<div class="mcc-strip">
+  <div class="mcc-wrap">
+    <div class="mcc-strip-item"><strong>Woven-in saff lines</strong>True 90 / 95 / 100cm spacing, woven in and never printed</div>
+    <div class="mcc-strip-item"><strong>Professional installation</strong>Measured, seamed and fitted by our crew</div>
+    <div class="mcc-strip-item"><strong>Fire rated</strong>CAN/ULC-S102 & ASTM E648 certified pile</div>
+    <div class="mcc-strip-item"><strong>Committee invoicing</strong>PO and bank transfer accepted</div>
+  </div>
+</div>
+
+<section class="mcc-section mcc-tight-top" id="sizes">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" data-reveal>
+      <h2>Shop by hall size</h2>
+      <p>Every hall is different, so treat these as starting points. Pick the closest size and we'll confirm exact measurements before anything is cut.</p>
+    </div>
+    <div class="mcc-grid-by-size"><a class="mcc-size-card" href="product.html" data-reveal ><div class="mcc-card-media"><svg viewBox="0 0 320 180" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <rect width="320" height="180" fill="#0F2822"/>
+                <g transform="translate(40,26)"><rect width="240" height="128" rx="4" fill="#16352E" stroke="#B8892F" stroke-opacity=".35"/>
+                  <g stroke="#B8892F" stroke-opacity=".7"><line x1="0" y1="18.285714285714285" x2="240" y2="18.285714285714285"/><line x1="0" y1="36.57142857142857" x2="240" y2="36.57142857142857"/><line x1="0" y1="54.857142857142854" x2="240" y2="54.857142857142854"/><line x1="0" y1="73.14285714285714" x2="240" y2="73.14285714285714"/><line x1="0" y1="91.42857142857143" x2="240" y2="91.42857142857143"/><line x1="0" y1="109.71428571428571" x2="240" y2="109.71428571428571"/></g>
+                </g>
+              </svg></div>
+          <div class="mcc-size-head">
+            <div class="mcc-dims">4 × 6<span> m room</span></div><div class="mcc-dims-ar">مصلى صغير</div></div>
+          <h3>Musalla, small</h3>
+          <p>Fits a side room or overflow musalla. One seamless roll, no joins.</p><div class="mcc-rows">≈ 5 prayer rows at 95cm spacing</div><ul class="mcc-incl"><li>Single roll, cut to width</li><li>Installation available, quoted with your order</li></ul><div class="mcc-size-foot">
+            <div>
+              <div class="mcc-price">from $1,150 CAD</div>
+            </div>
+            <span class="mcc-card-link">View details</span>
+          </div>
+        </a><a class="mcc-size-card mcc-pop" href="product.html" data-reveal ><span class="mcc-pop-tag">Most ordered</span><div class="mcc-card-media"><svg viewBox="0 0 320 180" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <rect width="320" height="180" fill="#0F2822"/>
+                <g transform="translate(40,26)"><rect width="240" height="128" rx="4" fill="#16352E" stroke="#B8892F" stroke-opacity=".35"/>
+                  <g stroke="#B8892F" stroke-opacity=".7"><line x1="0" y1="12.8" x2="240" y2="12.8"/><line x1="0" y1="25.6" x2="240" y2="25.6"/><line x1="0" y1="38.4" x2="240" y2="38.4"/><line x1="0" y1="51.2" x2="240" y2="51.2"/><line x1="0" y1="64" x2="240" y2="64"/><line x1="0" y1="76.8" x2="240" y2="76.8"/><line x1="0" y1="89.6" x2="240" y2="89.6"/><line x1="0" y1="102.4" x2="240" y2="102.4"/><line x1="0" y1="115.2" x2="240" y2="115.2"/></g>
+                </g>
+              </svg></div>
+          <div class="mcc-size-head">
+            <div class="mcc-dims">8 × 12<span> m hall</span></div><div class="mcc-dims-ar">القاعة الرئيسية</div></div>
+          <h3>Main hall, mid-size</h3>
+          <p>Two roll widths joined with a hidden seam, lined up so the saff runs straight across.</p><div class="mcc-rows">≈ 10 prayer rows at 95cm spacing</div><ul class="mcc-incl"><li>Hidden seam, lines matched</li><li>Installation available, quoted with your order</li></ul><div class="mcc-size-foot">
+            <div>
+              <div class="mcc-price">from $3,650 CAD</div>
+            </div>
+            <span class="mcc-card-link">View details</span>
+          </div>
+        </a><a class="mcc-size-card" href="product.html" data-reveal ><div class="mcc-card-media"><svg viewBox="0 0 320 180" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <rect width="320" height="180" fill="#0F2822"/>
+                <g transform="translate(40,26)"><rect width="240" height="128" rx="4" fill="#16352E" stroke="#B8892F" stroke-opacity=".35"/>
+                  <g stroke="#B8892F" stroke-opacity=".7"><line x1="0" y1="9.846153846153847" x2="240" y2="9.846153846153847"/><line x1="0" y1="19.692307692307693" x2="240" y2="19.692307692307693"/><line x1="0" y1="29.53846153846154" x2="240" y2="29.53846153846154"/><line x1="0" y1="39.38461538461539" x2="240" y2="39.38461538461539"/><line x1="0" y1="49.23076923076923" x2="240" y2="49.23076923076923"/><line x1="0" y1="59.07692307692308" x2="240" y2="59.07692307692308"/><line x1="0" y1="68.92307692307692" x2="240" y2="68.92307692307692"/><line x1="0" y1="78.76923076923077" x2="240" y2="78.76923076923077"/><line x1="0" y1="88.61538461538461" x2="240" y2="88.61538461538461"/><line x1="0" y1="98.46153846153847" x2="240" y2="98.46153846153847"/><line x1="0" y1="108.3076923076923" x2="240" y2="108.3076923076923"/><line x1="0" y1="118.15384615384616" x2="240" y2="118.15384615384616"/></g>
+                </g>
+              </svg></div>
+          <div class="mcc-size-head">
+            <div class="mcc-dims">15 × 22<span> m hall</span></div><div class="mcc-dims-ar">قاعة الجمعة</div></div>
+          <h3>Jumu'ah hall, large</h3>
+          <p>Multi-width install for main Jumu'ah and Eid halls.</p><div class="mcc-rows">≈ 19 prayer rows at 95cm spacing</div><ul class="mcc-incl"><li>Site visit & floor template included</li><li>Full professional installation</li></ul><div class="mcc-size-foot">
+            <div>
+              <div class="mcc-price">from $9,950 CAD</div>
+            </div>
+            <span class="mcc-card-link">View details</span>
+          </div>
+        </a></div>
+  </div>
+</section>
+
+<section class="mcc-section mcc-flush-top" id="sourcing">
+  <div class="mcc-wrap mcc-source">
+    <div class="mcc-source-visual" data-reveal><svg viewBox="0 0 500 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="500" height="400" fill="#0F2822"/>
+          <g transform="translate(70,120)">
+            <rect x="0" y="120" width="300" height="56" rx="6" fill="#5C2A2A"/><ellipse cx="300" cy="148" rx="14" ry="28" fill="#7A3434" stroke="#D7AE5C"/><g stroke="#B8892F" opacity=".5"><line x1="0" y1="134" x2="300" y2="134"/><line x1="0" y1="162" x2="300" y2="162"/></g>
+            <rect x="30" y="60" width="300" height="56" rx="6" fill="#16352E"/><ellipse cx="330" cy="88" rx="14" ry="28" fill="#204A40" stroke="#D7AE5C"/><g stroke="#B8892F" opacity=".5"><line x1="30" y1="74" x2="330" y2="74"/><line x1="30" y1="102" x2="330" y2="102"/></g>
+            <rect x="60" y="0" width="300" height="56" rx="6" fill="#1B2A4A"/><ellipse cx="360" cy="28" rx="14" ry="28" fill="#27406B" stroke="#D7AE5C"/><g stroke="#B8892F" opacity=".5"><line x1="60" y1="14" x2="360" y2="14"/><line x1="60" y1="42" x2="360" y2="42"/></g>
+          </g>
+          <g stroke="#B8892F" stroke-width="1" opacity=".3" fill="none"><path d="M0 360 Q250 300 500 360"/><path d="M0 380 Q250 320 500 380"/></g></svg></div>
+    <div data-reveal>
+      <span class="mcc-eyebrow">Sourced, not manufactured, and that's the point</span>
+      <h2 style="font-size:clamp(28px,3.2vw,38px);">We source it. We check it. We bring it home.</h2>
+      <p style="margin-top:14px; color:var(--text-dim); max-width:50ch;">We don't own a loom, so we're never tied to one factory's range. We work with specialist prayer-carpet mills overseas and choose each roll for pile density, colourfastness and how straight its lines run. Then we import it, inspect it in Canada and deliver it to your door.</p>
+      <div class="mcc-pillars">
+        <div class="mcc-pillar"><strong>Hand-selected mills</strong><span>Partners chosen for consistent quality, run after run</span></div>
+        <div class="mcc-pillar"><strong>Inspected on arrival</strong><span>Every roll is checked before it's cut</span></div>
+        <div class="mcc-pillar"><strong>Import handled</strong><span>Freight, duties and customs are itemised in your quote</span></div>
+        <div class="mcc-pillar"><strong>The right carpet, not the nearest</strong><span>We match the mill to your hall's needs and budget</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mcc-section mcc-process">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" data-reveal><span class="mcc-eyebrow">From the mill to your masjid</span><h2>Four steps. One team.</h2></div>
+    <div class="mcc-steps">
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">1</div><h3>Measure &amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class="mcc-when">Free, itemised quote</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class="mcc-when">See it before you commit</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">3</div><h3>We import &amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class="mcc-when">Lead time in your quote</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class="mcc-when">Scheduled around salah</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="mcc-saff-section" id="saff">
+  <div class="mcc-wrap">
+    <div class="mcc-saff-copy" data-reveal>
+      <span class="mcc-ar mcc-saff-kicker">الصف</span>
+      <h2>The line spacing is the whole point</h2>
+      <p>A carpet that looks right in a photo but crowds the saff makes every rak'ah harder. Every roll we supply comes in three woven spacings, and we'll help you choose the right one before you order.</p>
+      <ul class="mcc-saff-facts">
+        <li class="mcc-saff-fact"><span class="mcc-saff-fact-num">90</span><div class="mcc-saff-fact-body"><strong>90cm</strong><span>Tight halls, high midweek attendance, smaller-framed congregations</span></div></li>
+        <li class="mcc-saff-fact mcc-saff-fact-rec"><span class="mcc-saff-fact-num">95</span><div class="mcc-saff-fact-body"><strong>95cm <em class="mcc-saff-fact-tag">Recommended</em></strong><span>The standard we recommend for most mosques: comfortable sujood without wasted floor</span></div></li>
+        <li class="mcc-saff-fact"><span class="mcc-saff-fact-num">100</span><div class="mcc-saff-fact-body"><strong>100cm</strong><span>Jumu'ah and Eid halls where rows need extra room for movement</span></div></li>
+      </ul>
+    </div>
+    <div class="mcc-saff-diagram-wrap">
+      <svg class="mcc-saff-diagram" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="0" y="0" width="480" height="300" fill="#0F2822"/>
+        <g stroke="#B8892F" stroke-width="1.4"><line x1="30" y1="40" x2="450" y2="40"/><line x1="30" y1="97" x2="450" y2="97"/><line x1="30" y1="154" x2="450" y2="154"/><line x1="30" y1="211" x2="450" y2="211"/><line x1="30" y1="268" x2="450" y2="268"/></g>
+        <g fill="#7C9A87" opacity="0.85"><ellipse cx="70" cy="62" rx="14" ry="7"/><ellipse cx="130" cy="62" rx="14" ry="7"/><ellipse cx="190" cy="62" rx="14" ry="7"/><ellipse cx="250" cy="62" rx="14" ry="7"/><ellipse cx="310" cy="62" rx="14" ry="7"/><ellipse cx="370" cy="62" rx="14" ry="7"/><ellipse cx="70" cy="119" rx="14" ry="7"/><ellipse cx="130" cy="119" rx="14" ry="7"/><ellipse cx="190" cy="119" rx="14" ry="7"/><ellipse cx="250" cy="119" rx="14" ry="7"/><ellipse cx="310" cy="119" rx="14" ry="7"/><ellipse cx="370" cy="119" rx="14" ry="7"/><ellipse cx="70" cy="176" rx="14" ry="7"/><ellipse cx="130" cy="176" rx="14" ry="7"/><ellipse cx="190" cy="176" rx="14" ry="7"/><ellipse cx="250" cy="176" rx="14" ry="7"/><ellipse cx="310" cy="176" rx="14" ry="7"/><ellipse cx="370" cy="176" rx="14" ry="7"/><ellipse cx="70" cy="233" rx="14" ry="7"/><ellipse cx="130" cy="233" rx="14" ry="7"/><ellipse cx="190" cy="233" rx="14" ry="7"/><ellipse cx="250" cy="233" rx="14" ry="7"/><ellipse cx="310" cy="233" rx="14" ry="7"/><ellipse cx="370" cy="233" rx="14" ry="7"/></g>
+      </svg>
+      <div class="mcc-saff-diagram-tag">95cm spacing</div>
+    </div>
+  </div>
+</section>
+
+<section class="mcc-section" id="install">
+  <div class="mcc-wrap mcc-install">
+    <div>
+      <div class="mcc-section-head" style="margin-bottom:28px;" data-reveal><span class="mcc-eyebrow">Fitted, not just delivered</span><h2>Installation by people who understand a prayer hall</h2><p>A luxury carpet only looks luxurious if it's laid right. Our installers square the saff lines to the qibla wall first, then work outwards, so every row runs true.</p></div>
+      <ul class="mcc-install-list">
+        <li><strong>Qibla alignment</strong><span>Lines squared to the qibla wall, not to the room</span></li>
+        <li><strong>Hidden seams</strong><span>Joins placed between rows, where no one kneels</span></li>
+        <li><strong>Old carpet removal</strong><span>Can be added to your quote</span></li>
+        <li><strong>Minimal disruption</strong><span>Scheduled around salah times and Jumu'ah</span></li>
+      </ul>
+    </div>
+    <aside class="mcc-install-card mcc-on-dark" data-reveal>
+      <h3>Two ways to order</h3>
+      <p>Every quote shows both options, so your committee can compare.</p>
+      <div class="mcc-opt"><span>Supply + install</span><span>Our carpet, fitted by our crew</span></div>
+      <div class="mcc-opt"><span>Supply only</span><span>Our carpet, your installer</span></div>
+      <div class="mcc-opt"><span>Where</span><span>Across Canada, with travel itemised</span></div>
+      <a href="installation.html" class="mcc-btn-secondary">How installation works</a>
+    </aside>
+  </div>
+</section>
+
+<section class="mcc-section mcc-flush-top" id="colours">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" data-reveal>
+      <h2>Colourways</h2>
+      <p>Each colourway is dyed and woven as one production run at the mill, so pile depth and line contrast match across your whole order. Tap a shade to ask about samples.</p>
+    </div>
+    <div class="mcc-colorways">
+      <button type="button" class="mcc-swatch" data-name="Masjid Green" aria-pressed="false"><div class="mcc-block" style="background:#0F2822"></div><p>Masjid Green</p><div class="mcc-ar-name">أخضر</div><span>Our most-ordered shade</span></button>
+      <button type="button" class="mcc-swatch" data-name="Maroon" aria-pressed="false"><div class="mcc-block" style="background:#5C2A2A"></div><p>Maroon</p><div class="mcc-ar-name">عنابي</div><span>Traditional, low-glare</span></button>
+      <button type="button" class="mcc-swatch" data-name="Deep Indigo" aria-pressed="false"><div class="mcc-block" style="background:#1B2A4A"></div><p>Deep Indigo</p><div class="mcc-ar-name">نيلي</div><span>Evening-lit halls</span></button>
+      <button type="button" class="mcc-swatch" data-name="Walnut Brown" aria-pressed="false"><div class="mcc-block" style="background:#3B2A17"></div><p>Walnut Brown</p><div class="mcc-ar-name">بني</div><span>Hides daily foot traffic</span></button>
+      <button type="button" class="mcc-swatch" data-name="Camel Gold" aria-pressed="false"><div class="mcc-block" style="background:#8A6A2E"></div><p>Camel Gold</p><div class="mcc-ar-name">ذهبي</div><span>Bright, south-facing halls</span></button>
+    </div>
+    <p class="mcc-colorway-preview" id="mccColorwayPreview" aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="mcc-section mcc-flush-top" id="calculator">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" data-reveal>
+      <h2>Fit calculator</h2>
+      <p>Enter your hall's floor size for a rough row count and price range, then send the numbers to us for an exact quote.</p>
+    </div>
+    <div class="mcc-calc">
+      <div class="mcc-calc-form">
+        <label for="hw">Hall width (metres)</label>
+        <input type="number" id="hw" value="12" min="1" step="0.1" inputmode="decimal">
+        <label for="hl">Hall length, front to back (metres)</label>
+        <input type="number" id="hl" value="8" min="1" step="0.1" inputmode="decimal">
+        <label for="sp">Row spacing</label>
+        <select id="sp">
+          <option value="90">90cm, tighter halls</option>
+          <option value="95" selected>95cm, recommended</option>
+          <option value="100">100cm, Jumu'ah &amp; Eid halls</option>
+        </select>
+      </div>
+      <div class="mcc-calc-result">
+        <div class="mcc-num" id="rowCount" aria-live="polite">8</div>
+        <div class="mcc-label">prayer rows fit at this spacing</div>
+        <div class="mcc-note" id="calcNote"></div>
+        <a href="quote.html" class="mcc-btn-primary" id="calcSend">Request a quote with these numbers</a>
+      </div>
+    </div>
+  </div>
+</section><section class="mcc-section mcc-flush-top" id="faq">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" data-reveal><h2>Questions committees ask us</h2></div>
+    <div class="mcc-faq"><details  ><summary>Do you manufacture the carpet?</summary><p>No. We're specialist suppliers. We source luxury prayer carpet from partner mills, import it and inspect every roll in Canada. That lets us pick the best mill for each job instead of pushing one factory's range.</p></details><details  ><summary>How long does delivery take?</summary><p>It depends on the colourway, spacing and quantity. We confirm your delivery window in writing with your quote, before you pay anything.</p></details><details  ><summary>Is installation included?</summary><p>Installation is available on every order and quoted alongside the carpet, so you can compare supply-only and supply-and-install. The Jumu'ah hall package always includes a site visit and floor template.</p></details><details  ><summary>Is the carpet fire rated?</summary><p>Yes. The pile is certified to CAN/ULC-S102 and ASTM E648. We can send the certificates to your building inspector or insurer.</p></details><details  ><summary>Can our committee pay by purchase order?</summary><p>Yes. We accept POs and bank transfer, and we invoice in your mosque's registered name for your records.</p></details><details  ><summary>Can we see the carpet first?</summary><p>Yes. Request samples of any colourway through our quote form and we'll arrange them for your committee.</p></details></div>
+  </div>
+</section>
+
+<section class="mcc-cta mcc-on-dark" data-reveal>
+  <div><h2>Ready to re-carpet your musalla?</h2><p>Send your hall dimensions or a floor plan. We'll reply with a spacing recommendation, a roll layout and an itemised quote covering supply, import and installation.</p></div>
+  <div class="mcc-cta-actions"><a href="quote.html" class="mcc-btn-primary">Request a quote</a><a href="quote.html?need=samples" class="mcc-btn-ghost">Ask about samples</a><p class="mcc-cta-note">Free and itemised, with no obligation.</p></div>
+</section>
+</div>
+<script>
+  (function(){
+    try{
+      var hw = document.getElementById('hw'), hl = document.getElementById('hl'), sp = document.getElementById('sp');
+      var rowCount = document.getElementById('rowCount'), calcNote = document.getElementById('calcNote'), send = document.getElementById('calcSend');
+      function recalc(){
+        var width = parseFloat(hw.value) || 0, length = parseFloat(hl.value) || 0, spacing = parseFloat(sp.value) / 100;
+        var rows = spacing > 0 ? Math.max(0, Math.floor(length / spacing)) : 0;
+        var area = width * length;
+        rowCount.textContent = rows;
+        calcNote.textContent = '≈ ' + area.toFixed(0) + 'm² of carpet, typically CAD $' + Math.round(area * 34).toLocaleString() + '–$' + Math.round(area * 44).toLocaleString() + ' including a seamed, fitted install.';
+        send.href = 'quote.html?w=' + encodeURIComponent(hw.value) + '&l=' + encodeURIComponent(hl.value) + '&s=' + encodeURIComponent(sp.value);
+      }
+      [hw, hl, sp].forEach(function(el){ el.addEventListener('input', recalc); });
+      recalc();
+    }catch(e){ console.error('Calculator error', e); }
+  })();
+
+  (function(){
+    try{
+      var swatches = document.querySelectorAll('.mcc-swatch');
+      var preview = document.getElementById('mccColorwayPreview');
+      swatches.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          swatches.forEach(function(b){ b.setAttribute('aria-pressed', 'false'); b.classList.remove('mcc-swatch-pulse'); });
+          btn.setAttribute('aria-pressed', 'true');
+          void btn.offsetWidth;
+          btn.classList.add('mcc-swatch-pulse');
+          if (preview) {
+            preview.innerHTML = 'Selected: <strong>' + btn.dataset.name + '</strong> · <a href="quote.html?need=samples&colour=' + encodeURIComponent(btn.dataset.name) + '" style="border-bottom:1px solid var(--brass)">Ask about samples →</a>';
+            preview.classList.add('is-visible');
+          }
+        });
+      });
+    }catch(e){ console.error('Colorway selector error', e); }
+  })();
+</script>
+
+
+</main>
+<link rel="stylesheet" href="../../theme/assets/mosque-design.css">
+<link rel="stylesheet" href="../../theme/assets/mosque-update.css">
+<div id="mcc-app">
+<div class="mcc-divider-stars" style="background:var(--green-900); padding:36px 0;" aria-hidden="true">
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+  <svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass-light)"/></svg>
+</div>
+
+<div class="mcc-footer">
+  <div class="mcc-wrap">
+    <div class="mcc-foot-grid">
+      <div>
+        <div class="mcc-foot-logo">MosqueCarpetsCanada.ca</div>
+        <p class="mcc-ar" style="max-width:34ch; color:var(--brass-light); font-size:15px; margin-bottom:14px;">جزاكم الله خيرا</p>
+        <p style="max-width:34ch;">Luxury prayer-hall carpet, sourced from specialist mills, then supplied and installed for mosque committees across Canada.</p></div>
+      <div>
+        <h4>Shop</h4>
+        <a href="index.html#sizes">By hall size</a>
+        <a href="index.html#colours">Colourways</a>
+        <a href="index.html#calculator">Fit calculator</a>
+      </div>
+      <div>
+        <h4>Ordering</h4>
+        <a href="quote.html">Request a quote</a>
+        <a href="quote.html?need=site-visit">Request a site visit</a>
+        <a href="quote.html?need=samples">Samples</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="installation.html">Installation</a>
+        <a href="about.html">About us</a>
+        <a href="index.html#faq">FAQ</a>
+      </div>
+    </div>
+    <div class="mcc-foot-bottom">
+      <span>© 2026 MosqueCarpetsCanada.ca</span>
+      <span>Prices in CAD</span>
+    </div>
+  </div>
+</div>
+</div>
+
+
+</body></html>

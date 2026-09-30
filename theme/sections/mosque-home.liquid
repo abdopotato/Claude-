@@ -20,9 +20,10 @@
       <h1>{{ section.settings.heading }}</h1>
       <p>{{ section.settings.text }}</p>
       <div class="mcc-hero-actions">
-        <a href="/pages/contact" class="mcc-btn-primary">Request a free quote</a>
+        <a href="/pages/contact" class="mcc-btn-primary">Request a quote</a>
         <a href="#sizes" class="mcc-btn-ghost">Shop by hall size</a>
       </div>
+      <p class="mcc-cta-note" style="margin-top:12px;">{{ section.settings.cta_note }}</p>
       <div class="mcc-hero-mini-stats">
         <div><strong>{{ section.settings.stat_1_value }}</strong><span>{{ section.settings.stat_1_label }}</span></div>
         <div><strong>{{ section.settings.stat_2_value }}</strong><span>{{ section.settings.stat_2_label }}</span></div>
@@ -63,9 +64,9 @@
   </div>
 </div>
 
-<section class="mcc-section" id="sizes" style="padding-top:24px;">
+<section class="mcc-section mcc-tight-top" id="sizes">
   <div class="mcc-wrap">
-    <div class="mcc-section-head">
+    <div class="mcc-section-head" data-reveal>
       <h2>{{ section.settings.sizes_heading }}</h2>
       <p>{{ section.settings.sizes_text }}</p>
     </div>
@@ -73,14 +74,29 @@
       {%- for block in section.blocks -%}
         {%- if block.type != 'hall_size' -%}{%- continue -%}{%- endif -%}
         {%- assign p = block.settings.product -%}
-        <a class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" href="{% if p != blank %}{{ p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" {{ block.shopify_attributes }}>
+        <a class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" href="{% if p != blank %}{{ p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" data-reveal {{ block.shopify_attributes }}>
           {%- if block.settings.popular -%}<span class="mcc-pop-tag">Most ordered</span>{%- endif -%}
+          <div class="mcc-card-media">
+            {%- if p != blank and p.featured_media -%}
+              {%- assign alt = p.featured_media.alt | default: p.title -%}
+              {{ p.featured_media.preview_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '400, 600, 900', sizes: '(min-width: 900px) 360px, 100vw', alt: alt }}
+            {%- else -%}
+              {%- assign rows_n = forloop.index | times: 3 | plus: 4 -%}
+              <svg viewBox="0 0 320 180" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <rect width="320" height="180" fill="#0F2822"/>
+                <g transform="translate(40,26)"><rect width="240" height="128" rx="4" fill="#16352E" stroke="#B8892F" stroke-opacity=".35"/>
+                  <g stroke="#B8892F" stroke-opacity=".7">{%- for r in (1..rows_n) -%}{%- assign y = 128 | times: r | divided_by: rows_n | plus: 0 -%}{%- if y < 128 -%}<line x1="0" y1="{{ y }}" x2="240" y2="{{ y }}"/>{%- endif -%}{%- endfor -%}</g>
+                </g>
+              </svg>
+            {%- endif -%}
+          </div>
           <div class="mcc-size-head">
             <div class="mcc-dims">{{ block.settings.dims }}<span> {{ block.settings.unit }}</span></div>
             {%- if block.settings.arabic != blank -%}<div class="mcc-dims-ar">{{ block.settings.arabic }}</div>{%- endif -%}
           </div>
           <h3>{{ block.settings.title }}</h3>
           <p>{{ block.settings.description }}</p>
+          {%- if block.settings.rows != blank -%}<div class="mcc-rows">{{ block.settings.rows }}</div>{%- endif -%}
           {%- if block.settings.include_1 != blank or block.settings.include_2 != blank -%}
             <ul class="mcc-incl">
               {%- if block.settings.include_1 != blank -%}<li>{{ block.settings.include_1 }}</li>{%- endif -%}
@@ -88,8 +104,10 @@
             </ul>
           {%- endif -%}
           <div class="mcc-size-foot">
-            <div class="mcc-rows">{{ block.settings.rows }}</div>
-            <div class="mcc-price">{% if p != blank %}from {{ p.price_min | money_with_currency }}{% else %}{{ block.settings.price_text }}{% endif %}</div>
+            <div>
+              <div class="mcc-price">{% if p != blank %}from {{ p.price_min | money_without_trailing_zeros }} {{ cart.currency.iso_code }}{% else %}{{ block.settings.price_text }}{% endif %}</div>
+            </div>
+            <span class="mcc-card-link">View details</span>
           </div>
         </a>
       {%- endfor -%}
@@ -97,9 +115,9 @@
   </div>
 </section>
 
-<section class="mcc-section" id="sourcing" style="padding-top:24px;">
+<section class="mcc-section mcc-flush-top" id="sourcing">
   <div class="mcc-wrap mcc-source">
-    <div class="mcc-source-visual">
+    <div class="mcc-source-visual" data-reveal>
       {%- if section.settings.sourcing_image != blank -%}
         {{ section.settings.sourcing_image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: section.settings.sourcing_image.alt }}
       {%- else -%}
@@ -112,7 +130,7 @@
           <g stroke="#B8892F" stroke-width="1" opacity=".3" fill="none"><path d="M0 360 Q250 300 500 360"/><path d="M0 380 Q250 320 500 380"/></g></svg>
       {%- endif -%}
     </div>
-    <div>
+    <div data-reveal>
       <span class="mcc-eyebrow">{{ section.settings.sourcing_kicker }}</span>
       <h2 style="font-size:clamp(28px,3.2vw,38px);">{{ section.settings.sourcing_heading }}</h2>
       <p style="margin-top:14px; color:var(--text-dim); max-width:50ch;">{{ section.settings.sourcing_text }}</p>
@@ -128,19 +146,19 @@
 
 <section class="mcc-section mcc-process">
   <div class="mcc-wrap">
-    <div class="mcc-section-head"><span class="mcc-eyebrow">From the mill to your masjid</span><h2>Four steps. One team.</h2></div>
+    <div class="mcc-section-head" data-reveal><span class="mcc-eyebrow">From the mill to your masjid</span><h2>Four steps. One team.</h2></div>
     <div class="mcc-steps">
-      <div class="mcc-step"><div class="mcc-step-num">1</div><h3>Measure &amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class="mcc-when">Free, itemised quote</span></div>
-      <div class="mcc-step"><div class="mcc-step-num">2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class="mcc-when">See it before you commit</span></div>
-      <div class="mcc-step"><div class="mcc-step-num">3</div><h3>We import &amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class="mcc-when">{{ section.settings.lead_time_text }}</span></div>
-      <div class="mcc-step"><div class="mcc-step-num">4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class="mcc-when">Scheduled around salah</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">1</div><h3>Measure &amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class="mcc-when">Free, itemised quote</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class="mcc-when">See it before you commit</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">3</div><h3>We import &amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class="mcc-when">{{ section.settings.lead_time_text }}</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class="mcc-when">Scheduled around salah</span></div>
     </div>
   </div>
 </section>
 
 <section class="mcc-saff-section" id="saff">
   <div class="mcc-wrap">
-    <div class="mcc-saff-copy">
+    <div class="mcc-saff-copy" data-reveal>
       <span class="mcc-ar mcc-saff-kicker">الصف</span>
       <h2>The line spacing is the whole point</h2>
       <p>A carpet that looks right in a photo but crowds the saff makes every rak'ah harder. Every roll we supply comes in three woven spacings, and we'll help you choose the right one before you order.</p>
@@ -168,7 +186,7 @@
 <section class="mcc-section" id="install">
   <div class="mcc-wrap mcc-install">
     <div>
-      <div class="mcc-section-head" style="margin-bottom:28px;"><span class="mcc-eyebrow">Fitted, not just delivered</span><h2>Installation by people who understand a prayer hall</h2><p>A luxury carpet only looks luxurious if it's laid right. Our installers square the saff lines to the qibla wall first, then work outwards, so every row runs true.</p></div>
+      <div class="mcc-section-head" style="margin-bottom:28px;" data-reveal><span class="mcc-eyebrow">Fitted, not just delivered</span><h2>Installation by people who understand a prayer hall</h2><p>A luxury carpet only looks luxurious if it's laid right. Our installers square the saff lines to the qibla wall first, then work outwards, so every row runs true.</p></div>
       <ul class="mcc-install-list">
         <li><strong>Qibla alignment</strong><span>Lines squared to the qibla wall, not to the room</span></li>
         <li><strong>Hidden seams</strong><span>Joins placed between rows, where no one kneels</span></li>
@@ -176,21 +194,21 @@
         <li><strong>Minimal disruption</strong><span>Scheduled around salah times and Jumu'ah</span></li>
       </ul>
     </div>
-    <aside class="mcc-install-card">
+    <aside class="mcc-install-card mcc-on-dark" data-reveal>
       <h3>Two ways to order</h3>
       <p>Every quote shows both options, so your committee can compare.</p>
       <div class="mcc-opt"><span>Supply + install</span><span>Our carpet, fitted by our crew</span></div>
       <div class="mcc-opt"><span>Supply only</span><span>Our carpet, your installer</span></div>
       <div class="mcc-opt"><span>Where</span><span>{{ section.settings.service_area }}</span></div>
-      <a href="/pages/installation" class="mcc-btn-primary">How installation works</a>
+      <a href="/pages/installation" class="mcc-btn-secondary">How installation works</a>
     </aside>
   </div>
 </section>
 
-<section class="mcc-section" id="colors" style="padding-top:0;">
+<section class="mcc-section mcc-flush-top" id="colours">
   <div class="mcc-wrap">
-    <div class="mcc-section-head">
-      <h2>Colorways</h2>
+    <div class="mcc-section-head" data-reveal>
+      <h2>Colourways</h2>
       <p>Each colourway is dyed and woven as one production run at the mill, so pile depth and line contrast match across your whole order. Tap a shade to ask about samples.</p>
     </div>
     <div class="mcc-colorways">
@@ -204,18 +222,18 @@
   </div>
 </section>
 
-<section class="mcc-section" id="calculator" style="padding-top:0;">
+<section class="mcc-section mcc-flush-top" id="calculator">
   <div class="mcc-wrap">
-    <div class="mcc-section-head">
+    <div class="mcc-section-head" data-reveal>
       <h2>Fit calculator</h2>
       <p>Enter your hall's floor size for a rough row count and price range, then send the numbers to us for an exact quote.</p>
     </div>
     <div class="mcc-calc">
       <div class="mcc-calc-form">
         <label for="hw">Hall width (metres)</label>
-        <input type="number" id="hw" value="12" min="1" step="0.1">
+        <input type="number" id="hw" value="12" min="1" step="0.1" inputmode="decimal">
         <label for="hl">Hall length, front to back (metres)</label>
-        <input type="number" id="hl" value="8" min="1" step="0.1">
+        <input type="number" id="hl" value="8" min="1" step="0.1" inputmode="decimal">
         <label for="sp">Row spacing</label>
         <select id="sp">
           <option value="90">90cm, tighter halls</option>
@@ -224,10 +242,10 @@
         </select>
       </div>
       <div class="mcc-calc-result">
-        <div class="mcc-num" id="rowCount">8</div>
+        <div class="mcc-num" id="rowCount" aria-live="polite">8</div>
         <div class="mcc-label">prayer rows fit at this spacing</div>
         <div class="mcc-note" id="calcNote"></div>
-        <a href="/pages/contact" class="mcc-btn-primary" id="calcSend">Send these numbers for a quote</a>
+        <a href="/pages/contact" class="mcc-btn-primary" id="calcSend">Request a quote with these numbers</a>
       </div>
     </div>
   </div>
@@ -241,9 +259,9 @@
 </section>
 {%- endif -%}
 
-<section class="mcc-section" id="faq" style="padding-top:0;">
+<section class="mcc-section mcc-flush-top" id="faq">
   <div class="mcc-wrap">
-    <div class="mcc-section-head"><h2>Questions committees ask us</h2></div>
+    <div class="mcc-section-head" data-reveal><h2>Questions committees ask us</h2></div>
     <div class="mcc-faq">
       {%- for block in section.blocks -%}
         {%- if block.type != 'faq' -%}{%- continue -%}{%- endif -%}
@@ -253,9 +271,9 @@
   </div>
 </section>
 
-<section class="mcc-cta">
+<section class="mcc-cta mcc-on-dark" data-reveal>
   <div><h2>{{ section.settings.cta_heading }}</h2><p>{{ section.settings.cta_text }}</p></div>
-  <div class="mcc-cta-actions"><a href="/pages/contact" class="mcc-btn-primary">Request a free quote</a><a href="/pages/contact?need=samples" class="mcc-btn-ghost">Ask about samples</a></div>
+  <div class="mcc-cta-actions"><a href="/pages/contact" class="mcc-btn-primary">Request a quote</a><a href="/pages/contact?need=samples" class="mcc-btn-ghost">Ask about samples</a><p class="mcc-cta-note">{{ section.settings.cta_note }}</p></div>
 </section>
 </div>
 <script>
@@ -311,6 +329,7 @@
     { "type": "text", "id": "stat_2_label", "label": "Stat 2 label", "default": "roll widths" },
     { "type": "text", "id": "stat_3_value", "label": "Stat 3 value", "default": "Supply + fit" },
     { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "one team, one invoice" },
+    { "type": "text", "id": "cta_note", "label": "Note under quote buttons", "default": "Free and itemised, with no obligation." },
     { "type": "header", "content": "Trust strip" },
     { "type": "text", "id": "fire_rating", "label": "Fire rating text", "default": "CAN/ULC-S102 & ASTM E648 certified pile" },
     { "type": "text", "id": "payment_text", "label": "Payment text", "default": "PO and bank transfer accepted" },
@@ -323,7 +342,7 @@
     { "type": "text", "id": "sourcing_heading", "label": "Heading", "default": "We source it. We check it. We bring it home." },
     { "type": "textarea", "id": "sourcing_text", "label": "Text", "default": "We don't own a loom, so we're never tied to one factory's range. We work with specialist prayer-carpet mills overseas and choose each roll for pile density, colourfastness and how straight its lines run. Then we import it, inspect it in Canada and deliver it to your door." },
     { "type": "header", "content": "Process & installation" },
-    { "type": "text", "id": "lead_time_text", "label": "Step 3 badge (lead time)", "default": "Lead time confirmed in your quote" },
+    { "type": "text", "id": "lead_time_text", "label": "Step 3 badge (lead time)", "default": "Lead time in your quote" },
     { "type": "text", "id": "service_area", "label": "Service area", "default": "Across Canada, with travel itemised" },
     { "type": "header", "content": "Testimonial (hidden until filled in)" },
     { "type": "textarea", "id": "testimonial_quote", "label": "Quote" },
@@ -346,7 +365,7 @@
         { "type": "text", "id": "include_2", "label": "Included line 2" },
         { "type": "checkbox", "id": "popular", "label": "Show \"Most ordered\" tag", "default": false },
         { "type": "text", "id": "rows", "label": "Rows line", "default": "≈ 5 prayer rows at 95cm spacing" },
-        { "type": "text", "id": "price_text", "label": "Price text (used until a product is linked)", "default": "from CAD $1,150" },
+        { "type": "text", "id": "price_text", "label": "Price text (used until a product is linked)", "default": "from $1,150 CAD" },
         { "type": "product", "id": "product", "label": "Linked product" }
       ]
     },

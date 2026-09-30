@@ -31,7 +31,7 @@
       <div class="mcc-gal-main">
         {%- if product.featured_media -%}
           {%- assign alt = product.featured_media.alt | default: product.title -%}
-          {{ product.featured_media.preview_image | image_url: width: 1200 | image_tag: loading: 'eager', alt: alt }}
+          {{ product.featured_media.preview_image | image_url: width: 1400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600, 900, 1200, 1400', sizes: '(min-width: 900px) 600px, 100vw', alt: alt, id: 'mccMainImg' }}
         {%- else -%}
           <svg viewBox="0 0 600 600" role="img" aria-label="Illustration of the carpet layout">
             <rect width="600" height="600" fill="#F3EEE2"/>
@@ -46,10 +46,12 @@
         {%- endif -%}
       </div>
       {%- if product.media.size > 1 -%}
-        <div class="mcc-gal-thumbs">
-          {%- for m in product.media offset: 1 limit: 4 -%}
+        <div class="mcc-gal-thumbs" role="list">
+          {%- for m in product.media limit: 5 -%}
             {%- assign alt = m.alt | default: product.title -%}
-            {{ m.preview_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: alt }}
+            <button type="button" class="mcc-thumb" role="listitem" aria-current="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Show image {{ forloop.index }}: {{ alt | escape }}" data-src="{{ m.preview_image | image_url: width: 1400 }}" data-alt="{{ alt | escape }}">
+              {{ m.preview_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: '' }}
+            </button>
           {%- endfor -%}
         </div>
       {%- endif -%}
@@ -59,20 +61,20 @@
       {%- if arabic != blank -%}<div class="mcc-dims-ar" style="font-size:16px;">{{ arabic }}</div>{%- endif -%}
       <h1>{{ product.title }}</h1>
       {%- if rows_line != blank -%}<div class="mcc-sub"><span>{{ rows_line }}</span></div>{%- endif -%}
-      <div class="mcc-p-price"><span id="mccPrice">{{ current.price | money_with_currency }}</span> <small>{{ price_note }}</small></div>
+      <div class="mcc-p-price"><span id="mccPrice">{{ current.price | money_without_trailing_zeros }} {{ cart.currency.iso_code }}</span> <small>{{ price_note }}</small></div>
 
       {%- form 'product', product, id: 'mcc-product-form' -%}
         {%- if product.has_only_default_variant -%}
           <input type="hidden" name="id" value="{{ current.id }}">
         {%- else -%}
           <fieldset class="mcc-opt-group">
-            <legend class="mcc-opt-label" style="width:100%;">Row spacing <span>Not sure? 95cm suits most mosques</span></legend>
+            <legend class="mcc-opt-label">Row spacing <span>Not sure? 95cm suits most mosques</span></legend>
             <div class="mcc-chips">
               {%- for v in product.variants -%}
                 {%- assign hint = '' -%}
                 {%- if v.title contains '90' -%}{%- assign hint = 'Tighter halls' -%}{%- elsif v.title contains '95' -%}{%- assign hint = 'Recommended' -%}{%- elsif v.title contains '100' -%}{%- assign hint = "Jumu'ah & Eid" -%}{%- endif -%}
                 <label class="mcc-chip">
-                  <input type="radio" name="id" value="{{ v.id }}" data-price="{{ v.price | money_with_currency | escape }}" data-spacing="{{ v.title | remove: 'cm' | strip }}" {% if v.id == current.id %}checked{% endif %} {% unless v.available %}disabled{% endunless %}>
+                  <input type="radio" name="id" value="{{ v.id }}" data-price="{{ v.price | money_without_trailing_zeros | append: ' ' | append: cart.currency.iso_code | escape }}" data-spacing="{{ v.title | remove: 'cm' | strip }}" {% if v.id == current.id %}checked{% endif %} {% unless v.available %}disabled{% endunless %}>
                   <b>{{ v.title }}</b><small>{{ hint }}</small>
                 </label>
               {%- endfor -%}
@@ -81,7 +83,7 @@
         {%- endif -%}
 
         <fieldset class="mcc-opt-group">
-          <legend class="mcc-opt-label" style="width:100%;">Colourway <span id="mccCwName">Masjid Green</span></legend>
+          <legend class="mcc-opt-label">Colourway <span id="mccCwName">Masjid Green</span></legend>
           <div class="mcc-dots-row">
             {%- assign cws = 'Masjid Green:#0F2822,Maroon:#5C2A2A,Deep Indigo:#1B2A4A,Walnut Brown:#3B2A17,Camel Gold:#8A6A2E' | split: ',' -%}
             {%- for cw in cws -%}
@@ -95,22 +97,22 @@
 
         <fieldset class="mcc-opt-group">
           <legend class="mcc-opt-label">Installation</legend>
-          <label class="mcc-radio"><input type="radio" name="properties[Installation]" value="Supply + installation" checked><div><strong>Supply + professional installation</strong><span>{% if includes_visit %}Site visit and floor template included. We'll confirm the install details with you{% else %}We'll contact you to measure and confirm the install price before anything is cut{% endif %}</span></div></label>
+          <label class="mcc-radio"><input type="radio" name="properties[Installation]" value="Supply + installation" checked><div><strong>Supply + professional installation</strong><span>{% if includes_visit %}Site visit and floor template included{% else %}We measure first and confirm the install price with you{% endif %}</span></div></label>
           <label class="mcc-radio"><input type="radio" name="properties[Installation]" value="Supply only"><div><strong>Supply only</strong><span>Delivered to your mosque, ready for your own installer</span></div></label>
         </fieldset>
 
         <div class="mcc-buy">
-          <button type="submit" name="add" class="mcc-btn-primary" {% unless current.available %}disabled{% endunless %}>{% if current.available %}Add to order{% else %}Currently unavailable{% endif %}</button>
-          <a href="/pages/contact?product={{ product.handle | url_encode }}" class="mcc-btn-outline">Get an exact quote first</a>
+          <button type="submit" name="add" class="mcc-btn-primary" {% unless current.available %}disabled{% endunless %}>{% if current.available %}Add to cart{% else %}Currently unavailable{% endif %}</button>
+          <a href="/pages/contact?product={{ product.handle | url_encode }}" class="mcc-btn-secondary">Request a quote instead</a>
         </div>
         {%- if form.errors -%}<div class="mcc-form-error">{{ form.errors | default_errors }}</div>{%- endif -%}
       {%- endform -%}
 
       <ul class="mcc-assure">
-        <li>Measurements confirmed before cutting</li>
-        <li>Invoice in your mosque's name</li>
-        <li>Fire-rated pile, certificates on request</li>
-        <li>Saff lines squared to the qibla</li>
+        <li>Measured before we cut</li>
+        <li>Invoiced in your mosque's name</li>
+        <li>Fire-rated pile</li>
+        <li>Lines squared to the qibla</li>
       </ul>
 
       <div class="mcc-acc">
@@ -130,17 +132,17 @@
   </div>
 </div>
 
-<section class="mcc-section mcc-process" style="padding-top:64px; padding-bottom:64px;">
+<section class="mcc-section mcc-process">
   <div class="mcc-wrap">
-    <div class="mcc-section-head" style="margin-bottom:28px;"><h2>Other hall sizes</h2></div>
+    <div class="mcc-section-head" style="margin-bottom:28px;" data-reveal><h2>Other hall sizes</h2></div>
     <div class="mcc-grid-by-size">
       {%- assign shown = 0 -%}
       {%- for p in collections.all.products -%}
         {%- if p.id == product.id or shown >= 2 -%}{%- continue -%}{%- endif -%}
         {%- assign shown = shown | plus: 1 -%}
-        <a class="mcc-size-card" href="{{ p.url }}"><h3>{{ p.title }}</h3><div class="mcc-size-foot"><div class="mcc-price">from {{ p.price_min | money_with_currency }}</div></div></a>
+        <a class="mcc-size-card" href="{{ p.url }}" data-reveal><h3>{{ p.title }}</h3><div class="mcc-size-foot"><div class="mcc-price">from {{ p.price_min | money_without_trailing_zeros }} {{ cart.currency.iso_code }}</div><span class="mcc-card-link">View details</span></div></a>
       {%- endfor -%}
-      <a class="mcc-size-card" href="/pages/contact"><div class="mcc-dims">Custom<span> any hall</span></div><h3>Something else?</h3><p>L-shaped rooms, women's galleries, stairs. Send us the plan.</p><div class="mcc-size-foot"><div class="mcc-price">Quoted to measure</div></div></a>
+      <a class="mcc-size-card" href="/pages/contact" data-reveal><h3>Something else?</h3><p>L-shaped rooms, women's galleries, stairs. Send us the plan.</p><div class="mcc-size-foot"><div class="mcc-price">Quoted to measure</div><span class="mcc-card-link">Request a quote</span></div></a>
     </div>
   </div>
 </section>
@@ -164,11 +166,24 @@
         for(var y = step; y < 420; y += step){ s += '<line x1="0" y1="' + y.toFixed(1) + '" x2="480" y2="' + y.toFixed(1) + '"/>'; }
         lines.innerHTML = s;
         if(c){ carpet.setAttribute('fill', c.dataset.colour); }
-        cap.textContent = (coverage ? coverage.replace('Approx. ', '').replace(/ \(.*\)/, '') + ' · ' : '') + spacing + 'cm spacing · ' + (c ? c.value : '');
+        cap.textContent = 'Illustration · ' + (coverage ? coverage.replace('Approx. ', '').replace(/ \(.*\)/, '') + ' · ' : '') + spacing + 'cm spacing · ' + (c ? c.value : '');
       }
     }
     form.addEventListener('change', update);
     update();
+    form.addEventListener('submit', function(){
+      var btn = form.querySelector('button[type="submit"]');
+      if(btn){ btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Adding…'; }
+    });
+    var main = document.getElementById('mccMainImg');
+    document.querySelectorAll('.mcc-thumb').forEach(function(t){
+      t.addEventListener('click', function(){
+        if(!main) return;
+        main.removeAttribute('srcset');
+        main.src = t.dataset.src; main.alt = t.dataset.alt;
+        document.querySelectorAll('.mcc-thumb').forEach(function(x){ x.setAttribute('aria-current', x === t ? 'true' : 'false'); });
+      });
+    });
   }catch(e){ console.error('Product page error', e); }
 })();
 </script>
