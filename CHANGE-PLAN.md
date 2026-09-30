@@ -23,11 +23,11 @@ Duplicate the live theme as **"MosqueCarpetsCanada — Site update v2"** (unpubl
 
 All copy lives in section settings, so it can be edited later in the theme editor without code.
 
-## Step A.2: detail pass (v3), awaiting approval
+## Step A.2: detail pass (v3), uploaded 2026-09-30
 
-Built in `theme/` and previewed in `previews/v3/preview-all.html`. Not uploaded yet. When approved, re-upload to the
-same **unpublished** theme: `assets/mosque-update.css`, `assets/mosque-design.css` (unchanged copy),
-all 7 `sections/mosque-*.liquid`, and `templates/index.json`.
+The owner published "Site update v2" (now **MAIN**), so the detail pass went into a new copy:
+**"MosqueCarpetsCanada — Site update v3 (detail pass)"** (gid://shopify/OnlineStoreTheme/130977628206, unpublished),
+from commit f8269ec. Owner publishes it from Online Store → Themes.
 
 ## Step B: store data (changes the live site immediately, needs separate approval)
 
