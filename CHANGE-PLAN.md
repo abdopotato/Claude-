@@ -27,11 +27,11 @@ All copy lives in section settings, so it can be edited later in the theme edito
 
 The owner published "Site update v2" (now **MAIN**), so the detail pass went into a new copy:
 **"MosqueCarpetsCanada — Site update v3 (detail pass)"** (gid://shopify/OnlineStoreTheme/130977628206, unpublished),
-from commit f8269ec. Owner publishes it from Online Store → Themes.
+from commit f8269ec. **Published by the owner (MAIN) on 2026-10-01.**
 
 ## Step B: store data (changes the live site immediately, needs separate approval)
 
-1. **Pages:** create `Installation` (/pages/installation); publish `About Us`; rename `Contact` → "Request a quote" (keep handle `contact`).
+1. ✅ **Pages (done 2026-10-01):** created `Installation` (/pages/installation, published); published `About Us`; renamed `Contact` → "Request a quote" (handle `contact` kept). Each has an SEO title and description.
 2. **Products:** rewrite the 3 descriptions (below); rename option to "Row spacing"; add SEO titles/descriptions; publish when the owner is ready (currently DRAFT).
 3. **Collection:** create "Prayer hall carpet rolls" containing the 3 products.
 4. **Store name:** "My Store" → "MosqueCarpetsCanada.ca" (owner does this in Settings → Store details if the connector can't).
