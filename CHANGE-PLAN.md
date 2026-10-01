@@ -32,10 +32,14 @@ from commit f8269ec. **Published by the owner (MAIN) on 2026-10-01.**
 ## Step B: store data (changes the live site immediately, needs separate approval)
 
 1. ✅ **Pages (done 2026-10-01):** created `Installation` (/pages/installation, published); published `About Us`; renamed `Contact` → "Request a quote" (handle `contact` kept). Each has an SEO title and description.
-2. **Products:** rewrite the 3 descriptions (below); rename option to "Row spacing"; add SEO titles/descriptions; publish when the owner is ready (currently DRAFT).
-3. **Collection:** create "Prayer hall carpet rolls" containing the 3 products.
+2. ✅ **Products (done 2026-10-01):** descriptions rewritten (below), SEO titles/descriptions set, status ACTIVE and published to Online Store. Option was already named "Row spacing".
+3. ✅ **Collection (done 2026-10-01):** smart collection "Prayer hall carpet rolls" (/collections/prayer-hall-carpet-rolls), product type = Prayer Hall Carpet Roll, sorted by price.
 4. **Store name:** "My Store" → "MosqueCarpetsCanada.ca" (owner does this in Settings → Store details if the connector can't).
-5. **Homepage SEO:** set the store's meta title and description (currently empty, so Google shows no summary).
+5. ✅ **Homepage SEO (done 2026-10-01):** shop `global.title_tag` / `global.description_tag` set.
+
+## Step C: shipping (needs owner decision)
+
+Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.
 
 ## Proposed product descriptions
 

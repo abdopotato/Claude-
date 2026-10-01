@@ -7,6 +7,7 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 
 | # | Question | What the preview says for now |
 |---|----------|-------------------------------|
+| 20 | **Shipping on carpet rolls (urgent, products are live):** checkout offers Shopify's default $12 / free / $20 rates. How should delivery be charged: included in the price, a flat rate per roll, or "quoted after order"? | Default rates, unchanged |
 | 1 | Is the pile really certified to **CAN/ULC-S102 and ASTM E648**? (Your live site already claims this.) | Kept as-is |
 | 2 | Do you accept **purchase orders and bank transfer**? If so, is a manual payment method set up in Shopify checkout? | Kept as-is |
 | 3 | What's the pile made of? Current product copy says **"wool blend"**. | Kept as-is |
