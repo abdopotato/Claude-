@@ -344,3 +344,21 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   html body:has(.mcc-mobile-cta){padding-bottom:76px;}
 }
 #mcc-app .mcc-size-card .mcc-rows{margin-top:-4px;}
+
+/* Hall cards as buy panels: the whole card opens the product (stretched title link), and the
+   buy box at the bottom makes it clear this is where you purchase. */
+#mcc-app article.mcc-size-card{position:relative; cursor:pointer;}
+#mcc-app .mcc-card-title-link{color:inherit;}
+#mcc-app .mcc-card-title-link::after{content:''; position:absolute; inset:0; z-index:1; border-radius:inherit;}
+#mcc-app .mcc-size-card .mcc-pop-tag{z-index:3;}
+#mcc-app .mcc-buy-box{position:relative; z-index:2; margin:6px -28px -28px; padding:20px 28px 22px; background:var(--plaster-dim); border-top:1px solid var(--line); border-radius:0 0 var(--radius-lg) var(--radius-lg); display:flex; flex-direction:column; gap:10px; cursor:default;}
+#mcc-app .mcc-size-card.mcc-pop .mcc-buy-box{background:color-mix(in srgb, var(--brass) 14%, var(--surface));}
+#mcc-app .mcc-buy-top{display:flex; justify-content:space-between; align-items:baseline; gap:12px;}
+#mcc-app .mcc-buy-label{font-size:12px; font-weight:600; letter-spacing:.6px; text-transform:uppercase; color:var(--green-700);}
+#mcc-app .mcc-buy-box .mcc-price{font-size:18px; font-weight:600;}
+#mcc-app .mcc-buy-btn{width:100%;}
+#mcc-app .mcc-buy-note{font-size:14px; color:var(--text-dim); line-height:1.45;}
+#mcc-app .mcc-buy-quote{align-self:flex-start; display:inline-flex; align-items:center; min-height:44px; margin:-8px 0 -10px; font-size:14px; font-weight:500; color:var(--green-700); text-decoration:underline; text-decoration-color:var(--brass); text-underline-offset:3px;}
+#mcc-app .mcc-buy-quote:hover{color:var(--text);}
+#mcc-app .mcc-size-card p{flex:0 0 auto;}
+#mcc-app .mcc-incl{flex:1;}

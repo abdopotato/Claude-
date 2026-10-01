@@ -33,7 +33,8 @@ comes from the Claude Design Skillstack, MIT — see `.claude/skills/LICENSE-cla
 - **Type:** nothing below 14px except uppercase micro-labels; prices use tabular numbers.
 - **Spacing:** sections use `--section-y`; grids use `--gap`; no inline padding hacks, use
   `mcc-tight-top` or `mcc-flush-top` instead.
-- **CTAs:** one primary (gold) action per view. The primary label is "Request a quote" (product
+- **CTAs:** one primary (gold) action per view, except the hall-size cards, where each card's buy panel
+  has its own gold "Buy now" (owner request: make it obvious that's where you buy). The primary label is "Request a quote" (product
   pages: "Add to cart"); secondary actions use `mcc-btn-secondary`; text links use `mcc-btn-ghost`.
   Note under quote buttons: "Free and itemised, with no obligation."
 - **Navigation:** current page marked with `aria-current`; touch targets ≥ 44px; section anchors

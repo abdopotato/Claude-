@@ -37,6 +37,13 @@ from commit f8269ec. **Published by the owner (MAIN) on 2026-10-01.**
 4. **Store name:** "My Store" → "MosqueCarpetsCanada.ca" (owner does this in Settings → Store details if the connector can't).
 5. ✅ **Homepage SEO (done 2026-10-01):** shop `global.title_tag` / `global.description_tag` set.
 
+## Step A.3: "Buy now" panels on hall-size cards (awaiting approval)
+
+Owner asked for a clear buy section under each hall-size card. Each card now ends in a buy panel: "Buy online" label,
+price, a gold **Buy now** button (to the product page, where spacing, colourway and installation are chosen),
+and a "Prefer a quote first?" link. The rest of the card still opens the product. Changed: `sections/mosque-home.liquid`,
+`assets/mosque-update.css`. v3 is live, so the upload goes to a new unpublished copy ("Site update v4").
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.

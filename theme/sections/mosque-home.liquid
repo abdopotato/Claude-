@@ -74,7 +74,8 @@
       {%- for block in section.blocks -%}
         {%- if block.type != 'hall_size' -%}{%- continue -%}{%- endif -%}
         {%- assign p = block.settings.product -%}
-        <a class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" href="{% if p != blank %}{{ p.url }}{% else %}{{ routes.all_products_collection_url }}{% endif %}" data-reveal {{ block.shopify_attributes }}>
+        {%- if p != blank -%}{%- assign card_url = p.url -%}{%- else -%}{%- assign card_url = routes.all_products_collection_url -%}{%- endif -%}
+        <article class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" data-reveal {{ block.shopify_attributes }}>
           {%- if block.settings.popular -%}<span class="mcc-pop-tag">Most ordered</span>{%- endif -%}
           <div class="mcc-card-media">
             {%- if p != blank and p.featured_media -%}
@@ -94,7 +95,7 @@
             <div class="mcc-dims">{{ block.settings.dims }}<span> {{ block.settings.unit }}</span></div>
             {%- if block.settings.arabic != blank -%}<div class="mcc-dims-ar">{{ block.settings.arabic }}</div>{%- endif -%}
           </div>
-          <h3>{{ block.settings.title }}</h3>
+          <h3><a class="mcc-card-title-link" href="{{ card_url }}">{{ block.settings.title }}</a></h3>
           <p>{{ block.settings.description }}</p>
           {%- if block.settings.rows != blank -%}<div class="mcc-rows">{{ block.settings.rows }}</div>{%- endif -%}
           {%- if block.settings.include_1 != blank or block.settings.include_2 != blank -%}
@@ -103,13 +104,21 @@
               {%- if block.settings.include_2 != blank -%}<li>{{ block.settings.include_2 }}</li>{%- endif -%}
             </ul>
           {%- endif -%}
-          <div class="mcc-size-foot">
-            <div>
-              <div class="mcc-price">{% if p != blank %}from {{ p.price_min | money_without_trailing_zeros }} {{ cart.currency.iso_code }}{% else %}{{ block.settings.price_text }}{% endif %}</div>
+          <div class="mcc-buy-box">
+            <div class="mcc-buy-top">
+              <span class="mcc-buy-label">Buy online</span>
+              <span class="mcc-price">{% if p != blank %}from {{ p.price_min | money_without_trailing_zeros }} {{ cart.currency.iso_code }}{% else %}{{ block.settings.price_text }}{% endif %}</span>
             </div>
-            <span class="mcc-card-link">View details</span>
+            {%- if p != blank and p.available -%}
+              <a class="mcc-btn-primary mcc-buy-btn" href="{{ p.url }}" aria-label="Buy now: {{ block.settings.title | escape }}">Buy now</a>
+              <p class="mcc-buy-note">Choose row spacing, colourway and installation on the next step.</p>
+            {%- else -%}
+              <a class="mcc-btn-primary mcc-buy-btn" href="/pages/contact{% if p != blank %}?product={{ p.handle | url_encode }}{% endif %}">Request a quote</a>
+              <p class="mcc-buy-note">Online ordering for this size opens soon.</p>
+            {%- endif -%}
+            <a class="mcc-buy-quote" href="/pages/contact{% if p != blank %}?product={{ p.handle | url_encode }}{% endif %}">Prefer a quote first?</a>
           </div>
-        </a>
+        </article>
       {%- endfor -%}
     </div>
   </div>
@@ -335,7 +344,7 @@
     { "type": "text", "id": "payment_text", "label": "Payment text", "default": "PO and bank transfer accepted" },
     { "type": "header", "content": "Hall sizes" },
     { "type": "text", "id": "sizes_heading", "label": "Hall size heading", "default": "Shop by hall size" },
-    { "type": "textarea", "id": "sizes_text", "label": "Hall size text", "default": "Every hall is different, so treat these as starting points. Pick the closest size and we'll confirm exact measurements before anything is cut." },
+    { "type": "textarea", "id": "sizes_text", "label": "Hall size text", "default": "Buy online in three standard sizes, or request a quote for any hall. Either way, we confirm exact measurements before anything is cut." },
     { "type": "header", "content": "Sourcing" },
     { "type": "image_picker", "id": "sourcing_image", "label": "Photo (replaces the illustration)" },
     { "type": "text", "id": "sourcing_kicker", "label": "Kicker", "default": "Sourced, not manufactured, and that's the point" },

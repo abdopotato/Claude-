@@ -70,7 +70,7 @@ function mkProduct(id, handle, title, price, tags, description) {
   const vs = variants(id * 10).map((v) => ({ ...v, price }));
   return {
     id, handle, title, tags, description, url: `/products/${handle}`,
-    price_min: price, variants: vs, selected_or_first_available_variant: vs[1],
+    price_min: price, available: true, variants: vs, selected_or_first_available_variant: vs[1],
     has_only_default_variant: false, featured_media: null, media: [],
   };
 }
