@@ -447,3 +447,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 @media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
 /* Footer: one link per line (links were running together) */
 #mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
+
+/* Header (owner request): Request a quote sits right after the logo; Installation, About and FAQ move right,
+   beside the cart. Hall sizes / Colours links removed. */
+#mcc-app .mcc-nav-quote{flex:0 0 auto;}
+#mcc-app .mcc-navlinks{margin-left:auto; margin-right:4px;}
+@media (max-width:840px){ #mcc-app .mcc-navtools{margin-left:auto;} }
+@media (max-width:560px){ #mcc-app .mcc-nav-quote{display:none;} }

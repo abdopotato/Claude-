@@ -80,6 +80,8 @@ slot); homepage only, other pages untouched. Homepage is now hero → trust band
 closing banner (page ~4,300px, was ~7,600px). Their settings stay in the schema, labelled "not shown".
 Still pointing at the removed calculator (not homepage files, left as asked): Installation page "Try the fit
 calculator" button and footer "Fit calculator" link.
+Header (owner): "Hall sizes" and "Colours" links removed; "Request a quote" moved right after the logo;
+Installation · About · FAQ moved right, beside the cart. Phones unchanged (quote button in the bottom bar).
 Screenshots: `previews/layout/`. Before upload, check the live `templates/index.json` for saved hero settings
 (new hero wording is a schema default and won't show if the owner saved their own).
 

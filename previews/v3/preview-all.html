@@ -593,6 +593,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 @media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
 /* Footer: one link per line (links were running together) */
 #mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
+
+/* Header (owner request): Request a quote sits right after the logo; Installation, About and FAQ move right,
+   beside the cart. Hall sizes / Colours links removed. */
+#mcc-app .mcc-nav-quote{flex:0 0 auto;}
+#mcc-app .mcc-navlinks{margin-left:auto; margin-right:4px;}
+@media (max-width:840px){ #mcc-app .mcc-navtools{margin-left:auto;} }
+@media (max-width:560px){ #mcc-app .mcc-nav-quote{display:none;} }
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -621,15 +628,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-      <a href=&quot;index.html#colours&quot;>Colours</a>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -638,8 +643,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
     </div>
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
-    <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -1555,6 +1558,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 @media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
 /* Footer: one link per line (links were running together) */
 #mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
+
+/* Header (owner request): Request a quote sits right after the logo; Installation, About and FAQ move right,
+   beside the cart. Hall sizes / Colours links removed. */
+#mcc-app .mcc-nav-quote{flex:0 0 auto;}
+#mcc-app .mcc-navlinks{margin-left:auto; margin-right:4px;}
+@media (max-width:840px){ #mcc-app .mcc-navtools{margin-left:auto;} }
+@media (max-width:560px){ #mcc-app .mcc-nav-quote{display:none;} }
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -1583,15 +1593,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-      <a href=&quot;index.html#colours&quot;>Colours</a>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -1600,8 +1608,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
     </div>
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
-    <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -2390,6 +2396,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 @media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
 /* Footer: one link per line (links were running together) */
 #mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
+
+/* Header (owner request): Request a quote sits right after the logo; Installation, About and FAQ move right,
+   beside the cart. Hall sizes / Colours links removed. */
+#mcc-app .mcc-nav-quote{flex:0 0 auto;}
+#mcc-app .mcc-navlinks{margin-left:auto; margin-right:4px;}
+@media (max-width:840px){ #mcc-app .mcc-navtools{margin-left:auto;} }
+@media (max-width:560px){ #mcc-app .mcc-nav-quote{display:none;} }
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -2418,15 +2431,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-      <a href=&quot;index.html#colours&quot;>Colours</a>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot; aria-current=&quot;page&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -2435,8 +2446,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
     </div>
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
-    <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot; aria-current=&quot;page&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -3139,6 +3148,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 @media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
 /* Footer: one link per line (links were running together) */
 #mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
+
+/* Header (owner request): Request a quote sits right after the logo; Installation, About and FAQ move right,
+   beside the cart. Hall sizes / Colours links removed. */
+#mcc-app .mcc-nav-quote{flex:0 0 auto;}
+#mcc-app .mcc-navlinks{margin-left:auto; margin-right:4px;}
+@media (max-width:840px){ #mcc-app .mcc-navtools{margin-left:auto;} }
+@media (max-width:560px){ #mcc-app .mcc-nav-quote{display:none;} }
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -3167,15 +3183,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-      <a href=&quot;index.html#colours&quot;>Colours</a>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot; aria-current=&quot;page&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -3184,8 +3198,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
     </div>
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
-    <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot; aria-current=&quot;page&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -3881,6 +3893,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 @media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
 /* Footer: one link per line (links were running together) */
 #mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
+
+/* Header (owner request): Request a quote sits right after the logo; Installation, About and FAQ move right,
+   beside the cart. Hall sizes / Colours links removed. */
+#mcc-app .mcc-nav-quote{flex:0 0 auto;}
+#mcc-app .mcc-navlinks{margin-left:auto; margin-right:4px;}
+@media (max-width:840px){ #mcc-app .mcc-navtools{margin-left:auto;} }
+@media (max-width:560px){ #mcc-app .mcc-nav-quote{display:none;} }
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -3909,15 +3928,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-      <a href=&quot;index.html#colours&quot;>Colours</a>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -3926,8 +3943,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
     </div>
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
-    <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
-    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
