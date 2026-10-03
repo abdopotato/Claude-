@@ -43,6 +43,8 @@ comes from the Claude Design Skillstack, MIT — see `.claude/skills/LICENSE-cla
   `widths` on every `image_tag`; drawings until real photos exist (see `PHOTO-GUIDE.md`).
 - **Motion:** transform/opacity only, ≤ 600ms, `data-reveal` once per element, off under
   `prefers-reduced-motion`, content visible without JavaScript.
+  Exception (owner request): the hall-size carousel uses a brief horizontal motion blur (SVG filter) while
+  cards slide, and the front card's buy panel pops out toward the viewer. Without JavaScript it stays a plain grid.
 - **Copy:** Canadian spelling (colour, centre, itemised). Prices are formatted "$3,650 CAD".
 
 ## Open questions

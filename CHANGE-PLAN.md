@@ -46,6 +46,15 @@ and a "Prefer a quote first?" link. The rest of the card still opens the product
 (gid://shopify/OnlineStoreTheme/131005284398, unpublished); checksums verified. The connector cannot publish themes,
 so the owner publishes it in Online Store → Themes.
 
+## Step A.4: hall-size carousel with pop-out buy panel (preview, awaiting approval)
+
+Owner asked for left/right arrows on the three hall-size cards (same style as the "Artistry carousel" theme):
+the middle card (Main hall) starts in front, the other two sit behind it at 30% opacity, and switching cards
+slides them with a short motion blur. The front card's buy panel then pops out toward the viewer. Clicking a side
+card brings it to the front; swipe and arrow keys work; reduced-motion users get no blur or pop.
+Changed: `sections/mosque-home.liquid`, `assets/mosque-update.css`. Demo: `previews/carousel-demo.mp4`.
+Once approved, upload to the unpublished "Site update v4 (buy panels)" theme (if not yet published) or a new copy.
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.

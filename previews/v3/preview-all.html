@@ -508,6 +508,54 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-buy-quote:hover{color:var(--text);}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
+
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+   Without JavaScript the cards stay a normal grid. */
+#mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
+#mcc-app .mcc-size-carousel{position:relative;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
+  grid-area:1 / 1; width:min(420px, 78vw); --x:0%; --s:1;
+  transform:translateX(var(--x)) scale(var(--s)); opacity:.3; z-index:1;
+  transition:transform .45s cubic-bezier(.22,.8,.24,1), opacity .45s ease, box-shadow .3s ease;
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card:hover{transform:translateX(var(--x)) scale(var(--s));}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
+.mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
+#mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
+#mcc-app .mcc-carousel-nav[hidden]{display:none;}
+#mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
+#mcc-app .mcc-carousel-nav:active{transform:translateY(-50%) scale(.94);}
+#mcc-app .mcc-carousel-nav:focus-visible{outline:3px solid var(--brass); outline-offset:3px;}
+#mcc-app .mcc-carousel-prev{left:0;}
+#mcc-app .mcc-carousel-next{right:0;}
+@media (max-width:700px){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-30%; --s:.84;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:30%; --s:.84;}
+  #mcc-app .mcc-carousel-nav{width:44px; height:44px; top:auto; bottom:6px; transform:none;}
+  #mcc-app .mcc-carousel-nav:active{transform:scale(.94);}
+  #mcc-app .mcc-carousel-prev{left:calc(50% - 56px);}
+  #mcc-app .mcc-carousel-next{right:calc(50% - 56px);}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready{padding-bottom:64px;}
+}
+/* Buy section pops out toward the viewer on the card in front */
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transform-origin:50% 0; transition:transform .35s ease, box-shadow .35s ease;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset; border-radius:var(--radius-lg);}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:mcc-buy-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes mcc-buy-pop{
+  0%{transform:translateY(0) scale(1); box-shadow:0 0 0 rgba(15,40,34,0);}
+  100%{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset;}
+}
+@media (prefers-reduced-motion:reduce){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -655,7 +703,9 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
       <h2>Shop by hall size</h2>
       <p>Buy online in three standard sizes, or request a quote for any hall. Either way, we confirm exact measurements before anything is cut.</p>
     </div>
-    <div class=&quot;mcc-grid-by-size&quot;><article class=&quot;mcc-size-card&quot; data-reveal ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
+    <div class=&quot;mcc-size-carousel&quot; data-size-carousel data-reveal role=&quot;region&quot; aria-roledescription=&quot;carousel&quot; aria-label=&quot;Hall sizes&quot;>
+    <button type=&quot;button&quot; class=&quot;mcc-carousel-nav mcc-carousel-prev&quot; data-carousel-prev aria-label=&quot;Previous hall size&quot; hidden>&amp;#8249;</button>
+    <div class=&quot;mcc-grid-by-size&quot; data-carousel-track><article class=&quot;mcc-size-card&quot; data-carousel-card aria-roledescription=&quot;slide&quot; ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
                 <rect width=&quot;320&quot; height=&quot;180&quot; fill=&quot;#0F2822&quot;/>
                 <g transform=&quot;translate(40,26)&quot;><rect width=&quot;240&quot; height=&quot;128&quot; rx=&quot;4&quot; fill=&quot;#16352E&quot; stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.35&quot;/>
                   <g stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.7&quot;><line x1=&quot;0&quot; y1=&quot;18.285714285714285&quot; x2=&quot;240&quot; y2=&quot;18.285714285714285&quot;/><line x1=&quot;0&quot; y1=&quot;36.57142857142857&quot; x2=&quot;240&quot; y2=&quot;36.57142857142857&quot;/><line x1=&quot;0&quot; y1=&quot;54.857142857142854&quot; x2=&quot;240&quot; y2=&quot;54.857142857142854&quot;/><line x1=&quot;0&quot; y1=&quot;73.14285714285714&quot; x2=&quot;240&quot; y2=&quot;73.14285714285714&quot;/><line x1=&quot;0&quot; y1=&quot;91.42857142857143&quot; x2=&quot;240&quot; y2=&quot;91.42857142857143&quot;/><line x1=&quot;0&quot; y1=&quot;109.71428571428571&quot; x2=&quot;240&quot; y2=&quot;109.71428571428571&quot;/></g>
@@ -671,7 +721,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
             </div><a class=&quot;mcc-btn-primary mcc-buy-btn&quot; href=&quot;product.html&quot; aria-label=&quot;Buy now: Musalla, small&quot;>Buy now</a>
               <p class=&quot;mcc-buy-note&quot;>Choose row spacing, colourway and installation on the next step.</p><a class=&quot;mcc-buy-quote&quot; href=&quot;quote.html?product=musalla-carpet-roll-small-4-6-m&quot;>Prefer a quote first?</a>
           </div>
-        </article><article class=&quot;mcc-size-card mcc-pop&quot; data-reveal ><span class=&quot;mcc-pop-tag&quot;>Most ordered</span><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
+        </article><article class=&quot;mcc-size-card mcc-pop&quot; data-carousel-card aria-roledescription=&quot;slide&quot; ><span class=&quot;mcc-pop-tag&quot;>Most ordered</span><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
                 <rect width=&quot;320&quot; height=&quot;180&quot; fill=&quot;#0F2822&quot;/>
                 <g transform=&quot;translate(40,26)&quot;><rect width=&quot;240&quot; height=&quot;128&quot; rx=&quot;4&quot; fill=&quot;#16352E&quot; stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.35&quot;/>
                   <g stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.7&quot;><line x1=&quot;0&quot; y1=&quot;12.8&quot; x2=&quot;240&quot; y2=&quot;12.8&quot;/><line x1=&quot;0&quot; y1=&quot;25.6&quot; x2=&quot;240&quot; y2=&quot;25.6&quot;/><line x1=&quot;0&quot; y1=&quot;38.4&quot; x2=&quot;240&quot; y2=&quot;38.4&quot;/><line x1=&quot;0&quot; y1=&quot;51.2&quot; x2=&quot;240&quot; y2=&quot;51.2&quot;/><line x1=&quot;0&quot; y1=&quot;64&quot; x2=&quot;240&quot; y2=&quot;64&quot;/><line x1=&quot;0&quot; y1=&quot;76.8&quot; x2=&quot;240&quot; y2=&quot;76.8&quot;/><line x1=&quot;0&quot; y1=&quot;89.6&quot; x2=&quot;240&quot; y2=&quot;89.6&quot;/><line x1=&quot;0&quot; y1=&quot;102.4&quot; x2=&quot;240&quot; y2=&quot;102.4&quot;/><line x1=&quot;0&quot; y1=&quot;115.2&quot; x2=&quot;240&quot; y2=&quot;115.2&quot;/></g>
@@ -687,7 +737,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
             </div><a class=&quot;mcc-btn-primary mcc-buy-btn&quot; href=&quot;product.html&quot; aria-label=&quot;Buy now: Main hall, mid-size&quot;>Buy now</a>
               <p class=&quot;mcc-buy-note&quot;>Choose row spacing, colourway and installation on the next step.</p><a class=&quot;mcc-buy-quote&quot; href=&quot;quote.html?product=main-hall-carpet-roll-mid-size-8-12-m&quot;>Prefer a quote first?</a>
           </div>
-        </article><article class=&quot;mcc-size-card&quot; data-reveal ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
+        </article><article class=&quot;mcc-size-card&quot; data-carousel-card aria-roledescription=&quot;slide&quot; ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
                 <rect width=&quot;320&quot; height=&quot;180&quot; fill=&quot;#0F2822&quot;/>
                 <g transform=&quot;translate(40,26)&quot;><rect width=&quot;240&quot; height=&quot;128&quot; rx=&quot;4&quot; fill=&quot;#16352E&quot; stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.35&quot;/>
                   <g stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.7&quot;><line x1=&quot;0&quot; y1=&quot;9.846153846153847&quot; x2=&quot;240&quot; y2=&quot;9.846153846153847&quot;/><line x1=&quot;0&quot; y1=&quot;19.692307692307693&quot; x2=&quot;240&quot; y2=&quot;19.692307692307693&quot;/><line x1=&quot;0&quot; y1=&quot;29.53846153846154&quot; x2=&quot;240&quot; y2=&quot;29.53846153846154&quot;/><line x1=&quot;0&quot; y1=&quot;39.38461538461539&quot; x2=&quot;240&quot; y2=&quot;39.38461538461539&quot;/><line x1=&quot;0&quot; y1=&quot;49.23076923076923&quot; x2=&quot;240&quot; y2=&quot;49.23076923076923&quot;/><line x1=&quot;0&quot; y1=&quot;59.07692307692308&quot; x2=&quot;240&quot; y2=&quot;59.07692307692308&quot;/><line x1=&quot;0&quot; y1=&quot;68.92307692307692&quot; x2=&quot;240&quot; y2=&quot;68.92307692307692&quot;/><line x1=&quot;0&quot; y1=&quot;78.76923076923077&quot; x2=&quot;240&quot; y2=&quot;78.76923076923077&quot;/><line x1=&quot;0&quot; y1=&quot;88.61538461538461&quot; x2=&quot;240&quot; y2=&quot;88.61538461538461&quot;/><line x1=&quot;0&quot; y1=&quot;98.46153846153847&quot; x2=&quot;240&quot; y2=&quot;98.46153846153847&quot;/><line x1=&quot;0&quot; y1=&quot;108.3076923076923&quot; x2=&quot;240&quot; y2=&quot;108.3076923076923&quot;/><line x1=&quot;0&quot; y1=&quot;118.15384615384616&quot; x2=&quot;240&quot; y2=&quot;118.15384615384616&quot;/></g>
@@ -704,6 +754,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
               <p class=&quot;mcc-buy-note&quot;>Choose row spacing, colourway and installation on the next step.</p><a class=&quot;mcc-buy-quote&quot; href=&quot;quote.html?product=jumuah-hall-carpet-roll-large-15-22-m&quot;>Prefer a quote first?</a>
           </div>
         </article></div>
+    <button type=&quot;button&quot; class=&quot;mcc-carousel-nav mcc-carousel-next&quot; data-carousel-next aria-label=&quot;Next hall size&quot; hidden>&amp;#8250;</button>
+    <p class=&quot;mcc-visually-hidden&quot; aria-live=&quot;polite&quot; data-carousel-status></p>
+    <svg class=&quot;mcc-blur-defs&quot; width=&quot;0&quot; height=&quot;0&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;><filter id=&quot;mccMotionBlur&quot; x=&quot;-20%&quot; y=&quot;0&quot; width=&quot;140%&quot; height=&quot;100%&quot;><feGaussianBlur in=&quot;SourceGraphic&quot; stdDeviation=&quot;0 0&quot;/></filter></svg>
+    </div>
   </div>
 </section>
 
@@ -878,6 +932,98 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         });
       });
     }catch(e){ console.error('Colorway selector error', e); }
+  })();
+</script>
+<script>
+  (function(){
+    try{
+      var root = document.querySelector('[data-size-carousel]');
+      if(!root) return;
+      var cards = Array.prototype.slice.call(root.querySelectorAll('[data-carousel-card]'));
+      if(cards.length < 2) return;
+      var prevBtn = root.querySelector('[data-carousel-prev]'), nextBtn = root.querySelector('[data-carousel-next]');
+      var status = root.querySelector('[data-carousel-status]');
+      var blur = root.querySelector('#mccMotionBlur feGaussianBlur');
+      var still = window.matchMedia &amp;&amp; window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var n = cards.length, active = Math.floor((n - 1) / 2), raf = null, timer = null;
+
+      function layout(){
+        cards.forEach(function(card, i){
+          var d = (i - active + n) % n;
+          var pos = d === 0 ? 'active' : (d === 1 ? 'next' : (d === n - 1 ? 'prev' : 'hidden'));
+          card.setAttribute('data-pos', pos);
+          card.setAttribute('aria-label', (i + 1) + ' of ' + n);
+          card.setAttribute('aria-hidden', pos === 'active' ? 'false' : 'true');
+          card.querySelectorAll('a, button').forEach(function(el){
+            if(pos === 'active'){ el.removeAttribute('tabindex'); } else { el.setAttribute('tabindex', '-1'); }
+          });
+        });
+        var title = cards[active].querySelector('h3');
+        if(status &amp;&amp; title){ status.textContent = 'Showing ' + title.textContent.trim() + ', ' + (active + 1) + ' of ' + n; }
+      }
+
+      function pop(){
+        var box = cards[active].querySelector('.mcc-buy-box');
+        if(!box || still) return;
+        box.classList.remove('is-popping'); void box.offsetWidth; box.classList.add('is-popping');
+      }
+
+      function motionBlur(dir){
+        if(still || !blur) return;
+        var start = null, dur = 450;
+        root.classList.add('is-moving');
+        cancelAnimationFrame(raf);
+        function step(t){
+          if(start === null) start = t;
+          var k = Math.min(1, (t - start) / dur);
+          var amount = 9 * Math.sin(Math.PI * k);
+          blur.setAttribute('stdDeviation', amount.toFixed(2) + ' 0');
+          if(k < 1){ raf = requestAnimationFrame(step); }
+          else { blur.setAttribute('stdDeviation', '0 0'); root.classList.remove('is-moving'); }
+        }
+        raf = requestAnimationFrame(step);
+      }
+
+      function go(index){
+        var next = (index + n) % n;
+        if(next === active) return;
+        cards.forEach(function(c){ var b = c.querySelector('.mcc-buy-box'); if(b){ b.classList.remove('is-popping'); } });
+        active = next;
+        motionBlur();
+        layout();
+        clearTimeout(timer);
+        timer = setTimeout(pop, still ? 0 : 260);
+      }
+
+      prevBtn.addEventListener('click', function(){ go(active - 1); });
+      nextBtn.addEventListener('click', function(){ go(active + 1); });
+
+      root.addEventListener('click', function(e){
+        var card = e.target.closest('[data-carousel-card]');
+        if(card &amp;&amp; card.getAttribute('data-pos') !== 'active'){
+          e.preventDefault(); e.stopPropagation();
+          go(cards.indexOf(card));
+        }
+      }, true);
+
+      root.addEventListener('keydown', function(e){
+        if(e.key === 'ArrowLeft'){ e.preventDefault(); go(active - 1); prevBtn.focus(); }
+        if(e.key === 'ArrowRight'){ e.preventDefault(); go(active + 1); nextBtn.focus(); }
+      });
+
+      var x0 = null;
+      root.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, { passive: true });
+      root.addEventListener('touchend', function(e){
+        if(x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0; x0 = null;
+        if(Math.abs(dx) > 40){ go(active + (dx < 0 ? 1 : -1)); }
+      }, { passive: true });
+
+      prevBtn.hidden = false; nextBtn.hidden = false;
+      root.classList.add('is-ready');
+      layout();
+      setTimeout(pop, 300);
+    }catch(e){ console.error('Hall size carousel error', e); }
   })();
 </script>
 
@@ -1428,6 +1574,54 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-buy-quote:hover{color:var(--text);}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
+
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+   Without JavaScript the cards stay a normal grid. */
+#mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
+#mcc-app .mcc-size-carousel{position:relative;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
+  grid-area:1 / 1; width:min(420px, 78vw); --x:0%; --s:1;
+  transform:translateX(var(--x)) scale(var(--s)); opacity:.3; z-index:1;
+  transition:transform .45s cubic-bezier(.22,.8,.24,1), opacity .45s ease, box-shadow .3s ease;
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card:hover{transform:translateX(var(--x)) scale(var(--s));}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
+.mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
+#mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
+#mcc-app .mcc-carousel-nav[hidden]{display:none;}
+#mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
+#mcc-app .mcc-carousel-nav:active{transform:translateY(-50%) scale(.94);}
+#mcc-app .mcc-carousel-nav:focus-visible{outline:3px solid var(--brass); outline-offset:3px;}
+#mcc-app .mcc-carousel-prev{left:0;}
+#mcc-app .mcc-carousel-next{right:0;}
+@media (max-width:700px){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-30%; --s:.84;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:30%; --s:.84;}
+  #mcc-app .mcc-carousel-nav{width:44px; height:44px; top:auto; bottom:6px; transform:none;}
+  #mcc-app .mcc-carousel-nav:active{transform:scale(.94);}
+  #mcc-app .mcc-carousel-prev{left:calc(50% - 56px);}
+  #mcc-app .mcc-carousel-next{right:calc(50% - 56px);}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready{padding-bottom:64px;}
+}
+/* Buy section pops out toward the viewer on the card in front */
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transform-origin:50% 0; transition:transform .35s ease, box-shadow .35s ease;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset; border-radius:var(--radius-lg);}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:mcc-buy-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes mcc-buy-pop{
+  0%{transform:translateY(0) scale(1); box-shadow:0 0 0 rgba(15,40,34,0);}
+  100%{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset;}
+}
+@media (prefers-reduced-motion:reduce){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -2176,6 +2370,54 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-buy-quote:hover{color:var(--text);}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
+
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+   Without JavaScript the cards stay a normal grid. */
+#mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
+#mcc-app .mcc-size-carousel{position:relative;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
+  grid-area:1 / 1; width:min(420px, 78vw); --x:0%; --s:1;
+  transform:translateX(var(--x)) scale(var(--s)); opacity:.3; z-index:1;
+  transition:transform .45s cubic-bezier(.22,.8,.24,1), opacity .45s ease, box-shadow .3s ease;
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card:hover{transform:translateX(var(--x)) scale(var(--s));}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
+.mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
+#mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
+#mcc-app .mcc-carousel-nav[hidden]{display:none;}
+#mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
+#mcc-app .mcc-carousel-nav:active{transform:translateY(-50%) scale(.94);}
+#mcc-app .mcc-carousel-nav:focus-visible{outline:3px solid var(--brass); outline-offset:3px;}
+#mcc-app .mcc-carousel-prev{left:0;}
+#mcc-app .mcc-carousel-next{right:0;}
+@media (max-width:700px){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-30%; --s:.84;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:30%; --s:.84;}
+  #mcc-app .mcc-carousel-nav{width:44px; height:44px; top:auto; bottom:6px; transform:none;}
+  #mcc-app .mcc-carousel-nav:active{transform:scale(.94);}
+  #mcc-app .mcc-carousel-prev{left:calc(50% - 56px);}
+  #mcc-app .mcc-carousel-next{right:calc(50% - 56px);}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready{padding-bottom:64px;}
+}
+/* Buy section pops out toward the viewer on the card in front */
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transform-origin:50% 0; transition:transform .35s ease, box-shadow .35s ease;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset; border-radius:var(--radius-lg);}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:mcc-buy-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes mcc-buy-pop{
+  0%{transform:translateY(0) scale(1); box-shadow:0 0 0 rgba(15,40,34,0);}
+  100%{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset;}
+}
+@media (prefers-reduced-motion:reduce){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -2838,6 +3080,54 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-buy-quote:hover{color:var(--text);}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
+
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+   Without JavaScript the cards stay a normal grid. */
+#mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
+#mcc-app .mcc-size-carousel{position:relative;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
+  grid-area:1 / 1; width:min(420px, 78vw); --x:0%; --s:1;
+  transform:translateX(var(--x)) scale(var(--s)); opacity:.3; z-index:1;
+  transition:transform .45s cubic-bezier(.22,.8,.24,1), opacity .45s ease, box-shadow .3s ease;
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card:hover{transform:translateX(var(--x)) scale(var(--s));}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
+.mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
+#mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
+#mcc-app .mcc-carousel-nav[hidden]{display:none;}
+#mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
+#mcc-app .mcc-carousel-nav:active{transform:translateY(-50%) scale(.94);}
+#mcc-app .mcc-carousel-nav:focus-visible{outline:3px solid var(--brass); outline-offset:3px;}
+#mcc-app .mcc-carousel-prev{left:0;}
+#mcc-app .mcc-carousel-next{right:0;}
+@media (max-width:700px){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-30%; --s:.84;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:30%; --s:.84;}
+  #mcc-app .mcc-carousel-nav{width:44px; height:44px; top:auto; bottom:6px; transform:none;}
+  #mcc-app .mcc-carousel-nav:active{transform:scale(.94);}
+  #mcc-app .mcc-carousel-prev{left:calc(50% - 56px);}
+  #mcc-app .mcc-carousel-next{right:calc(50% - 56px);}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready{padding-bottom:64px;}
+}
+/* Buy section pops out toward the viewer on the card in front */
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transform-origin:50% 0; transition:transform .35s ease, box-shadow .35s ease;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset; border-radius:var(--radius-lg);}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:mcc-buy-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes mcc-buy-pop{
+  0%{transform:translateY(0) scale(1); box-shadow:0 0 0 rgba(15,40,34,0);}
+  100%{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset;}
+}
+@media (prefers-reduced-motion:reduce){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -3493,6 +3783,54 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-buy-quote:hover{color:var(--text);}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
+
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+   Without JavaScript the cards stay a normal grid. */
+#mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
+#mcc-app .mcc-size-carousel{position:relative;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
+  grid-area:1 / 1; width:min(420px, 78vw); --x:0%; --s:1;
+  transform:translateX(var(--x)) scale(var(--s)); opacity:.3; z-index:1;
+  transition:transform .45s cubic-bezier(.22,.8,.24,1), opacity .45s ease, box-shadow .3s ease;
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card:hover{transform:translateX(var(--x)) scale(var(--s));}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:64%; --s:.86; cursor:pointer;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
+.mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
+#mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
+#mcc-app .mcc-carousel-nav[hidden]{display:none;}
+#mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
+#mcc-app .mcc-carousel-nav:active{transform:translateY(-50%) scale(.94);}
+#mcc-app .mcc-carousel-nav:focus-visible{outline:3px solid var(--brass); outline-offset:3px;}
+#mcc-app .mcc-carousel-prev{left:0;}
+#mcc-app .mcc-carousel-next{right:0;}
+@media (max-width:700px){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-30%; --s:.84;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:30%; --s:.84;}
+  #mcc-app .mcc-carousel-nav{width:44px; height:44px; top:auto; bottom:6px; transform:none;}
+  #mcc-app .mcc-carousel-nav:active{transform:scale(.94);}
+  #mcc-app .mcc-carousel-prev{left:calc(50% - 56px);}
+  #mcc-app .mcc-carousel-next{right:calc(50% - 56px);}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready{padding-bottom:64px;}
+}
+/* Buy section pops out toward the viewer on the card in front */
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transform-origin:50% 0; transition:transform .35s ease, box-shadow .35s ease;}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset; border-radius:var(--radius-lg);}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:mcc-buy-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes mcc-buy-pop{
+  0%{transform:translateY(0) scale(1); box-shadow:0 0 0 rgba(15,40,34,0);}
+  100%{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset;}
+}
+@media (prefers-reduced-motion:reduce){
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
+  .mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
+}
+.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
