@@ -467,7 +467,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 
   // ---------- 3D view ----------
   const cam = { yaw: 0, pitch: 0 };
-  const tgt = { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0, kb: 0 };
+  let gclock = 0;                        // game time in ms
+  const tgt = { yaw: 0, pitch: 0, py: 0, pp: 0, vy: 0, want: 0, vp: 0, next: 0, kb: 0 };
   let orbs = [];            // flick targets
   let W = 0, H = 0, focal = 1, dirty = true;
 
@@ -552,12 +553,12 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   const onTarget = () => dummyHit() > 0;
   const visibleOrbs = () => orbs;
-  function drawDummy(B, hit) {
-    const m = dpm(), feet = tgt.pitch - EYE * m, seg = [];
+  function drawDummy(B, hit, ry, rp) {
+    const m = dpm(), feet = rp - EYE * m, seg = [];
     for (const p of PARTS) {
-      if (!projectAngles(B, tgt.yaw, feet + p.h0 * m)) return;
+      if (!projectAngles(B, ry, feet + p.h0 * m)) return;
       const x0 = P.x, y0 = P.y;
-      if (!projectAngles(B, tgt.yaw, feet + p.h1 * m)) return;
+      if (!projectAngles(B, ry, feet + p.h1 * m)) return;
       seg.push([x0, y0, P.x, P.y, Math.max(1, 2 * focal * Math.tan(p.r * m * D2R) / P.z)]);
     }
     ctx.lineCap = 'round';
@@ -569,7 +570,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         ctx.beginPath(); ctx.moveTo(x0 + off, y0); ctx.lineTo(x1 + off, y1); ctx.stroke();
       }
     }
-    if (projectAngles(B, tgt.yaw, feet + HEAD.h * m)) {
+    if (projectAngles(B, ry, feet + HEAD.h * m)) {
       const hr = focal * Math.tan(HEAD.r * m * D2R) / P.z;
       ctx.fillStyle = hit === 2 ? '#c9ffe9' : '#f0b340';
       ctx.beginPath(); ctx.arc(P.x, P.y, Math.max(1, hr), 0, Math.PI * 2); ctx.fill();
@@ -637,14 +638,20 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     ctx.lineWidth = Math.max(1, s);
     drawGrid(B);
     let anyLit = 0;
-    if (phase !== 'calib' && d.kind !== 'flick') { anyLit = dummyHit(); drawDummy(B, anyLit); }
+    if (phase !== 'calib' && d.kind !== 'flick') {
+      // draw the dummy between its last two 120 Hz positions so motion stays even at any frame rate
+      const a = (phase === 'run' || phase === 'countdown') ? Math.min(1, simAcc / STEP) : 1;
+      anyLit = dummyHit();
+      drawDummy(B, anyLit, tgt.py + (tgt.yaw - tgt.py) * a, tgt.pp + (tgt.pitch - tgt.pp) * a);
+    }
+    if (d.kind === 'flick') updateOrbs();
     if (phase !== 'calib' && d.kind === 'flick') for (const o of visibleOrbs()) {
       const lit = angTo(o.yaw, o.pitch) <= T.r;
       anyLit = anyLit || (lit ? 1 : 0);
       drawOrb(B, o, T.r, lit);
       if (T.life && phase === 'run') {
         if (projectAngles(B, o.yaw, o.pitch)) {
-          const rad = focal * Math.tan(T.r * D2R) / P.z, left = Math.max(0, 1 - (now - o.born) / T.life);
+          const rad = focal * Math.tan(T.r * D2R) / P.z, left = Math.min(1, Math.max(0, 1 - (now - o.born) / T.life));
           ctx.strokeStyle = left < .3 ? '#ef6f5e' : '#f0b340';
           ctx.lineWidth = Math.max(1.5, 2 * s);
           ctx.beginPath(); ctx.arc(P.x, P.y, rad + 5 * s, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); ctx.stroke();
@@ -735,7 +742,25 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       if (tgt.pitch <= 0) { tgt.pitch = 0; tgt.vp = 0; }
     }
   }
-  function spawnOrb() {
+  // New targets glide from where the last one was (or from your crosshair) to their spot instead of
+  // appearing there. Their position is a pure function of time, so it's identical for drawing and hit tests.
+  function spawnOrb(from) {
+    const o = pickSpot(), now = performance.now();
+    const fy = from ? from.yaw : cam.yaw, fp = from ? from.pitch : cam.pitch;
+    const speed = 70 + 10 * (playTiers[drillId] - 1);                         // average deg/s, faster at higher tiers
+    const dur = Math.min(800, Math.max(200, Math.hypot(o.yaw - fy, o.pitch - fp) / speed * 1000));
+    // the hit timer (Flick frenzy) starts once it has arrived
+    return { yaw: fy, pitch: fp, fy, fp, ty: o.yaw, tp: o.pitch, t0: gclock, dur, born: now + dur };
+  }
+  // Glides run on the game clock, which advances at most 50 ms per frame, so a stalled frame can't skip them ahead.
+  function updateOrbs() {
+    for (const o of orbs) {
+      const u = Math.min(1, Math.max(0, (gclock - o.t0) / o.dur)), e = u * u * (3 - 2 * u);   // starts and stops gently
+      o.yaw = o.fy + (o.ty - o.fy) * e;
+      o.pitch = o.fp + (o.tp - o.fp) * e;
+    }
+  }
+  function pickSpot() {
     const T = tier();
     // keep new orbs at least a few radii from the crosshair so each one is a real flick,
     // and always inside the visible screen so you never have to search for one
@@ -743,7 +768,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const onScreen = o => projectAngles(basis(), o.yaw, o.pitch) && P.x > W * .06 && P.x < W * .94 && P.y > H * .08 && P.y < H * .92;
     for (let i = 0; i < 80; i++) {
       const o = { yaw: (Math.random() * 2 - 1) * T.spread, pitch: T.lo + Math.random() * (T.hi - T.lo), born: performance.now() };
-      if (angTo(o.yaw, o.pitch) > minDist && onScreen(o) && orbs.every(p => Math.hypot(p.yaw - o.yaw, p.pitch - o.pitch) > T.r * 3)) return o;
+      if (angTo(o.yaw, o.pitch) > minDist && onScreen(o) && orbs.every(p => Math.hypot((p.ty ?? p.yaw) - o.yaw, (p.tp ?? p.pitch) - o.pitch) > T.r * 3)) return o;
     }
     // you've turned far from the arena: place the orb on screen, back towards the centre
     const back = cam.yaw > 0 ? -1 : 1;
@@ -875,8 +900,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const k = drill().kind, T = tier();
     if (k === 'punch' && !chargeStart) chargeStart = performance.now();
     if (k === 'flick') {
+      updateOrbs();
       const i = orbs.findIndex(o => angTo(o.yaw, o.pitch) <= T.r);
-      if (i >= 0) { hits++; orbs.splice(i, 1); orbs.push(spawnOrb()); setFlash('#6fe8b8'); }
+      if (i >= 0) { hits++; const [old] = orbs.splice(i, 1); orbs.push(spawnOrb(old)); setFlash('#6fe8b8'); }
       else { misses++; setFlash('#ef6f5e'); }
     }
   });
@@ -920,6 +946,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   let simAcc = 0, headOn = 0;
   function simulate(dt, t) {
     const k = drill().kind;
+    tgt.py = tgt.yaw; tgt.pp = tgt.pitch;
     if (k !== 'flick') stepTarget(dt, t);
     if (phase !== 'run') return;          // countdown: the dummy moves, nothing is scored yet
     if (k === 'track') {
@@ -929,19 +956,20 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       if (h === 2) headOn += dt;
     }
     const life = tier().life;
-    if (life) orbs.forEach((o, i) => { if (t - o.born > life) { misses++; setFlash('#ef6f5e'); orbs[i] = spawnOrb(); } });
+    if (life) orbs.forEach((o, i) => { if (t - o.born > life) { misses++; setFlash('#ef6f5e'); orbs[i] = spawnOrb(o); } });
   }
   let last = performance.now(), fpsFrames = 0, fpsStart = last, worst = 0;
   const fpsEl = $('fps');
   function frame(now) {
     const dt = (now - last) / 1000;
     worst = Math.max(worst, now - last);
+    gclock += Math.min(50, now - last);
     last = now;
-    if (phase === 'countdown' && now >= runStart) { phase = 'run'; orbs.forEach(o => { o.born = now; }); }
+    if (phase === 'countdown' && now >= runStart) { phase = 'run'; orbs.forEach(o => { o.born = Math.max(o.born, now); }); }
     if (phase === 'run' || phase === 'countdown') {
       // The game updates at a fixed 120 Hz whatever the monitor's refresh rate. This frame's mouse movement
       // is spread across the sub-steps, so hits are judged where the crosshair actually was at each instant.
-      simAcc += Math.min(0.1, dt);
+      simAcc += Math.min(0.05, dt);   // after a stalled frame, catch up at most 50 ms so nothing jumps
       const steps = Math.floor(simAcc / STEP);
       simAcc -= steps * STEP;
       if (!steps) applyMouse();
