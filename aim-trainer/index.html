@@ -1,0 +1,559 @@
+<title>Tracking Ladder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 16:9 range screen on top, a three-column control strip below (progress, ladder, settings and history). */
+:root {
+  --bg: #0c1014;
+  --panel: #141a20;
+  --line: #25303a;
+  --fg: #e4e9ed;
+  --muted: #8d99a4;
+  --target: #f0b340;
+  --hit: #6fe8b8;
+  --miss: #ef6f5e;
+  --font-display: "Saira Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--fg); }
+body { font: 15px/1.5 var(--font-body); padding-inline: 16px; padding-block: 20px 40px; }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
+h1 { font: 700 30px/1 var(--font-display); letter-spacing: .02em; margin: 0; text-transform: uppercase; }
+h1 span { color: var(--target); }
+h2 { font: 700 13px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+.calib { font: 13px/1.4 var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
+.calib b { color: var(--fg); font-weight: 500; }
+
+.stage { position: relative; background: #000; border: 1px solid var(--line); }
+.screen { position: relative; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; margin: 0 auto; }
+.stage:fullscreen { display: grid; place-items: center; border: 0; }
+.stage:fullscreen .screen { width: min(100vw, 177.78vh); }
+canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+.overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(8, 11, 14, .72); text-align: center; cursor: pointer; }
+.overlay-card { max-width: 520px; display: grid; gap: 10px; justify-items: center; }
+.ov-eyebrow { font: 500 12px/1 var(--font-data); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.ov-title { font: 700 clamp(28px, 5vw, 52px)/1 var(--font-display); text-transform: uppercase; letter-spacing: .02em; text-wrap: balance; }
+.ov-title.pass { color: var(--hit); }
+.ov-title.fail { color: var(--fg); }
+.ov-body { color: var(--muted); max-width: 46ch; text-wrap: pretty; }
+.ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
+.stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
+.stage:fullscreen .stage-bar { display: none; }
+
+.grid { display: grid; gap: 18px; grid-template-columns: 1fr 1.1fr 1fr; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--line); padding: 16px; min-width: 0; }
+
+.score { display: flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+.score .big { font: 700 64px/1 var(--font-display); }
+.score .of { font: 500 18px/1 var(--font-data); color: var(--muted); }
+.meter { height: 8px; background: var(--line); margin: 12px 0 6px; position: relative; }
+.meter i { position: absolute; inset: 0 auto 0 0; background: var(--target); }
+.ticks { display: flex; justify-content: space-between; font: 11px/1 var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin-top: 16px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.routine { margin: 16px 0 0; padding: 12px 0 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.routine b { color: var(--fg); font-weight: 500; }
+
+.ladder { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.ladder button { width: 100%; display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; min-height: 44px; padding: 6px 10px; background: transparent; border: 1px solid transparent; color: var(--muted); font: 14px/1.2 var(--font-body); text-align: left; cursor: pointer; }
+.ladder button:disabled { cursor: not-allowed; opacity: .45; }
+.ladder button:not(:disabled):hover { border-color: var(--line); color: var(--fg); }
+.ladder button[aria-pressed="true"] { border-color: var(--target); color: var(--fg); }
+.ladder .n { font: 700 20px/1 var(--font-display); color: var(--fg); }
+.ladder .cleared .n { color: var(--hit); }
+.ladder .spec { font: 12px/1.3 var(--font-data); font-variant-numeric: tabular-nums; }
+.ladder .pct { font: 12px/1 var(--font-data); text-align: right; font-variant-numeric: tabular-nums; }
+.ladder .current .pct { color: var(--target); }
+.ladder .final .pct { color: var(--hit); }
+
+.fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+label { display: grid; gap: 4px; font: 12px/1 var(--font-data); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+input { width: 100%; min-height: 40px; background: var(--bg); border: 1px solid var(--line); color: var(--fg); font: 15px var(--font-data); padding: 6px 8px; }
+input:focus-visible, button:focus-visible { outline: 2px solid var(--target); outline-offset: 2px; }
+.note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.btn { min-height: 40px; padding: 8px 12px; background: transparent; border: 1px solid var(--line); color: var(--fg); font: 500 12px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.btn:hover { border-color: var(--muted); }
+.btn.danger { color: var(--miss); }
+#spark { width: 100%; height: 120px; display: block; margin-top: 4px; }
+.history-head { display: flex; justify-content: space-between; align-items: baseline; margin-top: 20px; }
+.legend { font: 11px/1 var(--font-data); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Tracking <span>Ladder</span></h1>
+    <div class="calib" id="calib"></div>
+  </header>
+
+  <section class="stage" id="stage">
+    <div class="screen">
+      <canvas id="cv" aria-label="Aim trainer. Click to lock the mouse and start a 30 second run."></canvas>
+      <div class="overlay" id="overlay">
+        <div class="overlay-card">
+          <div class="ov-eyebrow" id="ovEyebrow">Tier 1 · 30 s run</div>
+          <div class="ov-title" id="ovTitle">Click to start</div>
+          <div class="ov-body" id="ovBody">Keep the crosshair on the orb while it strafes. The mouse locks to the game; press Esc to leave.</div>
+          <div class="ov-cta" id="ovCta">Click to start</div>
+        </div>
+      </div>
+    </div>
+    <div class="stage-bar">
+      <span id="inputMode">Mouse input: not locked yet</span>
+      <button class="btn" id="fsBtn" type="button">Fullscreen</button>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="h-progress">
+      <h2 id="h-progress">Overall score</h2>
+      <div class="score"><span class="big" id="score">0.0</span><span class="of">/ 60</span></div>
+      <div class="meter"><i id="meter"></i></div>
+      <div class="ticks"><span>0</span><span>15</span><span>30</span><span>45</span><span>60</span></div>
+      <dl class="kv">
+        <dt>Current tier</dt><dd id="kvTier">1</dd>
+        <dt>Next benchmark</dt><dd id="kvNext">5.0</dd>
+        <dt>Accuracy needed</dt><dd id="kvBench">65%</dd>
+        <dt>Best this tier</dt><dd id="kvBest">–</dd>
+        <dt>Estimated percentile</dt><dd id="kvPct">–</dd>
+      </dl>
+      <p class="routine"><b>Daily routine:</b> 2 warm-up runs one tier below your current one, then up to 8 runs at your current tier. Stop after 10 runs; tracking improves with rest between sessions, not with grinding. A run at your current tier that meets the benchmark promotes you on the spot.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="h-ladder">
+      <h2 id="h-ladder">Benchmarks</h2>
+      <ol class="ladder" id="ladder"></ol>
+    </section>
+
+    <section class="panel" aria-labelledby="h-settings">
+      <h2 id="h-settings">Your settings</h2>
+      <div class="fields">
+        <label for="dpi">DPI<input id="dpi" type="number" min="100" max="32000" step="50"></label>
+        <label for="sens">OW sens<input id="sens" type="number" min="0.01" max="100" step="0.01"></label>
+        <label for="fov">FOV<input id="fov" type="number" min="60" max="103" step="1"></label>
+      </div>
+      <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely.</p>
+      <div class="history-head"><h2 style="margin:0">History</h2><span class="legend">accuracy ÷ benchmark, last 40 runs</span></div>
+      <canvas id="spark" aria-label="Chart of recent runs against their benchmarks"></canvas>
+      <div class="btns">
+        <button class="btn danger" id="resetBtn" type="button">Reset progress</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const OW_YAW = 0.0066;       // degrees per mouse count at sens 1
+  const RUN_MS = 30000;
+  const COUNTDOWN_MS = 2000;
+  const POINTS_PER_TIER = 5;
+  // Each tier: orb angular radius (deg), top strafe speed (deg/s), direction-change window (ms),
+  // acceleration (deg/s^2), jump chance per change, accuracy needed, estimated percentile once cleared.
+  const TIERS = [
+    { r: 2.6,  v: 22, c: [900, 1500], a: 120, j: 0,    bench: 65, pct: 10 },
+    { r: 2.4,  v: 27, c: [800, 1300], a: 160, j: 0,    bench: 65, pct: 15 },
+    { r: 2.2,  v: 32, c: [700, 1200], a: 200, j: 0,    bench: 65, pct: 20 },
+    { r: 2.0,  v: 37, c: [600, 1050], a: 260, j: 0,    bench: 65, pct: 25 },
+    { r: 1.9,  v: 41, c: [550,  950], a: 320, j: 0.10, bench: 62, pct: 30 },
+    { r: 1.75, v: 45, c: [500,  880], a: 380, j: 0.15, bench: 62, pct: 36 },
+    { r: 1.6,  v: 49, c: [450,  800], a: 450, j: 0.20, bench: 62, pct: 42 },
+    { r: 1.5,  v: 53, c: [400,  720], a: 520, j: 0.25, bench: 60, pct: 48 },
+    { r: 1.4,  v: 57, c: [350,  650], a: 600, j: 0.30, bench: 58, pct: 54 },
+    { r: 1.3,  v: 61, c: [320,  600], a: 700, j: 0.35, bench: 57, pct: 59 },
+    { r: 1.2,  v: 65, c: [280,  540], a: 800, j: 0.40, bench: 56, pct: 64 },
+    { r: 1.1,  v: 70, c: [250,  480], a: 900, j: 0.45, bench: 55, pct: 70 },
+  ];
+  const MAX_SCORE = TIERS.length * POINTS_PER_TIER;
+
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('tl.' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
+  };
+  let settings = store.get('settings', { dpi: 1600, sens: 2.55, fov: 103 });
+  let prog = store.get('prog', { tier: 1, best: 0, goal: false });
+  let hist = store.get('hist', []);
+  let playTier = prog.tier;
+
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  const stage = $('stage'), overlay = $('overlay');
+  const D2R = Math.PI / 180;
+
+  // ---------- settings ----------
+  const degPerCount = () => OW_YAW * settings.sens;
+  function renderCalib() {
+    const cm360 = 360 / degPerCount() / settings.dpi * 2.54;
+    $('calib').innerHTML = `<b>${settings.dpi}</b> DPI · sens <b>${settings.sens}</b> · FOV <b>${settings.fov}</b> · <b>${cm360.toFixed(1)}</b> cm/360`;
+  }
+  for (const k of ['dpi', 'sens', 'fov']) {
+    const el = $(k);
+    el.value = settings[k];
+    el.addEventListener('change', () => {
+      const v = parseFloat(el.value);
+      if (!isFinite(v) || v <= 0) { el.value = settings[k]; return; }
+      settings[k] = k === 'fov' ? Math.min(103, Math.max(60, v)) : v;
+      el.value = settings[k];
+      store.set('settings', settings);
+      renderCalib();
+    });
+  }
+
+  // ---------- progress ----------
+  const overall = () => prog.goal ? MAX_SCORE
+    : (prog.tier - 1) * POINTS_PER_TIER + POINTS_PER_TIER * Math.min(1, prog.best / TIERS[prog.tier - 1].bench);
+
+  function renderProgress() {
+    const s = overall();
+    $('score').textContent = s.toFixed(1);
+    $('meter').style.width = (s / MAX_SCORE * 100) + '%';
+    const t = TIERS[prog.tier - 1];
+    $('kvTier').textContent = prog.goal ? '12 (cleared)' : prog.tier;
+    $('kvNext').textContent = prog.goal ? 'Goal reached' : (prog.tier * POINTS_PER_TIER).toFixed(1);
+    $('kvBench').textContent = t.bench + '%';
+    $('kvBest').textContent = prog.best ? prog.best.toFixed(1) + '%' : '–';
+    const cleared = prog.goal ? TIERS.length : prog.tier - 1;
+    $('kvPct').textContent = cleared ? '~' + TIERS[cleared - 1].pct + 'th' : 'below 10th';
+
+    const ol = $('ladder');
+    ol.innerHTML = '';
+    TIERS.forEach((tt, i) => {
+      const n = i + 1;
+      const li = document.createElement('li');
+      const isCleared = n < prog.tier || prog.goal;
+      li.className = [isCleared ? 'cleared' : '', n === prog.tier && !prog.goal ? 'current' : '', n === TIERS.length ? 'final' : ''].join(' ');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.disabled = n > prog.tier;
+      b.setAttribute('aria-pressed', String(n === playTier));
+      b.innerHTML = `<span class="n">${n}</span><span><span class="spec">${tt.bench}% · ${tt.v}°/s · r ${tt.r}°${tt.j ? ' · jumps' : ''}</span><br><span class="spec" style="color:var(--muted)">score ${(n * POINTS_PER_TIER)} unlocks ${n < TIERS.length ? 'tier ' + (n + 1) : 'goal'}</span></span><span class="pct">${isCleared ? 'cleared' : '~' + tt.pct + 'th'}</span>`;
+      b.addEventListener('click', () => { playTier = n; renderProgress(); showIdle(); });
+      li.appendChild(b);
+      ol.appendChild(li);
+    });
+  }
+
+  $('resetBtn').addEventListener('click', e => {
+    const b = e.currentTarget;
+    if (b.dataset.armed) {
+      prog = { tier: 1, best: 0, goal: false }; hist = []; playTier = 1;
+      store.set('prog', prog); store.set('hist', hist);
+      b.textContent = 'Reset progress'; delete b.dataset.armed;
+      renderProgress(); renderSpark(); showIdle();
+    } else {
+      b.dataset.armed = '1'; b.textContent = 'Click again to erase';
+      setTimeout(() => { if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset progress'; } }, 3000);
+    }
+  });
+
+  // ---------- history chart ----------
+  const spark = $('spark'), sctx = spark.getContext('2d');
+  function renderSpark() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = spark.clientWidth, h = spark.clientHeight;
+    spark.width = w * dpr; spark.height = h * dpr;
+    sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    sctx.clearRect(0, 0, w, h);
+    const css = getComputedStyle(document.documentElement);
+    const col = n => css.getPropertyValue(n).trim();
+    const padL = 34, padR = 6, padT = 8, padB = 8;
+    const y = v => padT + (1 - Math.min(v, 1.4) / 1.4) * (h - padT - padB);
+    sctx.font = '10px "IBM Plex Mono", monospace';
+    sctx.fillStyle = col('--muted');
+    sctx.textAlign = 'right'; sctx.textBaseline = 'middle';
+    for (const v of [0, 0.5, 1, 1.4]) {
+      sctx.strokeStyle = v === 1 ? col('--target') : col('--line');
+      sctx.setLineDash(v === 1 ? [4, 3] : []);
+      sctx.beginPath(); sctx.moveTo(padL, y(v)); sctx.lineTo(w - padR, y(v)); sctx.stroke();
+      sctx.fillText(Math.round(v * 100) + '%', padL - 6, y(v));
+    }
+    sctx.setLineDash([]);
+    const runs = hist.slice(-40);
+    if (!runs.length) {
+      sctx.textAlign = 'center'; sctx.fillStyle = col('--muted');
+      sctx.fillText('Your runs will appear here', (w + padL) / 2, h / 2 + 18);
+      return;
+    }
+    const x = i => padL + 6 + (runs.length === 1 ? 0 : i / (runs.length - 1)) * (w - padL - padR - 12);
+    sctx.strokeStyle = col('--muted'); sctx.lineWidth = 1.5;
+    sctx.beginPath();
+    runs.forEach((r, i) => { const v = r.acc / TIERS[r.tier - 1].bench; i ? sctx.lineTo(x(i), y(v)) : sctx.moveTo(x(i), y(v)); });
+    sctx.stroke();
+    runs.forEach((r, i) => {
+      const v = r.acc / TIERS[r.tier - 1].bench;
+      sctx.fillStyle = v >= 1 ? col('--hit') : col('--fg');
+      sctx.beginPath(); sctx.arc(x(i), y(v), i === runs.length - 1 ? 4 : 2.5, 0, Math.PI * 2); sctx.fill();
+    });
+  }
+
+  // ---------- 3D view ----------
+  const cam = { yaw: 0, pitch: 0 };
+  const tgt = { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 };
+  let W = 0, H = 0, focal = 1;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    W = cv.width = Math.round(cv.clientWidth * dpr);
+    H = cv.height = Math.round(cv.clientHeight * dpr);
+    // Overwatch's FOV is horizontal at 16:9; the screen is always 16:9.
+    focal = (W / 2) / Math.tan(settings.fov / 2 * D2R);
+  }
+  new ResizeObserver(() => { resize(); renderSpark(); }).observe(cv);
+
+  function dir(yaw, pitch) {
+    const y = yaw * D2R, p = pitch * D2R;
+    return [Math.cos(p) * Math.sin(y), Math.sin(p), Math.cos(p) * Math.cos(y)];
+  }
+  function basis() {
+    const y = cam.yaw * D2R, p = cam.pitch * D2R;
+    return {
+      f: dir(cam.yaw, cam.pitch),
+      r: [Math.cos(y), 0, -Math.sin(y)],
+      u: [-Math.sin(p) * Math.sin(y), Math.cos(p), -Math.sin(p) * Math.cos(y)],
+    };
+  }
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  function project(B, d) {
+    const z = dot(d, B.f);
+    if (z <= 0.05) return null;
+    return { x: W / 2 + focal * dot(d, B.r) / z, y: H / 2 - focal * dot(d, B.u) / z, z };
+  }
+  const onTarget = () => Math.acos(Math.min(1, dot(dir(cam.yaw, cam.pitch), dir(tgt.yaw, tgt.pitch)))) / D2R <= TIERS[playTier - 1].r;
+
+  function polyline(B, pts) {
+    ctx.beginPath();
+    let pen = false;
+    for (const [yw, pt] of pts) {
+      const p = project(B, dir(yw, pt));
+      if (!p) { pen = false; continue; }
+      pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+      pen = true;
+    }
+    ctx.stroke();
+  }
+
+  function draw(hit) {
+    const B = basis();
+    const s = W / 1280;
+    ctx.fillStyle = '#0b0f13';
+    ctx.fillRect(0, 0, W, H);
+    ctx.lineWidth = Math.max(1, s);
+    for (let yw = -120; yw <= 120; yw += 10) {
+      ctx.strokeStyle = yw % 30 === 0 ? '#25303a' : '#171e25';
+      const pts = []; for (let pt = -60; pt <= 60; pt += 4) pts.push([yw, pt]); polyline(B, pts);
+    }
+    for (let pt = -60; pt <= 60; pt += 10) {
+      ctx.strokeStyle = pt === 0 ? '#3a4855' : '#171e25';
+      const pts = []; for (let yw = -120; yw <= 120; yw += 3) pts.push([yw, pt]); polyline(B, pts);
+    }
+    // orb
+    const T = TIERS[playTier - 1];
+    const c = project(B, dir(tgt.yaw, tgt.pitch));
+    if (c) {
+      const rad = focal * Math.tan(T.r * D2R) / c.z;
+      const g = ctx.createRadialGradient(c.x - rad * .35, c.y - rad * .35, rad * .1, c.x, c.y, rad);
+      g.addColorStop(0, hit ? '#c9ffe9' : '#ffe2a3');
+      g.addColorStop(1, hit ? '#2fbf8a' : '#c7861c');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(c.x, c.y, rad, 0, Math.PI * 2); ctx.fill();
+    }
+    // crosshair
+    const cx = W / 2, cy = H / 2, k = Math.max(1, s * 1.5);
+    ctx.strokeStyle = hit ? '#6fe8b8' : '#ffffff';
+    ctx.lineWidth = 2 * k;
+    ctx.beginPath();
+    ctx.moveTo(cx - 12 * k, cy); ctx.lineTo(cx - 4 * k, cy);
+    ctx.moveTo(cx + 4 * k, cy); ctx.lineTo(cx + 12 * k, cy);
+    ctx.moveTo(cx, cy - 12 * k); ctx.lineTo(cx, cy - 4 * k);
+    ctx.moveTo(cx, cy + 4 * k); ctx.lineTo(cx, cy + 12 * k);
+    ctx.stroke();
+    // HUD
+    if (phase === 'run' || phase === 'countdown') {
+      const now = performance.now();
+      ctx.font = `500 ${Math.round(16 * s)}px "IBM Plex Mono", monospace`;
+      ctx.textBaseline = 'top';
+      if (phase === 'countdown') {
+        const left = Math.ceil((runStart - now) / 1000);
+        ctx.textAlign = 'center'; ctx.fillStyle = '#e4e9ed';
+        ctx.font = `700 ${Math.round(72 * s)}px "Saira Condensed", sans-serif`;
+        ctx.fillText(String(Math.max(1, left)), cx, H * 0.18);
+      } else {
+        const frac = Math.min(1, (now - runStart) / RUN_MS);
+        ctx.fillStyle = '#25303a'; ctx.fillRect(0, 0, W, 6 * s);
+        ctx.fillStyle = '#f0b340'; ctx.fillRect(0, 0, W * (1 - frac), 6 * s);
+        const acc = timeTotal ? timeOn / timeTotal * 100 : 0;
+        ctx.textAlign = 'left'; ctx.fillStyle = acc >= T.bench ? '#6fe8b8' : '#e4e9ed';
+        ctx.fillText(`${acc.toFixed(1)}%  ·  need ${T.bench}%`, 18 * s, 18 * s);
+        ctx.textAlign = 'right'; ctx.fillStyle = '#8d99a4';
+        ctx.fillText(`${((RUN_MS - (now - runStart)) / 1000).toFixed(1)} s`, W - 18 * s, 18 * s);
+      }
+    }
+  }
+
+  // ---------- target movement ----------
+  const BOUND_YAW = 35;
+  function scheduleChange(now) {
+    const T = TIERS[playTier - 1];
+    tgt.next = now + T.c[0] + Math.random() * (T.c[1] - T.c[0]);
+    // bias away from the arena edges so strafes stay in view
+    const bias = -tgt.yaw / BOUND_YAW * 0.45;
+    let sign = Math.random() < 0.5 + bias ? 1 : -1;
+    let speed = T.v * (0.55 + 0.45 * Math.random());
+    if (playTier >= 3 && Math.random() < 0.1) speed = 0;     // brief stop
+    tgt.want = sign * speed;
+    if (tgt.pitch === 0 && Math.random() < T.j) tgt.vp = 26 + Math.random() * 8;  // jump
+  }
+  function stepTarget(dt, now) {
+    const T = TIERS[playTier - 1];
+    if (now >= tgt.next) scheduleChange(now);
+    if (tgt.yaw > BOUND_YAW && tgt.want > 0) tgt.want = -tgt.want;
+    if (tgt.yaw < -BOUND_YAW && tgt.want < 0) tgt.want = -tgt.want;
+    const dv = tgt.want - tgt.vy, maxDv = T.a * dt;
+    tgt.vy += Math.max(-maxDv, Math.min(maxDv, dv));
+    tgt.yaw += tgt.vy * dt;
+    if (tgt.vp || tgt.pitch > 0) {
+      tgt.vp -= 60 * dt;
+      tgt.pitch += tgt.vp * dt;
+      if (tgt.pitch <= 0) { tgt.pitch = 0; tgt.vp = 0; }
+    }
+  }
+
+  // ---------- run flow ----------
+  let phase = 'idle', runStart = 0, timeOn = 0, timeTotal = 0;
+  const show = (eyebrow, title, body, cta, cls = '') => {
+    $('ovEyebrow').textContent = eyebrow;
+    const t = $('ovTitle'); t.textContent = title; t.className = 'ov-title ' + cls;
+    $('ovBody').textContent = body;
+    $('ovCta').textContent = cta;
+    overlay.hidden = false;
+  };
+  function showIdle(msg) {
+    const T = TIERS[playTier - 1];
+    const practice = playTier < prog.tier;
+    show(`Tier ${playTier} · 30 s run${practice ? ' · warm-up' : ''}`,
+      msg || 'Click to start',
+      practice
+        ? `Warm-up tier: runs here are logged but only your current tier (${prog.tier}) can promote you.`
+        : `Keep the crosshair on the orb for ${T.bench}% of the run to clear this tier. The mouse locks to the game; press Esc to leave.`,
+      'Click to start');
+  }
+  function resetScene() {
+    cam.yaw = 0; cam.pitch = 0;
+    Object.assign(tgt, { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 });
+  }
+  function startRun() {
+    resetScene();
+    timeOn = 0; timeTotal = 0;
+    phase = 'countdown';
+    runStart = performance.now() + COUNTDOWN_MS;
+    overlay.hidden = true;
+  }
+  function finishRun() {
+    phase = 'result';
+    const acc = timeTotal ? timeOn / timeTotal * 100 : 0;
+    const T = TIERS[playTier - 1];
+    hist.push({ ts: Date.now(), tier: playTier, acc: +acc.toFixed(2) });
+    if (hist.length > 500) hist = hist.slice(-500);
+    store.set('hist', hist);
+    const counts = playTier === prog.tier && !prog.goal;
+    const passed = acc >= T.bench;
+    let eyebrow = `Tier ${playTier} · needed ${T.bench}%`, title, body, cls = passed ? 'pass' : 'fail';
+    if (counts) {
+      prog.best = Math.max(prog.best, acc);
+      if (passed) {
+        if (prog.tier < TIERS.length) {
+          prog.tier++; prog.best = 0; playTier = prog.tier;
+          const N = TIERS[prog.tier - 1];
+          title = `${acc.toFixed(1)}% · Tier ${prog.tier} unlocked`;
+          body = `Score ${overall().toFixed(1)}. Next run is harder: ${N.v}°/s strafes, ${N.r}° orb${N.j ? ', jumps' : ''}. Benchmark ${N.bench}%.`;
+        } else {
+          prog.goal = true;
+          title = `${acc.toFixed(1)}% · Goal reached`;
+          body = 'You cleared the final tier, about the 70th percentile for reactive tracking. Keep one or two runs a day here to hold it.';
+        }
+      } else {
+        title = `${acc.toFixed(1)}%`;
+        body = `${(T.bench - acc).toFixed(1)} points short. Score ${overall().toFixed(1)}; ${(prog.tier * POINTS_PER_TIER).toFixed(1)} unlocks tier ${prog.tier + 1 <= TIERS.length ? prog.tier + 1 : 'goal'}.`;
+      }
+      store.set('prog', prog);
+    } else {
+      title = `${acc.toFixed(1)}%`;
+      body = prog.goal && playTier === TIERS.length ? 'Maintenance run at the final tier.' : `Warm-up logged. Switch to tier ${prog.tier} when you're ready to go for the benchmark.`;
+    }
+    renderProgress(); renderSpark();
+    show(eyebrow, title, body, 'Click for next run', cls);
+  }
+
+  // ---------- input ----------
+  let rawInput = null;
+  async function lock() {
+    try {
+      await cv.requestPointerLock({ unadjustedMovement: true });
+      rawInput = true;
+    } catch {
+      try { await cv.requestPointerLock(); rawInput = false; } catch { rawInput = null; }
+    }
+    $('inputMode').textContent = rawInput === true ? 'Mouse input: raw (no OS acceleration)'
+      : rawInput === false ? 'Mouse input: OS-adjusted, turn off pointer acceleration'
+      : 'Mouse input: lock refused, use a desktop browser';
+  }
+  // While locked, clicks land on the canvas, not the overlay.
+  const onClick = () => {
+    if (document.pointerLockElement !== cv) lock();
+    else if (phase === 'idle' || phase === 'result') startRun();
+  };
+  overlay.addEventListener('click', onClick);
+  cv.addEventListener('click', onClick);
+  document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement === cv) {
+      if (phase !== 'run' && phase !== 'countdown') startRun();
+    } else if (phase === 'run' || phase === 'countdown') {
+      phase = 'idle';
+      showIdle('Run cancelled');
+    }
+  });
+  document.addEventListener('mousemove', e => {
+    if (document.pointerLockElement !== cv) return;
+    const k = degPerCount();
+    cam.yaw += e.movementX * k;
+    cam.pitch = Math.max(-89, Math.min(89, cam.pitch - e.movementY * k));
+  });
+  $('fsBtn').addEventListener('click', () => {
+    (document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen?.())?.catch?.(() => {});
+  });
+
+  // ---------- loop ----------
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    let hit = false;
+    if (phase === 'countdown' && now >= runStart) { phase = 'run'; scheduleChange(now); }
+    if (phase === 'run') {
+      stepTarget(dt, now);
+      hit = onTarget();
+      timeTotal += dt; if (hit) timeOn += dt;
+      if (now - runStart >= RUN_MS) finishRun();
+    } else if (phase === 'countdown') {
+      hit = onTarget();
+    }
+    draw(hit);
+    requestAnimationFrame(frame);
+  }
+
+  renderCalib();
+  renderProgress();
+  resize();
+  renderSpark();
+  showIdle();
+  requestAnimationFrame(frame);
+})();
+</script>
