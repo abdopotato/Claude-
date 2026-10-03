@@ -30,7 +30,8 @@ This manual explains what was changed, how to do the same things yourself in Sho
 
 | Date | Change | Where it lives |
 | --- | --- | --- |
-| Oct 3 | Hall-size slider (arrows, motion blur, pop-out buy panel) built into Site update v5 (carousel), ready for you to publish | Online Store → Themes |
+| Oct 3 | Hall-size slider fixed (v5 showed the cards side by side) in Site update v6, ready for you to publish | Online Store → Themes |
+| Oct 3 | You published Site update v5 (carousel) | Online Store → Themes |
 | Oct 3 | You published Site update v4 (buy panels): Buy now panels are live | Online Store → Themes |
 | Oct 1 | Hall-size cards got a Buy now panel (preview) | Repo: theme/sections/mosque-home.liquid |
 | Oct 1 | Store homepage given a Google title and description | Online Store → Preferences |
@@ -79,8 +80,9 @@ flowchart LR
 
 | Theme | Role | Keep? |
 | --- | --- | --- |
-| Site update v5 (carousel) | Unpublished | Publish this to put the hall-size slider live |
-| Site update v4 (buy panels) | Live | Yes, this is your site (your fallback after v5 goes live) |
+| Site update v6 | Unpublished | Publish this: the working hall-size slider |
+| Site update v5 (carousel) | Live | Replace with v6 |
+| Site update v4 (buy panels) | Unpublished | Yes, your fallback |
 | Site update v3 (detail pass) | Unpublished | Yes, older fallback |
 | Site update v2 | Unpublished | Yes, your one-click fallback |
 | Hero spacing | Unpublished | Optional: the design before v2 |

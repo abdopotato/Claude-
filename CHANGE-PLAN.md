@@ -54,7 +54,11 @@ slides them with a short motion blur. The front card's buy panel then pops out t
 card brings it to the front; swipe and arrow keys work; reduced-motion users get no blur or pop.
 Changed: `sections/mosque-home.liquid`, `assets/mosque-update.css`. Demo: `previews/carousel-demo.mp4`.
 The owner published v4 (now MAIN, gid 131005284398), so this went into a new copy: **"MosqueCarpetsCanada — Site update v5 (carousel)"**
-(gid://shopify/OnlineStoreTheme/131005513774, unpublished), from commit 45d6b84; checksums verified. Owner publishes it.
+(gid://shopify/OnlineStoreTheme/131005513774), from commit 45d6b84. **Owner published v5**, but on the live Horizon
+layout the cards stayed a 3-column grid: the carousel CSS was gated on `html.mcc-js`, which isn't kept there.
+Fix (commit a5b7d4c): the script's `is-ready` class alone switches the layout on; side cards tucked to ±50%.
+Uploaded to **"MosqueCarpetsCanada — Site update v6"** (gid://shopify/OnlineStoreTheme/131005546542, unpublished);
+checksums verified. Owner publishes it.
 
 ## Step C: shipping (needs owner decision)
 
