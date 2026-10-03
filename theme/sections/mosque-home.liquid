@@ -61,7 +61,7 @@
       <h2>{{ section.settings.sizes_heading }}</h2>
       <p>{{ section.settings.sizes_text }}</p>
     </div>
-    <div class="mcc-size-carousel" data-size-carousel data-reveal aria-label="Hall sizes">
+    <div class="mcc-size-carousel" data-size-carousel data-reveal role="region" aria-roledescription="carousel" aria-label="Hall sizes">
     <button type="button" class="mcc-carousel-nav mcc-carousel-prev" data-carousel-prev aria-label="Previous hall size" hidden>&#8249;</button>
     <div class="mcc-grid-by-size" data-carousel-track>
       {%- for block in section.blocks -%}
@@ -81,7 +81,7 @@
             assign quote_url = '/pages/contact?product=' | append: p.handle
           endif
         -%}
-        <article class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" data-carousel-card {{ block.shopify_attributes }}>
+        <article class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" data-carousel-card aria-roledescription="slide" {{ block.shopify_attributes }}>
           {%- if block.settings.popular -%}<span class="mcc-pop-tag">Recommended</span>{%- endif -%}
           <div class="mcc-card-media">
             {%- if p != blank and p.featured_media -%}
@@ -162,34 +162,10 @@
       <button type="button" class="mcc-swatch" data-name="Camel Gold" aria-pressed="false"><div class="mcc-block" style="background:#8A6A2E"></div><p>Camel Gold</p><div class="mcc-ar-name">ذهبي</div><span>Warm and bright, suits sunlit halls</span></button>
     </div>
     <p class="mcc-colorway-preview" id="mccColorwayPreview" aria-live="polite"></p>
-    <div class="mcc-samples-offer" data-reveal>
-      <div><strong>See and feel it before you decide</strong><span>Colour samples sent to your committee, so the whole board can compare.</span></div>
-      <a class="mcc-btn-secondary" href="/pages/contact?need=samples">Request samples</a>
-    </div>
   </div>
 </section>
 
-<section class="mcc-section mcc-how-short" id="how">
-  <div class="mcc-wrap">
-    <div class="mcc-section-head" data-reveal><span class="mcc-eyebrow">How it works</span><h2>Measure, quote, install</h2></div>
-    <ol class="mcc-how3">
-      <li data-reveal><span class="mcc-step-num">1</span><h3>Measure</h3><p>Send your hall size or a floor plan, or book a site visit.</p></li>
-      <li data-reveal><span class="mcc-step-num">2</span><h3>Quote</h3><p>An itemised quote with supply-only and supply + installation prices, plus samples for your committee.</p></li>
-      <li data-reveal><span class="mcc-step-num">3</span><h3>Install</h3><p>We import and inspect the carpet, then fit it with the saff lines squared to the qibla wall, scheduled around salah.</p></li>
-    </ol>
-    <a class="mcc-btn-ghost mcc-how-link" href="/pages/installation">How installation works</a>
-  </div>
-</section>
-
-{%- if section.settings.testimonial_quote != blank -%}
-<section class="mcc-testimonial">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H7V7zm9 0h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H16V7z"/></svg>
-  <p>{{ section.settings.testimonial_quote }}</p>
-  <cite>{{ section.settings.testimonial_author }}</cite>
-</section>
-{%- endif -%}
-
-<section class="mcc-section mcc-band" id="faq">
+<section class="mcc-section" id="faq">
   <div class="mcc-wrap">
     <div class="mcc-section-head" data-reveal><h2>Questions committees ask us</h2></div>
     <div class="mcc-faq">
@@ -237,7 +213,6 @@
       var status = root.querySelector('[data-carousel-status]');
       var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var n = cards.length, active = Math.floor((n - 1) / 2), timer = null, on = false;
-      var phone = window.matchMedia('(max-width: 700px)');
 
       function layout(){
         cards.forEach(function(card, i){
@@ -296,7 +271,6 @@
         if(Math.abs(dx) > 40){ go(active + (dx < 0 ? 1 : -1)); }
       }, { passive: true });
 
-      // Slider on phones only; tablets and desktops show the three sizes side by side to compare.
       function enable(){
         on = true;
         prevBtn.hidden = false; nextBtn.hidden = false;
@@ -318,9 +292,7 @@
         });
         if(status){ status.textContent = ''; }
       }
-      function sync(){ if(phone.matches){ if(!on){ enable(); } } else if(on){ disable(); } }
-      if(phone.addEventListener){ phone.addEventListener('change', sync); } else if(phone.addListener){ phone.addListener(sync); }
-      sync();
+      enable();
     }catch(e){ console.error('Hall size carousel error', e); }
   })();
 </script>
@@ -356,8 +328,8 @@
     { "type": "text", "id": "lead_time_text", "label": "Step 3 badge (lead time) (hidden on homepage)", "default": "Lead time in your quote" },
     { "type": "text", "id": "service_area", "label": "Service area (hidden on homepage)", "default": "Across Canada, with travel itemised" },
     { "type": "header", "content": "Testimonial (hidden until filled in)" },
-    { "type": "textarea", "id": "testimonial_quote", "label": "Quote" },
-    { "type": "text", "id": "testimonial_author", "label": "Attribution" },
+    { "type": "textarea", "id": "testimonial_quote", "label": "Quote (hidden on homepage)" },
+    { "type": "text", "id": "testimonial_author", "label": "Attribution (hidden on homepage)" },
     { "type": "header", "content": "Closing call-to-action" },
     { "type": "text", "id": "cta_heading", "label": "Heading", "default": "Ready to re-carpet your prayer hall?" },
     { "type": "textarea", "id": "cta_text", "label": "Text", "default": "Send your hall dimensions or a floor plan. We'll reply with a spacing recommendation, a roll layout and an itemised quote covering supply, import and installation." }

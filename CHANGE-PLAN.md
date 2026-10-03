@@ -101,6 +101,11 @@ Changed: `sections/mosque-installation.liquid`, `sections/mosque-footer.liquid`.
 
 ## Step G: marketing review (`MARKETING-REVIEW.md`) — preview, awaiting approval
 
+**Owner: "STOP CHANGING THE LAYOUT."** All layout changes below were reverted (slider stays on every screen size,
+quote button stays right after the logo, no new homepage sections, no samples strip). Kept: wording/claim fixes,
+pricing clarity, the area/price-per-m² line on cards, the Jumu'ah quote-first button, the hidden WhatsApp slot.
+Do not propose layout changes unless the owner asks.
+
 Theme (homepage, header, product, quote, Installation):
 - Copy edits from the review table: hero badge/heading (option A)/text, trust strip, sizes intro, three card
   descriptions, "Most ordered" → "Recommended", buy note, colour notes, FAQ 1–3 rewritten, new FAQs (Jumu'ah during

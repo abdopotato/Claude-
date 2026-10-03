@@ -604,18 +604,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 /* Marketing review pass */
 #mcc-app .mcc-size-area{font-size:14px; color:var(--text-dim); font-variant-numeric:tabular-nums;}
 #mcc-app .mcc-buy-box-quote .mcc-buy-label{color:var(--brass-text);}
-/* Samples: the soft offer under the colourways */
-#mcc-app .mcc-samples-offer{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px 28px; margin-top:clamp(28px,4vw,40px); padding:22px 26px; background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--brass); border-radius:var(--radius-md);}
-#mcc-app .mcc-samples-offer strong{display:block; font-size:17px; color:var(--text); margin-bottom:2px;}
-#mcc-app .mcc-samples-offer span{font-size:15px; color:var(--text-dim);}
-/* Compact How it works */
-#mcc-app .mcc-how3{list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap,24px); counter-reset:none; padding:0;}
-#mcc-app .mcc-how3 li{position:relative; padding:4px 0 0 0; border-top:2px solid var(--brass);}
-#mcc-app .mcc-how3 .mcc-step-num{display:block; font-family:'Amiri',serif; font-size:40px; line-height:1; margin:18px 0 6px;}
-#mcc-app .mcc-how3 h3{font-size:20px; margin-bottom:6px;}
-#mcc-app .mcc-how3 p{font-size:15px; color:var(--text-dim); max-width:36ch;}
-#mcc-app .mcc-how-link{margin-top:28px;}
-@media (max-width:760px){#mcc-app .mcc-how3{grid-template-columns:1fr; gap:8px;}}
 /* WhatsApp chat button (only rendered when a number is set in the header settings) */
 #mcc-app .mcc-whatsapp{position:fixed; right:16px; bottom:16px; z-index:61; display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:0 18px 0 14px; border-radius:999px; background:#1F7A4D; color:#fff; font-weight:600; font-size:15px; box-shadow:0 10px 24px -10px rgba(0,0,0,.45);}
 #mcc-app .mcc-whatsapp:hover{background:#186640;}
@@ -649,13 +637,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -759,9 +747,9 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
       <h2>Shop by hall size</h2>
       <p>Order one of three standard sizes online, or get a quote for any hall. Either way, nothing is cut until we've confirmed your measurements.</p>
     </div>
-    <div class=&quot;mcc-size-carousel&quot; data-size-carousel data-reveal aria-label=&quot;Hall sizes&quot;>
+    <div class=&quot;mcc-size-carousel&quot; data-size-carousel data-reveal role=&quot;region&quot; aria-roledescription=&quot;carousel&quot; aria-label=&quot;Hall sizes&quot;>
     <button type=&quot;button&quot; class=&quot;mcc-carousel-nav mcc-carousel-prev&quot; data-carousel-prev aria-label=&quot;Previous hall size&quot; hidden>&amp;#8249;</button>
-    <div class=&quot;mcc-grid-by-size&quot; data-carousel-track><article class=&quot;mcc-size-card&quot; data-carousel-card ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
+    <div class=&quot;mcc-grid-by-size&quot; data-carousel-track><article class=&quot;mcc-size-card&quot; data-carousel-card aria-roledescription=&quot;slide&quot; ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
                 <rect width=&quot;320&quot; height=&quot;180&quot; fill=&quot;#0F2822&quot;/>
                 <g transform=&quot;translate(40,26)&quot;><rect width=&quot;240&quot; height=&quot;128&quot; rx=&quot;4&quot; fill=&quot;#16352E&quot; stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.35&quot;/>
                   <g stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.7&quot;><line x1=&quot;0&quot; y1=&quot;18.285714285714285&quot; x2=&quot;240&quot; y2=&quot;18.285714285714285&quot;/><line x1=&quot;0&quot; y1=&quot;36.57142857142857&quot; x2=&quot;240&quot; y2=&quot;36.57142857142857&quot;/><line x1=&quot;0&quot; y1=&quot;54.857142857142854&quot; x2=&quot;240&quot; y2=&quot;54.857142857142854&quot;/><line x1=&quot;0&quot; y1=&quot;73.14285714285714&quot; x2=&quot;240&quot; y2=&quot;73.14285714285714&quot;/><line x1=&quot;0&quot; y1=&quot;91.42857142857143&quot; x2=&quot;240&quot; y2=&quot;91.42857142857143&quot;/><line x1=&quot;0&quot; y1=&quot;109.71428571428571&quot; x2=&quot;240&quot; y2=&quot;109.71428571428571&quot;/></g>
@@ -777,7 +765,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
             </div><a class=&quot;mcc-btn-primary mcc-buy-btn&quot; href=&quot;product.html&quot; aria-label=&quot;Buy now: Musalla, small&quot;>Buy now</a>
               <p class=&quot;mcc-buy-note&quot;>Next: pick your row spacing, colour and installation.</p>
               <a class=&quot;mcc-buy-quote&quot; href=&quot;quote.html?product=musalla-carpet-roll-small-4-6-m&quot;>Prefer a quote first?</a></div>
-        </article><article class=&quot;mcc-size-card mcc-pop&quot; data-carousel-card ><span class=&quot;mcc-pop-tag&quot;>Recommended</span><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
+        </article><article class=&quot;mcc-size-card mcc-pop&quot; data-carousel-card aria-roledescription=&quot;slide&quot; ><span class=&quot;mcc-pop-tag&quot;>Recommended</span><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
                 <rect width=&quot;320&quot; height=&quot;180&quot; fill=&quot;#0F2822&quot;/>
                 <g transform=&quot;translate(40,26)&quot;><rect width=&quot;240&quot; height=&quot;128&quot; rx=&quot;4&quot; fill=&quot;#16352E&quot; stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.35&quot;/>
                   <g stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.7&quot;><line x1=&quot;0&quot; y1=&quot;12.8&quot; x2=&quot;240&quot; y2=&quot;12.8&quot;/><line x1=&quot;0&quot; y1=&quot;25.6&quot; x2=&quot;240&quot; y2=&quot;25.6&quot;/><line x1=&quot;0&quot; y1=&quot;38.4&quot; x2=&quot;240&quot; y2=&quot;38.4&quot;/><line x1=&quot;0&quot; y1=&quot;51.2&quot; x2=&quot;240&quot; y2=&quot;51.2&quot;/><line x1=&quot;0&quot; y1=&quot;64&quot; x2=&quot;240&quot; y2=&quot;64&quot;/><line x1=&quot;0&quot; y1=&quot;76.8&quot; x2=&quot;240&quot; y2=&quot;76.8&quot;/><line x1=&quot;0&quot; y1=&quot;89.6&quot; x2=&quot;240&quot; y2=&quot;89.6&quot;/><line x1=&quot;0&quot; y1=&quot;102.4&quot; x2=&quot;240&quot; y2=&quot;102.4&quot;/><line x1=&quot;0&quot; y1=&quot;115.2&quot; x2=&quot;240&quot; y2=&quot;115.2&quot;/></g>
@@ -793,7 +781,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
             </div><a class=&quot;mcc-btn-primary mcc-buy-btn&quot; href=&quot;product.html&quot; aria-label=&quot;Buy now: Main hall, mid-size&quot;>Buy now</a>
               <p class=&quot;mcc-buy-note&quot;>Next: pick your row spacing, colour and installation.</p>
               <a class=&quot;mcc-buy-quote&quot; href=&quot;quote.html?product=main-hall-carpet-roll-mid-size-8-12-m&quot;>Prefer a quote first?</a></div>
-        </article><article class=&quot;mcc-size-card&quot; data-carousel-card ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
+        </article><article class=&quot;mcc-size-card&quot; data-carousel-card aria-roledescription=&quot;slide&quot; ><div class=&quot;mcc-card-media&quot;><svg viewBox=&quot;0 0 320 180&quot; aria-hidden=&quot;true&quot; preserveAspectRatio=&quot;xMidYMid slice&quot;>
                 <rect width=&quot;320&quot; height=&quot;180&quot; fill=&quot;#0F2822&quot;/>
                 <g transform=&quot;translate(40,26)&quot;><rect width=&quot;240&quot; height=&quot;128&quot; rx=&quot;4&quot; fill=&quot;#16352E&quot; stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.35&quot;/>
                   <g stroke=&quot;#B8892F&quot; stroke-opacity=&quot;.7&quot;><line x1=&quot;0&quot; y1=&quot;9.846153846153847&quot; x2=&quot;240&quot; y2=&quot;9.846153846153847&quot;/><line x1=&quot;0&quot; y1=&quot;19.692307692307693&quot; x2=&quot;240&quot; y2=&quot;19.692307692307693&quot;/><line x1=&quot;0&quot; y1=&quot;29.53846153846154&quot; x2=&quot;240&quot; y2=&quot;29.53846153846154&quot;/><line x1=&quot;0&quot; y1=&quot;39.38461538461539&quot; x2=&quot;240&quot; y2=&quot;39.38461538461539&quot;/><line x1=&quot;0&quot; y1=&quot;49.23076923076923&quot; x2=&quot;240&quot; y2=&quot;49.23076923076923&quot;/><line x1=&quot;0&quot; y1=&quot;59.07692307692308&quot; x2=&quot;240&quot; y2=&quot;59.07692307692308&quot;/><line x1=&quot;0&quot; y1=&quot;68.92307692307692&quot; x2=&quot;240&quot; y2=&quot;68.92307692307692&quot;/><line x1=&quot;0&quot; y1=&quot;78.76923076923077&quot; x2=&quot;240&quot; y2=&quot;78.76923076923077&quot;/><line x1=&quot;0&quot; y1=&quot;88.61538461538461&quot; x2=&quot;240&quot; y2=&quot;88.61538461538461&quot;/><line x1=&quot;0&quot; y1=&quot;98.46153846153847&quot; x2=&quot;240&quot; y2=&quot;98.46153846153847&quot;/><line x1=&quot;0&quot; y1=&quot;108.3076923076923&quot; x2=&quot;240&quot; y2=&quot;108.3076923076923&quot;/><line x1=&quot;0&quot; y1=&quot;118.15384615384616&quot; x2=&quot;240&quot; y2=&quot;118.15384615384616&quot;/></g>
@@ -836,24 +824,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
       <button type=&quot;button&quot; class=&quot;mcc-swatch&quot; data-name=&quot;Camel Gold&quot; aria-pressed=&quot;false&quot;><div class=&quot;mcc-block&quot; style=&quot;background:#8A6A2E&quot;></div><p>Camel Gold</p><div class=&quot;mcc-ar-name&quot;>ذهبي</div><span>Warm and bright, suits sunlit halls</span></button>
     </div>
     <p class=&quot;mcc-colorway-preview&quot; id=&quot;mccColorwayPreview&quot; aria-live=&quot;polite&quot;></p>
-    <div class=&quot;mcc-samples-offer&quot; data-reveal>
-      <div><strong>See and feel it before you decide</strong><span>Colour samples sent to your committee, so the whole board can compare.</span></div>
-      <a class=&quot;mcc-btn-secondary&quot; href=&quot;quote.html?need=samples&quot;>Request samples</a>
-    </div>
   </div>
 </section>
 
-<section class=&quot;mcc-section mcc-how-short&quot; id=&quot;how&quot;>
-  <div class=&quot;mcc-wrap&quot;>
-    <div class=&quot;mcc-section-head&quot; data-reveal><span class=&quot;mcc-eyebrow&quot;>How it works</span><h2>Measure, quote, install</h2></div>
-    <ol class=&quot;mcc-how3&quot;>
-      <li data-reveal><span class=&quot;mcc-step-num&quot;>1</span><h3>Measure</h3><p>Send your hall size or a floor plan, or book a site visit.</p></li>
-      <li data-reveal><span class=&quot;mcc-step-num&quot;>2</span><h3>Quote</h3><p>An itemised quote with supply-only and supply + installation prices, plus samples for your committee.</p></li>
-      <li data-reveal><span class=&quot;mcc-step-num&quot;>3</span><h3>Install</h3><p>We import and inspect the carpet, then fit it with the saff lines squared to the qibla wall, scheduled around salah.</p></li>
-    </ol>
-    <a class=&quot;mcc-btn-ghost mcc-how-link&quot; href=&quot;installation.html&quot;>How installation works</a>
-  </div>
-</section><section class=&quot;mcc-section mcc-band&quot; id=&quot;faq&quot;>
+<section class=&quot;mcc-section&quot; id=&quot;faq&quot;>
   <div class=&quot;mcc-wrap&quot;>
     <div class=&quot;mcc-section-head&quot; data-reveal><h2>Questions committees ask us</h2></div>
     <div class=&quot;mcc-faq&quot;><details  ><summary>Do you make the carpet yourselves?</summary><p>We're specialist suppliers. We choose each carpet from partner mills, import it and inspect every roll in Canada. Not being tied to one factory means we pick the mill that suits your hall and budget.</p></details><details  ><summary>How long does delivery take?</summary><p>It depends on the colourway, spacing and quantity. We confirm your delivery date in writing once your measurements are confirmed, before anything is cut.</p></details><details  ><summary>Is installation included?</summary><p>Yes, if you'd like it. Every quote shows two prices, supply only and supply + installation, so your committee can compare. The Jumu'ah hall package always includes a site visit and floor template.</p></details><details  ><summary>Will we miss Jumu'ah during the install?</summary><p>No. We plan install days around salah times and Jumu'ah, and agree the dates with your committee in advance.</p></details><details  ><summary>Do you remove the old carpet?</summary><p>Yes. Removing the old carpet can be added to your quote as its own line, so your committee can see the cost.</p></details><details  ><summary>Is the carpet fire rated?</summary><p>Yes. The pile is certified to CAN/ULC-S102 and ASTM E648. We can send the certificates to your building inspector or insurer.</p></details><details  ><summary>Can our committee pay by purchase order?</summary><p>Yes. We accept POs and bank transfer, and we invoice in your mosque's registered name for your records.</p></details><details  ><summary>Can we see the carpet first?</summary><p>Yes. Request samples of any colourway through our quote form and we'll arrange them for your committee.</p></details><details  ><summary>How do we look after the carpet?</summary><p>Vacuum regularly along the direction of the pile, and blot spills straight away with a clean, damp cloth rather than rubbing. A professional deep clean once or twice a year keeps the pile and the saff lines looking sharp.</p></details></div>
@@ -896,7 +870,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
       var status = root.querySelector('[data-carousel-status]');
       var still = window.matchMedia &amp;&amp; window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var n = cards.length, active = Math.floor((n - 1) / 2), timer = null, on = false;
-      var phone = window.matchMedia('(max-width: 700px)');
 
       function layout(){
         cards.forEach(function(card, i){
@@ -955,7 +928,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         if(Math.abs(dx) > 40){ go(active + (dx < 0 ? 1 : -1)); }
       }, { passive: true });
 
-      // Slider on phones only; tablets and desktops show the three sizes side by side to compare.
       function enable(){
         on = true;
         prevBtn.hidden = false; nextBtn.hidden = false;
@@ -977,9 +949,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         });
         if(status){ status.textContent = ''; }
       }
-      function sync(){ if(phone.matches){ if(!on){ enable(); } } else if(on){ disable(); } }
-      if(phone.addEventListener){ phone.addEventListener('change', sync); } else if(phone.addListener){ phone.addListener(sync); }
-      sync();
+      enable();
     }catch(e){ console.error('Hall size carousel error', e); }
   })();
 </script>
@@ -1627,18 +1597,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 /* Marketing review pass */
 #mcc-app .mcc-size-area{font-size:14px; color:var(--text-dim); font-variant-numeric:tabular-nums;}
 #mcc-app .mcc-buy-box-quote .mcc-buy-label{color:var(--brass-text);}
-/* Samples: the soft offer under the colourways */
-#mcc-app .mcc-samples-offer{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px 28px; margin-top:clamp(28px,4vw,40px); padding:22px 26px; background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--brass); border-radius:var(--radius-md);}
-#mcc-app .mcc-samples-offer strong{display:block; font-size:17px; color:var(--text); margin-bottom:2px;}
-#mcc-app .mcc-samples-offer span{font-size:15px; color:var(--text-dim);}
-/* Compact How it works */
-#mcc-app .mcc-how3{list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap,24px); counter-reset:none; padding:0;}
-#mcc-app .mcc-how3 li{position:relative; padding:4px 0 0 0; border-top:2px solid var(--brass);}
-#mcc-app .mcc-how3 .mcc-step-num{display:block; font-family:'Amiri',serif; font-size:40px; line-height:1; margin:18px 0 6px;}
-#mcc-app .mcc-how3 h3{font-size:20px; margin-bottom:6px;}
-#mcc-app .mcc-how3 p{font-size:15px; color:var(--text-dim); max-width:36ch;}
-#mcc-app .mcc-how-link{margin-top:28px;}
-@media (max-width:760px){#mcc-app .mcc-how3{grid-template-columns:1fr; gap:8px;}}
 /* WhatsApp chat button (only rendered when a number is set in the header settings) */
 #mcc-app .mcc-whatsapp{position:fixed; right:16px; bottom:16px; z-index:61; display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:0 18px 0 14px; border-radius:999px; background:#1F7A4D; color:#fff; font-weight:600; font-size:15px; box-shadow:0 10px 24px -10px rgba(0,0,0,.45);}
 #mcc-app .mcc-whatsapp:hover{background:#186640;}
@@ -1672,13 +1630,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -2486,18 +2444,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 /* Marketing review pass */
 #mcc-app .mcc-size-area{font-size:14px; color:var(--text-dim); font-variant-numeric:tabular-nums;}
 #mcc-app .mcc-buy-box-quote .mcc-buy-label{color:var(--brass-text);}
-/* Samples: the soft offer under the colourways */
-#mcc-app .mcc-samples-offer{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px 28px; margin-top:clamp(28px,4vw,40px); padding:22px 26px; background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--brass); border-radius:var(--radius-md);}
-#mcc-app .mcc-samples-offer strong{display:block; font-size:17px; color:var(--text); margin-bottom:2px;}
-#mcc-app .mcc-samples-offer span{font-size:15px; color:var(--text-dim);}
-/* Compact How it works */
-#mcc-app .mcc-how3{list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap,24px); counter-reset:none; padding:0;}
-#mcc-app .mcc-how3 li{position:relative; padding:4px 0 0 0; border-top:2px solid var(--brass);}
-#mcc-app .mcc-how3 .mcc-step-num{display:block; font-family:'Amiri',serif; font-size:40px; line-height:1; margin:18px 0 6px;}
-#mcc-app .mcc-how3 h3{font-size:20px; margin-bottom:6px;}
-#mcc-app .mcc-how3 p{font-size:15px; color:var(--text-dim); max-width:36ch;}
-#mcc-app .mcc-how-link{margin-top:28px;}
-@media (max-width:760px){#mcc-app .mcc-how3{grid-template-columns:1fr; gap:8px;}}
 /* WhatsApp chat button (only rendered when a number is set in the header settings) */
 #mcc-app .mcc-whatsapp{position:fixed; right:16px; bottom:16px; z-index:61; display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:0 18px 0 14px; border-radius:999px; background:#1F7A4D; color:#fff; font-weight:600; font-size:15px; box-shadow:0 10px 24px -10px rgba(0,0,0,.45);}
 #mcc-app .mcc-whatsapp:hover{background:#186640;}
@@ -2531,13 +2477,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot; aria-current=&quot;page&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -3305,18 +3251,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 /* Marketing review pass */
 #mcc-app .mcc-size-area{font-size:14px; color:var(--text-dim); font-variant-numeric:tabular-nums;}
 #mcc-app .mcc-buy-box-quote .mcc-buy-label{color:var(--brass-text);}
-/* Samples: the soft offer under the colourways */
-#mcc-app .mcc-samples-offer{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px 28px; margin-top:clamp(28px,4vw,40px); padding:22px 26px; background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--brass); border-radius:var(--radius-md);}
-#mcc-app .mcc-samples-offer strong{display:block; font-size:17px; color:var(--text); margin-bottom:2px;}
-#mcc-app .mcc-samples-offer span{font-size:15px; color:var(--text-dim);}
-/* Compact How it works */
-#mcc-app .mcc-how3{list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap,24px); counter-reset:none; padding:0;}
-#mcc-app .mcc-how3 li{position:relative; padding:4px 0 0 0; border-top:2px solid var(--brass);}
-#mcc-app .mcc-how3 .mcc-step-num{display:block; font-family:'Amiri',serif; font-size:40px; line-height:1; margin:18px 0 6px;}
-#mcc-app .mcc-how3 h3{font-size:20px; margin-bottom:6px;}
-#mcc-app .mcc-how3 p{font-size:15px; color:var(--text-dim); max-width:36ch;}
-#mcc-app .mcc-how-link{margin-top:28px;}
-@media (max-width:760px){#mcc-app .mcc-how3{grid-template-columns:1fr; gap:8px;}}
 /* WhatsApp chat button (only rendered when a number is set in the header settings) */
 #mcc-app .mcc-whatsapp{position:fixed; right:16px; bottom:16px; z-index:61; display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:0 18px 0 14px; border-radius:999px; background:#1F7A4D; color:#fff; font-weight:600; font-size:15px; box-shadow:0 10px 24px -10px rgba(0,0,0,.45);}
 #mcc-app .mcc-whatsapp:hover{background:#186640;}
@@ -3350,13 +3284,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot; aria-current=&quot;page&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>
@@ -4071,18 +4005,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 /* Marketing review pass */
 #mcc-app .mcc-size-area{font-size:14px; color:var(--text-dim); font-variant-numeric:tabular-nums;}
 #mcc-app .mcc-buy-box-quote .mcc-buy-label{color:var(--brass-text);}
-/* Samples: the soft offer under the colourways */
-#mcc-app .mcc-samples-offer{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px 28px; margin-top:clamp(28px,4vw,40px); padding:22px 26px; background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--brass); border-radius:var(--radius-md);}
-#mcc-app .mcc-samples-offer strong{display:block; font-size:17px; color:var(--text); margin-bottom:2px;}
-#mcc-app .mcc-samples-offer span{font-size:15px; color:var(--text-dim);}
-/* Compact How it works */
-#mcc-app .mcc-how3{list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap,24px); counter-reset:none; padding:0;}
-#mcc-app .mcc-how3 li{position:relative; padding:4px 0 0 0; border-top:2px solid var(--brass);}
-#mcc-app .mcc-how3 .mcc-step-num{display:block; font-family:'Amiri',serif; font-size:40px; line-height:1; margin:18px 0 6px;}
-#mcc-app .mcc-how3 h3{font-size:20px; margin-bottom:6px;}
-#mcc-app .mcc-how3 p{font-size:15px; color:var(--text-dim); max-width:36ch;}
-#mcc-app .mcc-how-link{margin-top:28px;}
-@media (max-width:760px){#mcc-app .mcc-how3{grid-template-columns:1fr; gap:8px;}}
 /* WhatsApp chat button (only rendered when a number is set in the header settings) */
 #mcc-app .mcc-whatsapp{position:fixed; right:16px; bottom:16px; z-index:61; display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:0 18px 0 14px; border-radius:999px; background:#1F7A4D; color:#fff; font-weight:600; font-size:15px; box-shadow:0 10px 24px -10px rgba(0,0,0,.45);}
 #mcc-app .mcc-whatsapp:hover{background:#186640;}
@@ -4116,13 +4038,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span>MosqueCarpetsCanada<span style=&quot;color:var(--brass);&quot;>.ca</span></span>
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
-    </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
+    </a>
+    <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
     </nav>
     <div class=&quot;mcc-navtools&quot;>
-      <a class=&quot;mcc-btn-primary mcc-btn-sm mcc-nav-quote&quot; href=&quot;quote.html&quot;>Request a quote</a>
       <a class=&quot;mcc-cart-btn&quot; href=&quot;/cart&quot; aria-label=&quot;Cart, 0 items&quot;>
         <svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; aria-hidden=&quot;true&quot;><path d=&quot;M3 4h2l2.4 13.2a2 2 0 0 0 2 1.8h8.4a2 2 0 0 0 2-1.6L21 8H6&quot;/><circle cx=&quot;9&quot; cy=&quot;21&quot; r=&quot;1&quot;/><circle cx=&quot;18&quot; cy=&quot;21&quot; r=&quot;1&quot;/></svg>
         <span class=&quot;mcc-cart-label&quot;>Cart</span>

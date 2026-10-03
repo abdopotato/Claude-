@@ -50,6 +50,11 @@ comes from the Claude Design Skillstack, MIT — see `.claude/skills/LICENSE-cla
   asked for the motion blur on sliding to be removed). Without JavaScript it stays a plain grid.
 - **Copy:** Canadian spelling (colour, centre, itemised). Prices are formatted "$3,650 CAD".
 
+## Layout is owner-decided
+
+The owner set the current layout (header, homepage section order, hall-size slider). Don't change layout or add or
+remove sections unless the owner explicitly asks, even when a review suggests it; offer it as a question instead.
+
 ## Open questions
 
 `OPEN-QUESTIONS.md` tracks everything we still need from the owner. When something is unknown, use safe wording
