@@ -85,6 +85,14 @@ Installation · About · FAQ moved right, beside the cart. Phones unchanged (quo
 Screenshots: `previews/layout/`. Before upload, check the live `templates/index.json` for saved hero settings
 (new hero wording is a schema default and won't show if the owner saved their own).
 
+## Step E applied (approved 2026-10-03)
+
+Uploaded to **"MosqueCarpetsCanada — Site update v7 (layout)"** (gid://shopify/OnlineStoreTheme/131005644846,
+unpublished) from commit 07d1001: homepage layout, header, CSS, plus the footer/About/Installation/product/quote
+sections. A checksum audit showed those five, and the header, were still the **v2** versions on the live theme: the
+v3 detail-pass uploads had silently not applied (the live site ran v3 CSS with v2 markup, which is also why
+`html.mcc-js` was missing). All 9 custom files now match `theme/` exactly. Owner publishes v7.
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.

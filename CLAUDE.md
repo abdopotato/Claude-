@@ -22,6 +22,9 @@ comes from the Claude Design Skillstack, MIT — see `.claude/skills/LICENSE-cla
 
 - `theme/` mirrors the custom files in the Shopify theme (sections, templates, `assets/mosque-*.css`).
   Edit here, then upload to an **unpublished** theme.
+- After every upload, compare each file's `checksumMd5` with `md5sum` of the local file. `themeFilesUpsert`
+  by URL can report the job done without applying it (retry once), and Shopify silently rejects a section whose
+  schema breaks a rule (e.g. a setting label over 70 characters).
 - `node previews/render.js` (needs `liquidjs@10`) renders those real files into `previews/v3/`,
   including `preview-all.html`, a self-contained file to send to the owner. Previews come from the
   theme files, never a hand-made mock-up, so what's approved is what ships.
