@@ -93,7 +93,7 @@ sections. A checksum audit showed those five, and the header, were still the **v
 v3 detail-pass uploads had silently not applied (the live site ran v3 CSS with v2 markup, which is also why
 `html.mcc-js` was missing). All 9 custom files now match `theme/` exactly. Owner publishes v7.
 
-## Step F: fit calculator on the Installation page (preview, awaiting approval)
+## Step F: fit calculator on the Installation page (approved 2026-10-03, uploaded to v7 from cc20020, checksums verified)
 
 Owner chose to move the calculator to the Installation page (it was removed from the homepage). "Try the fit
 calculator" now scrolls to it on the same page; footer "Fit calculator" links to /pages/installation#calculator.
