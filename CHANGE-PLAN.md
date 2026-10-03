@@ -93,6 +93,12 @@ sections. A checksum audit showed those five, and the header, were still the **v
 v3 detail-pass uploads had silently not applied (the live site ran v3 CSS with v2 markup, which is also why
 `html.mcc-js` was missing). All 9 custom files now match `theme/` exactly. Owner publishes v7.
 
+## Step F: fit calculator on the Installation page (preview, awaiting approval)
+
+Owner chose to move the calculator to the Installation page (it was removed from the homepage). "Try the fit
+calculator" now scrolls to it on the same page; footer "Fit calculator" links to /pages/installation#calculator.
+Changed: `sections/mosque-installation.liquid`, `sections/mosque-footer.liquid`.
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.
