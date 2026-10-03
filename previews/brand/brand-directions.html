@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand and Design Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Work+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Reem+Kufi:wght@500;700&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16201C; --dim:#56615B; --line:#DDD5C6; --bg:#F4F0E7; --card:#FFFDF8;
+  --green:#0F2A22; --green-2:#1B4337; --brass:#B8892F; --brass-text:#7F5B1C; --brass-light:#D9B26A;
+  --maroon:#5C2A2A; --indigo:#1C2A4A; --sand:#E9DFCC;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 'Work Sans',system-ui,sans-serif}
+a{color:inherit}
+.chrome{position:sticky;top:0;z-index:50;background:#111;color:#eee;padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chrome b{font-size:13px;margin-right:6px;letter-spacing:.3px}
+.chrome button{font:600 13px 'Work Sans',sans-serif;background:transparent;color:#ddd;border:1px solid #444;border-radius:999px;padding:7px 14px;cursor:pointer;min-height:36px}
+.chrome button[aria-selected="true"]{background:#fff;color:#111;border-color:#fff}
+.tab{display:none}.tab.on{display:block}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.doc{padding:56px 0 80px}
+.doc h1{font:700 44px/1.1 Amiri,serif;margin-bottom:12px}
+.doc h2{font:700 28px/1.2 Amiri,serif;margin:48px 0 14px}
+.doc h3{font:600 17px/1.3 'Work Sans',sans-serif;margin-bottom:6px}
+.doc p,.doc li{color:var(--dim);max-width:70ch}
+.doc .lede{font-size:19px;color:var(--ink);max-width:62ch}
+.kicker{font:italic 15px Amiri,serif;color:var(--brass-text);display:block;margin-bottom:6px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:820px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.doc h1{font-size:34px}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.box p{font-size:15px}
+.decision{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.pill{display:inline-block;font:600 12px 'Work Sans';letter-spacing:.5px;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--sand);color:var(--brass-text)}
+.swatch{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.swatch i{display:block;height:84px}
+.swatch div{padding:10px 12px;font-size:13px;color:var(--dim)}
+.swatch strong{display:block;color:var(--ink);font-size:14px}
+.voice td,.voice th{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:15px;vertical-align:top}
+.voice th{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim)}
+.voice{border-collapse:collapse;width:100%;background:var(--card);border-radius:14px;overflow:hidden}
+.voice .no{color:#8A3B3B}.voice .yes{color:#2F5A45}
+.logo-row{display:flex;gap:18px;flex-wrap:wrap}
+.logo-tile{flex:1 1 240px;border-radius:16px;padding:28px;display:flex;align-items:center;gap:14px}
+.logo-tile .wm{font:700 22px/1.1 Amiri,serif}
+.logo-tile .wm small{display:block;font:400 15px Amiri,serif;opacity:.8;margin-top:4px}
+ol.order{counter-reset:o;list-style:none;padding:0}
+ol.order li{counter-increment:o;position:relative;padding:12px 14px 12px 54px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;max-width:none;color:var(--ink)}
+ol.order li::before{content:counter(o);position:absolute;left:14px;top:11px;width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--brass-light);font:700 14px/28px 'Work Sans';text-align:center}
+ol.order li span{display:block;font-size:14px;color:var(--dim)}
+ol.order li.new::after{content:"New";position:absolute;right:14px;top:12px}
+ol.order li.moved::after{content:"Moved up";position:absolute;right:14px;top:12px}
+ol.order li.merged::after{content:"Merged";position:absolute;right:14px;top:12px}
+ol.order li::after{font:600 11px 'Work Sans';letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--sand);color:var(--brass-text)}
+@media(max-width:600px){ol.order li::after{position:static!important;display:inline-block;margin-top:6px}}
+.fix{border-left:3px solid var(--brass);padding-left:14px;margin:10px 0}
+.dir-intro{padding:40px 0 28px}
+.dir-intro h1{font:700 36px/1.15 Amiri,serif}
+.dir-intro p{color:var(--dim);max-width:70ch;margin-top:8px}
+.dir-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:8px;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 6px}
+.chip i{width:20px;height:20px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.1)}
+.frame{border-radius:20px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(0,0,0,.35);margin-bottom:40px;border:1px solid var(--line)}
+.note{font-size:13px;color:var(--dim);text-align:center;margin:-24px 0 56px}
+
+/* ---------- Direction A: Mihrab (heritage luxury) ---------- */
+.A{background:#F3EEE3;color:#14201B;font-family:'Work Sans',sans-serif}
+.A .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:#0F2A22;color:#F3EEE3}
+.A .nav .links{display:flex;gap:26px;font-size:14px;opacity:.85}
+.A .btn{display:inline-block;background:#B8892F;color:#0F2A22;font-weight:700;font-size:15px;padding:13px 24px;border-radius:999px;text-decoration:none}
+.A .btn.ghost{background:transparent;color:inherit;border:1px solid currentColor}
+.A .hero{background:#0F2A22 radial-gradient(ellipse at 70% 30%,#1E4A3C 0,#0F2A22 60%);color:#F3EEE3;display:grid;grid-template-columns:1.1fr 1fr;gap:40px;padding:64px 40px 0;position:relative;overflow:hidden}
+.A .hero h2{font:700 56px/1.05 Amiri,serif;margin:12px 0 18px}
+.A .hero h2 em{color:#D9B26A;font-style:normal}
+.A .hero p{color:#C9D2CB;max-width:44ch;margin-bottom:26px}
+.A .hero .ar{font:400 22px Amiri,serif;color:#D9B26A}
+.A .arch{align-self:end;justify-self:center;width:340px;height:420px;border-radius:170px 170px 0 0;border:2px solid #B8892F;padding:14px;position:relative}
+.A .arch .inner{width:100%;height:100%;border-radius:156px 156px 0 0;background:repeating-linear-gradient(180deg,#5C2A2A 0 46px,#D9B26A 46px 48px);position:relative;overflow:hidden}
+.A .arch .inner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,42,34,.0),rgba(15,42,34,.45))}
+.A .band{height:46px;background:#0F2A22 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='46'%3E%3Cpath d='M23 4l5 12 12-5-5 12 12 5-12 5 5 12-12-5-5 12-5-12-12 5 5-12-12-5 12-5-5-12 12 5z' fill='none' stroke='%23B8892F' stroke-width='1.2'/%3E%3C/svg%3E");border-top:1px solid #B8892F;border-bottom:1px solid #B8892F}
+.A .sec{padding:64px 40px}
+.A .sec h3{font:700 36px Amiri,serif;margin-bottom:6px}
+.A .sec .sub{color:#56615B;margin-bottom:30px}
+.A .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.A .card{background:#FFFDF8;border-radius:150px 150px 18px 18px;border:1px solid #DCCFB5;padding:22px 22px 24px;text-align:center}
+.A .card .pic{height:150px;border-radius:130px 130px 10px 10px;margin-bottom:18px;background:repeating-linear-gradient(180deg,#0F2A22 0 22px,#B8892F 22px 23px)}
+.A .card:nth-child(2) .pic{background:repeating-linear-gradient(180deg,#5C2A2A 0 22px,#D9B26A 22px 23px)}
+.A .card:nth-child(3) .pic{background:repeating-linear-gradient(180deg,#1C2A4A 0 22px,#D9B26A 22px 23px)}
+.A .card .dims{font:700 30px Amiri,serif;color:#7F5B1C}
+.A .card .ar{font:16px Amiri,serif;color:#4F6B5A}
+.A .card h4{font:700 19px Amiri,serif;margin:6px 0}
+.A .card .price{font-weight:700;margin:12px 0}
+.A .quote{background:#5C2A2A;color:#F3EEE3;padding:56px 40px;text-align:center}
+.A .quote blockquote{font:400 30px/1.35 Amiri,serif;max-width:30ch;margin:0 auto 14px}
+.A .quote cite{font-style:normal;color:#D9B26A;font-size:14px}
+@media(max-width:820px){.A .hero{grid-template-columns:1fr;padding:40px 22px 0}.A .hero h2{font-size:40px}.A .arch{width:250px;height:300px}.A .cards{grid-template-columns:1fr}.A .nav .links{display:none}.A .sec{padding:44px 22px}}
+
+/* ---------- Direction B: Saff (modern editorial) ---------- */
+.B{background:#FAF7F0;color:#111;font-family:'Work Sans',sans-serif}
+.B .nav{display:flex;justify-content:space-between;align-items:center;padding:22px 44px;border-bottom:1px solid #111}
+.B .nav .mark{font:800 20px Fraunces,serif;letter-spacing:-.5px}
+.B .nav .links{display:flex;gap:28px;font-size:14px}
+.B .btn{display:inline-block;background:#111;color:#FAF7F0;font-weight:600;padding:14px 26px;text-decoration:none;font-size:15px}
+.B .btn.gold{background:#B8892F;color:#111}
+.B .hero{padding:70px 44px 40px;position:relative}
+.B .hero h2{font:800 104px/.92 Fraunces,serif;letter-spacing:-3px;max-width:11ch}
+.B .hero h2 span{color:#B8892F}
+.B .hero .row{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-top:40px;align-items:end}
+.B .hero p{font-size:19px;max-width:40ch;color:#333}
+.B .lines{height:120px;background:repeating-linear-gradient(180deg,transparent 0 22px,#B8892F 22px 24px)}
+.B .stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #111;border-bottom:1px solid #111}
+.B .stats div{padding:26px 44px;border-right:1px solid #111}
+.B .stats div:last-child{border-right:0}
+.B .stats b{display:block;font:800 56px/1 Fraunces,serif}
+.B .stats span{font-size:14px;color:#555}
+.B .sec{padding:70px 44px}
+.B .sec h3{font:800 54px/1 Fraunces,serif;letter-spacing:-1.5px;margin-bottom:34px}
+.B .list{border-top:1px solid #111}
+.B .item{display:grid;grid-template-columns:80px 1.2fr 1fr auto;gap:24px;align-items:center;padding:26px 0;border-bottom:1px solid #111}
+.B .item .n{font:800 40px Fraunces,serif;color:#B8892F}
+.B .item h4{font:600 28px Fraunces,serif}
+.B .item p{color:#555;font-size:15px}
+.B .item .price{font:600 20px Fraunces,serif;white-space:nowrap}
+.B .feature{background:#111;color:#FAF7F0;display:grid;grid-template-columns:1fr 1fr}
+.B .feature .txt{padding:64px 44px}
+.B .feature h3{font:800 48px/1 Fraunces,serif;letter-spacing:-1px;margin-bottom:18px}
+.B .feature p{color:#BBB;max-width:40ch}
+.B .feature .viz{background:repeating-linear-gradient(180deg,#1A1A1A 0 40px,#B8892F 40px 42px);min-height:320px}
+@media(max-width:820px){.B .hero{padding:44px 22px 30px}.B .hero h2{font-size:60px;letter-spacing:-1.5px}.B .hero .row,.B .feature{grid-template-columns:1fr}.B .stats{grid-template-columns:1fr}.B .stats div{border-right:0;border-bottom:1px solid #111;padding:20px 22px}.B .sec{padding:44px 22px}.B .sec h3{font-size:38px}.B .item{grid-template-columns:50px 1fr;}.B .item p,.B .item .price{grid-column:2}.B .nav{padding:18px 22px}.B .nav .links{display:none}.B .feature .txt{padding:44px 22px}}
+
+/* ---------- Direction C: Isha (night luxury) ---------- */
+.C{background:#0A1222;color:#E8E2D2;font-family:'Work Sans',sans-serif}
+.C .nav{display:flex;justify-content:space-between;align-items:center;padding:20px 40px}
+.C .nav .mark{font:700 20px 'Reem Kufi',sans-serif;color:#E7C77F}
+.C .nav .links{display:flex;gap:26px;font-size:14px;color:#AEB6C8}
+.C .btn{display:inline-block;background:linear-gradient(180deg,#E7C77F,#B8892F);color:#0A1222;font-weight:700;padding:14px 26px;border-radius:12px;text-decoration:none;box-shadow:0 10px 30px -8px rgba(231,199,127,.55);font-size:15px}
+.C .btn.ghost{background:transparent;color:#E7C77F;border:1px solid rgba(231,199,127,.5);box-shadow:none}
+.C .hero{text-align:center;padding:60px 40px 0;position:relative;overflow:hidden;background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(231,199,127,.18),transparent 70%)}
+.C .lamp{width:60px;height:90px;margin:0 auto 18px;position:relative}
+.C .lamp::before{content:"";position:absolute;left:50%;top:0;width:1px;height:26px;background:#E7C77F}
+.C .lamp::after{content:"";position:absolute;left:8px;top:26px;width:44px;height:58px;border-radius:22px 22px 10px 10px;background:radial-gradient(circle at 50% 55%,#FFE6A8,#B8892F 60%,#5a3f10);box-shadow:0 0 60px 20px rgba(231,199,127,.35)}
+.C .hero .ar{font:500 22px 'Reem Kufi',sans-serif;color:#E7C77F}
+.C .hero h2{font:700 60px/1.08 'Reem Kufi',sans-serif;margin:10px auto 16px;max-width:16ch;color:#F5EFE0}
+.C .hero p{color:#AEB6C8;max-width:50ch;margin:0 auto 28px}
+.C .floor{margin:46px auto 0;height:200px;max-width:900px;transform:perspective(600px) rotateX(55deg);transform-origin:bottom;background:repeating-linear-gradient(180deg,#1C2A4A 0 30px,#E7C77F 30px 32px);border-radius:8px;box-shadow:0 -20px 80px rgba(231,199,127,.15)}
+.C .sec{padding:70px 40px}
+.C .sec h3{font:700 38px 'Reem Kufi',sans-serif;text-align:center;margin-bottom:8px;color:#F5EFE0}
+.C .sec .sub{text-align:center;color:#AEB6C8;margin-bottom:36px}
+.C .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.C .card{background:linear-gradient(180deg,#121D33,#0E172A);border:1px solid rgba(231,199,127,.22);border-radius:18px;padding:26px;position:relative}
+.C .card.pop{border-color:#E7C77F;box-shadow:0 0 0 1px #E7C77F,0 20px 60px -20px rgba(231,199,127,.4)}
+.C .card .dims{font:700 34px 'Reem Kufi',sans-serif;color:#E7C77F}
+.C .card h4{font-size:18px;margin:4px 0 8px;color:#F5EFE0}
+.C .card p{color:#AEB6C8;font-size:14.5px}
+.C .card .price{margin:16px 0;font-size:20px;font-weight:700;color:#F5EFE0}
+.C .swatches{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.C .swatches div{width:150px;height:200px;border-radius:75px 75px 12px 12px;box-shadow:0 20px 50px -20px rgba(0,0,0,.6),inset 0 0 0 1px rgba(231,199,127,.35);display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px;font-size:13px;color:#F5EFE0}
+@media(max-width:820px){.C .hero{padding:40px 22px 0}.C .hero h2{font-size:40px}.C .cards{grid-template-columns:1fr}.C .sec{padding:44px 22px}.C .nav .links{display:none}.C .nav{padding:18px 22px}.C .swatches div{width:46%;height:150px}}
+
+/* ---------- Direction D: Jama'ah (warm community) ---------- */
+.D{background:#F7EFE4;color:#2A1E1A;font-family:'DM Sans',sans-serif}
+.D .nav{display:flex;justify-content:space-between;align-items:center;padding:18px 40px}
+.D .nav .mark{font:400 24px 'DM Serif Display',serif;color:#5C2A2A}
+.D .nav .links{display:flex;gap:24px;font-size:14px}
+.D .btn{display:inline-block;background:#5C2A2A;color:#FFF7EC;font-weight:700;padding:14px 26px;border-radius:14px;text-decoration:none;font-size:15px}
+.D .btn.alt{background:#E2B860;color:#2A1E1A}
+.D .hero{display:grid;grid-template-columns:1fr 1fr;gap:36px;padding:40px 40px 60px;align-items:center}
+.D .hero h2{font:400 62px/1.02 'DM Serif Display',serif;color:#3D1B1B;margin:8px 0 16px}
+.D .hero p{font-size:18px;color:#5B4A42;max-width:42ch;margin-bottom:24px}
+.D .tag{display:inline-block;background:#E8D5BC;color:#5C2A2A;font-weight:700;font-size:13px;padding:6px 12px;border-radius:999px}
+.D .collage{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:150px 150px;gap:12px}
+.D .collage div{border-radius:20px;display:flex;align-items:flex-end;padding:12px;font-size:12px;font-weight:700;color:#FFF7EC}
+.D .collage .a{grid-row:span 2;background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(0,0,0,.4)),repeating-linear-gradient(180deg,#5C2A2A 0 28px,#E2B860 28px 30px)}
+.D .collage .b{background:#7A8F6E}
+.D .collage .c{background:#2F4A3C}
+.D .proof{background:#FFF9F0;margin:0 40px;border-radius:24px;padding:30px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:20px;align-items:center;box-shadow:0 20px 40px -30px rgba(92,42,42,.4)}
+.D .proof blockquote{font:400 22px/1.35 'DM Serif Display',serif;color:#3D1B1B}
+.D .proof cite{display:block;font:500 13px 'DM Sans';color:#7A5E52;margin-top:8px;font-style:normal}
+.D .proof b{display:block;font:400 40px 'DM Serif Display',serif;color:#5C2A2A}
+.D .proof span{font-size:13px;color:#7A5E52}
+.D .sec{padding:64px 40px}
+.D .sec h3{font:400 42px 'DM Serif Display',serif;color:#3D1B1B;margin-bottom:6px}
+.D .sec .sub{color:#5B4A42;margin-bottom:28px}
+.D .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.D .card{background:#FFF9F0;border-radius:24px;overflow:hidden;box-shadow:0 14px 30px -24px rgba(92,42,42,.5)}
+.D .card .pic{height:130px;background:repeating-linear-gradient(90deg,#7A8F6E 0 36px,#6C8061 36px 38px)}
+.D .card:nth-child(2) .pic{background:repeating-linear-gradient(90deg,#5C2A2A 0 36px,#4E2323 36px 38px)}
+.D .card:nth-child(3) .pic{background:repeating-linear-gradient(90deg,#2F4A3C 0 36px,#263E32 36px 38px)}
+.D .card .body{padding:20px 22px 24px}
+.D .card h4{font:400 24px 'DM Serif Display',serif}
+.D .card p{color:#5B4A42;font-size:15px;margin:6px 0 14px}
+.D .card .price{font-weight:700;margin-bottom:14px}
+.D .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.D .steps div{background:#E8D5BC;border-radius:20px;padding:20px}
+.D .steps b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#5C2A2A;color:#FFF7EC;margin-bottom:10px}
+@media(max-width:820px){.D .hero,.D .cards,.D .steps{grid-template-columns:1fr}.D .hero{padding:24px 22px 40px}.D .hero h2{font-size:42px}.D .proof{grid-template-columns:1fr;margin:0 16px}.D .sec{padding:44px 22px}.D .nav .links{display:none}.D .nav{padding:18px 22px}}
+</style>
+</head>
+<body>
+<nav class="chrome" role="tablist" aria-label="Sections">
+  <b>PREVIEW: nothing here is live</b>
+  <button role="tab" data-t="brand" aria-selected="true">1. Brand identity</button>
+  <button role="tab" data-t="layout" aria-selected="false">2. Layout suggestions</button>
+  <button role="tab" data-t="a" aria-selected="false">A. Mihrab</button>
+  <button role="tab" data-t="b" aria-selected="false">B. Saff</button>
+  <button role="tab" data-t="c" aria-selected="false">C. Isha</button>
+  <button role="tab" data-t="d" aria-selected="false">D. Jama'ah</button>
+</nav>
+
+<!-- ================= BRAND ================= -->
+<section class="tab on" id="t-brand"><div class="wrap doc">
+  <span class="kicker">Proposed brand identity, for your approval</span>
+  <h1>Laid for the saff.</h1>
+  <p class="lede">MosqueCarpetsCanada.ca is the carpet partner a mosque committee can trust with the most-used floor in the community. We don't sell "carpet"; we deliver straight rows, soft sujood and one team that answers the phone from first quote to first salah.</p>
+
+  <h2>The idea in one line</h2>
+  <div class="grid3">
+    <div class="box"><h3>Brand promise</h3><p>Every row straight. Every roll right. One team, start to finish.</p></div>
+    <div class="box"><h3>Who it's for</h3><p>Masjid committees, imams and facility volunteers who must justify a large spend to their community and can't afford a carpet that crowds the saff.</p></div>
+    <div class="box"><h3>Why us, not a carpet shop</h3><p>We choose from many mills (we're not tied to one factory), we understand prayer-line spacing and qibla alignment, and we install it ourselves.</p></div>
+  </div>
+
+  <h2>Tagline options (pick one)</h2>
+  <div class="grid3">
+    <div class="box"><span class="pill">Recommended</span><h3 style="margin-top:10px;font:700 24px Amiri,serif">Laid for the saff.</h3><p>Short, specific to prayer, and implies craftsmanship (laid = installed).</p></div>
+    <div class="box"><h3 style="font:700 24px Amiri,serif">Every row, straight.</h3><p>Leads with the most practical benefit committees care about.</p></div>
+    <div class="box"><h3 style="font:700 24px Amiri,serif">From the mill to the mihrab.</h3><p>Tells the sourcing-and-install story in five words.</p></div>
+  </div>
+
+  <h2>Personality</h2>
+  <div class="grid4">
+    <div class="box"><h3>Reverent</h3><p>The prayer hall is sacred space. We never sound salesy or gimmicky about it.</p></div>
+    <div class="box"><h3>Precise</h3><p>Numbers, measurements, itemised quotes. Precision is our luxury.</p></div>
+    <div class="box"><h3>Warm</h3><p>We serve communities, not "customers". Friendly, patient, plain-spoken.</p></div>
+    <div class="box"><h3>Dependable</h3><p>Canadian, accountable, on schedule. We say what we'll do and do it.</p></div>
+  </div>
+
+  <h2>Voice</h2>
+  <table class="voice">
+    <tr><th>We sound like</th><th>We don't sound like</th></tr>
+    <tr><td class="yes">"Your rows will run square to the qibla wall."</td><td class="no">"Transform your space with stunning luxury flooring!"</td></tr>
+    <tr><td class="yes">"Free, itemised quote: supply, import and installation."</td><td class="no">"Contact us for pricing."</td></tr>
+    <tr><td class="yes">"Jazakum Allahu khayran for trusting us with your masjid."</td><td class="no">Heavy religious phrases on every line.</td></tr>
+  </table>
+  <p style="margin-top:10px">Arabic is used with care: hall names, the Bismillah bar and a closing du'a. Never as decoration on buttons or prices.</p>
+
+  <h2>Colour palette</h2>
+  <div class="grid4">
+    <div class="swatch"><i style="background:#0F2A22"></i><div><strong>Masjid Green</strong>#0F2A22 · primary, headers, dark bands</div></div>
+    <div class="swatch"><i style="background:#B8892F"></i><div><strong>Brass</strong>#B8892F · buttons, saff lines, highlights</div></div>
+    <div class="swatch"><i style="background:#F3EEE3"></i><div><strong>Plaster</strong>#F3EEE3 · page background</div></div>
+    <div class="swatch"><i style="background:#5C2A2A"></i><div><strong>Maroon</strong>#5C2A2A · accent bands, testimonials</div></div>
+  </div>
+  <p style="margin-top:10px">Supporting: Deep Indigo #1C2A4A and Sage #4F6B5A, taken from the real colourways, so the site's colours are the carpet's colours.</p>
+
+  <h2>Type</h2>
+  <div class="grid2">
+    <div class="box"><p style="font:700 40px/1.1 Amiri,serif;color:var(--ink)">Amiri</p><p>Headlines and Arabic. One family that sets English and Arabic beautifully together, so the two languages feel like one brand.</p></div>
+    <div class="box"><p style="font:600 34px/1.2 'Work Sans',sans-serif;color:var(--ink)">Work Sans</p><p>Body text, prices, buttons. Clean and very readable on phones.</p></div>
+  </div>
+
+  <h2>Signature elements</h2>
+  <div class="grid3">
+    <div class="box"><h3>The saff line</h3><p>A thin brass horizontal line, used as dividers, underlines and backgrounds. It's literally what we sell: woven prayer lines.</p></div>
+    <div class="box"><h3>The mihrab arch</h3><p>Our frame for photos and cards. Instantly reads as "mosque" without clichés.</p></div>
+    <div class="box"><h3>The khatam star</h3><p>The 8-point star from Islamic geometry, as a small mark and a pattern band. Used sparingly.</p></div>
+  </div>
+
+  <h2>Logo concept</h2>
+  <div class="logo-row">
+    <div class="logo-tile" style="background:#0F2A22;color:#F3EEE3">
+      <svg width="54" height="62" viewBox="0 0 48 56" aria-hidden="true"><path d="M8 54V26a16 16 0 0 1 32 0v28z" fill="none" stroke="#D9B26A" stroke-width="2.2"/><path d="M13 34h22M13 41h22M13 48h22" stroke="#D9B26A" stroke-width="1.6"/><path d="M24 3l2.2 5.3 5.3-2.2-2.2 5.3 5.3 2.2-5.3 2.2 2.2 5.3-5.3-2.2L24 21l-2.2-5.3-5.3 2.2 2.2-5.3-5.3-2.2 5.3-2.2-2.2-5.3 5.3 2.2z" fill="#D9B26A"/></svg>
+      <div class="wm">MosqueCarpets<span style="color:#D9B26A">Canada</span><small>سجاد المساجد</small></div>
+    </div>
+    <div class="logo-tile" style="background:#F3EEE3;color:#0F2A22;border:1px solid var(--line)">
+      <svg width="54" height="62" viewBox="0 0 48 56" aria-hidden="true"><path d="M8 54V26a16 16 0 0 1 32 0v28z" fill="none" stroke="#0F2A22" stroke-width="2.2"/><path d="M13 34h22M13 41h22M13 48h22" stroke="#B8892F" stroke-width="1.6"/><path d="M24 3l2.2 5.3 5.3-2.2-2.2 5.3 5.3 2.2-5.3 2.2 2.2 5.3-5.3-2.2L24 21l-2.2-5.3-5.3 2.2 2.2-5.3-5.3-2.2 5.3-2.2-2.2-5.3 5.3 2.2z" fill="#B8892F"/></svg>
+      <div class="wm">MosqueCarpets<span style="color:#B8892F">Canada</span><small>سجاد المساجد</small></div>
+    </div>
+  </div>
+  <p style="margin-top:10px">A mihrab arch holding three saff lines, crowned with the khatam star. It replaces the current small square icon and works as a favicon.</p>
+
+  <h2>Photography (when photos arrive)</h2>
+  <ul style="padding-left:20px">
+    <li>Real halls, low angle along the rows, morning light. Show the lines running straight.</li>
+    <li>Hands and texture close-ups: pile, binding, seams placed between rows.</li>
+    <li>Our crew at work (faces optional). Never stock photos of generic carpet showrooms.</li>
+  </ul>
+
+  <div class="box" style="margin-top:40px;background:var(--green);color:#F3EEE3;border:0">
+    <h3 style="color:#D9B26A">Your call</h3>
+    <p style="color:#C9D2CB">Reply <b>"brand approved"</b> or tell me what to change (e.g. a different tagline or colour). Then pick a design direction from tabs A to D, or mix them ("A's hero with D's testimonials").</p>
+  </div>
+</div></section>
+
+<!-- ================= LAYOUT ================= -->
+<section class="tab" id="t-layout"><div class="wrap doc">
+  <span class="kicker">Marketing and ease-of-use review of the current homepage</span>
+  <h1>Shorter page, buying first, more life.</h1>
+  <p class="lede">Today the homepage has 12 sections at a similar volume, mostly cream boxes on cream. Visitors have to scroll past installation details to reach colours and the calculator, which are part of choosing a carpet. My suggestions, in order of impact:</p>
+
+  <h2>What I'd change</h2>
+  <div class="grid2">
+    <div class="box"><h3>1. Put "choosing" together</h3><p>Hall sizes → colourways → fit calculator should sit next to each other. Right now colourways and the calculator are 4 sections below the hall sizes, after installation.</p></div>
+    <div class="box"><h3>2. Cut 12 sections to 9</h3><p>Merge "Four steps" with "Installation" into one "How it works". Fold the line-spacing explainer into the hall-size area as a short "Which spacing?" note.</p></div>
+    <div class="box"><h3>3. Shorter, braver hero</h3><p>The headline runs 4 lines. Proposed: "Laid for the saff." plus one sentence, two buttons ("Shop hall sizes", "Request a quote") and a large mihrab-framed image instead of the small illustration.</p></div>
+    <div class="box"><h3>4. Rhythm, not sameness</h3><p>Alternate dark green, cream and one maroon band, separated by a brass saff line. Fewer outlined boxes, more full-width bands. This is what brings back the identity.</p></div>
+    <div class="box"><h3>5. Proof near the money</h3><p>Add a testimonial and "mosques we've carpeted" right after the hall sizes, where people decide to buy. (Needs item #17 from you.)</p></div>
+    <div class="box"><h3>6. Clear navigation</h3><p>Menu: Hall sizes · Colours · Installation · About · FAQ. "Fit calculator" becomes a button inside Hall sizes, not a menu item.</p></div>
+  </div>
+
+  <h2>Two small bugs I spotted</h2>
+  <p class="fix"><b>Trust strip:</b> the grey dome shapes above the four trust points are cut off at the top, which looks broken. Fix: show them in full or remove them.</p>
+  <p class="fix"><b>Footer:</b> links in each column run together on one line ("By hall size Colourways"). Fix: one link per line.</p>
+
+  <h2>Proposed homepage order</h2>
+  <ol class="order">
+    <li>Bismillah bar + header<span>Unchanged, with the new logo mark if approved.</span></li>
+    <li>Hero: "Laid for the saff."<span>One sentence, two buttons, large arched image. Trust points sit inside the hero bottom.</span></li>
+    <li class="moved">Shop by hall size (slider with Buy now)<span>With a "Not sure? Use the fit calculator" link and a one-line spacing tip.</span></li>
+    <li class="moved">Colourways<span>Right after sizes, because it's the next decision.</span></li>
+    <li class="new">What committees say<span>Testimonial + mosques served (shown only once you send one).</span></li>
+    <li class="merged">How it works: measure → choose → import → install<span>Merges "Four steps" and "Installation" into one dark band.</span></li>
+    <li>Sourced, not manufactured<span>The sourcing story, shorter, with the rolls illustration.</span></li>
+    <li class="moved">Fit calculator<span>Also reachable from the hall-size section.</span></li>
+    <li>FAQ, then closing quote banner and footer<span>Unchanged content, footer links fixed.</span></li>
+  </ol>
+  <p style="margin-top:14px">The line-spacing explainer (90 / 95 / 100cm) moves into the product page and a short tip under the hall sizes. Nothing is deleted; it's re-ordered and merged.</p>
+</div></section>
+
+<!-- ================= A ================= -->
+<section class="tab" id="t-a"><div class="wrap">
+  <div class="dir-intro"><span class="kicker">Direction A</span><h1>Mihrab: heritage luxury</h1>
+  <p>The closest to your brand today, turned up. Deep green, brass and maroon, arch-framed images and cards, a khatam pattern band. Feels like a beautifully finished masjid.</p>
+  <div class="dir-meta"><span class="chip"><i style="background:#0F2A22"></i>Masjid Green</span><span class="chip"><i style="background:#B8892F"></i>Brass</span><span class="chip"><i style="background:#5C2A2A"></i>Maroon</span><span class="chip">Amiri + Work Sans</span><span class="pill">My pick</span></div></div>
+  <div class="frame A">
+    <div class="nav"><strong style="font:700 20px Amiri,serif">MosqueCarpets<span style="color:#D9B26A">Canada</span></strong><div class="links"><span>Hall sizes</span><span>Colours</span><span>Installation</span><span>About</span></div><a class="btn" href="#">Request a quote</a></div>
+    <div class="hero">
+      <div style="padding-bottom:60px"><span class="ar">سجاد المساجد</span><h2>Laid for the <em>saff</em>.</h2><p>Luxury prayer-hall carpet, sourced from specialist mills, imported and installed by our own team across Canada.</p><a class="btn" href="#">Shop hall sizes</a>&nbsp; <a class="btn ghost" href="#">Request a quote</a></div>
+      <div class="arch"><div class="inner"></div></div>
+    </div>
+    <div class="band" aria-hidden="true"></div>
+    <div class="sec"><h3>Shop by hall size</h3><p class="sub">Three standard sizes, or a quote for any hall.</p>
+      <div class="cards">
+        <div class="card"><div class="pic"></div><div class="dims">4 × 6 m</div><div class="ar">مصلى صغير</div><h4>Musalla, small</h4><div class="price">from $1,150 CAD</div><a class="btn" href="#">Buy now</a></div>
+        <div class="card" style="border-color:#B8892F;box-shadow:0 20px 40px -24px rgba(15,42,34,.5)"><div class="pic"></div><div class="dims">8 × 12 m</div><div class="ar">القاعة الرئيسية</div><h4>Main hall, mid-size</h4><div class="price">from $3,650 CAD</div><a class="btn" href="#">Buy now</a></div>
+        <div class="card"><div class="pic"></div><div class="dims">15 × 22 m</div><div class="ar">قاعة الجمعة</div><h4>Jumu'ah hall, large</h4><div class="price">from $9,950 CAD</div><a class="btn" href="#">Buy now</a></div>
+      </div></div>
+    <div class="quote"><blockquote>"The rows finally run straight to the qibla. Our jama'ah noticed on the first Jumu'ah."</blockquote><cite>Sample testimonial: replace with a real one</cite></div>
+  </div>
+  <p class="note">Mock-up with drawings in place of photos. Prices and copy are your current ones.</p>
+</div></section>
+
+<!-- ================= B ================= -->
+<section class="tab" id="t-b"><div class="wrap">
+  <div class="dir-intro"><span class="kicker">Direction B</span><h1>Saff: modern editorial</h1>
+  <p>Confident and contemporary. Huge type, black rules and brass prayer lines as the main graphic. Feels like a premium architecture studio. Most different from today; strongest for standing out.</p>
+  <div class="dir-meta"><span class="chip"><i style="background:#111"></i>Ink</span><span class="chip"><i style="background:#B8892F"></i>Brass</span><span class="chip"><i style="background:#FAF7F0"></i>Paper</span><span class="chip">Fraunces + Work Sans</span></div></div>
+  <div class="frame B">
+    <div class="nav"><span class="mark">MosqueCarpets<span style="color:#B8892F">.</span>ca</span><div class="links"><span>Hall sizes</span><span>Colours</span><span>Installation</span><span>About</span></div><a class="btn gold" href="#">Get a quote</a></div>
+    <div class="hero"><h2>Every row, <span>straight.</span></h2>
+      <div class="row"><p>Prayer-hall carpet with lines woven in at 90, 95 or 100cm. Sourced from specialist mills, installed square to your qibla wall.</p><div><a class="btn" href="#">Shop hall sizes</a> <a class="btn gold" href="#">Request a quote</a></div></div></div>
+    <div class="lines" aria-hidden="true"></div>
+    <div class="stats"><div><b>3</b><span>woven row spacings</span></div><div><b>1</b><span>team, quote to first salah</span></div><div><b>0</b><span>seams under a sujood</span></div></div>
+    <div class="sec"><h3>Hall sizes</h3><div class="list">
+      <div class="item"><span class="n">01</span><div><h4>Musalla · 4 × 6 m</h4></div><p>Side rooms and women's areas. One seamless roll.</p><span class="price">$1,150 CAD →</span></div>
+      <div class="item"><span class="n">02</span><div><h4>Main hall · 8 × 12 m</h4></div><p>Most ordered. Hidden seam between rows.</p><span class="price">$3,650 CAD →</span></div>
+      <div class="item"><span class="n">03</span><div><h4>Jumu'ah · 15 × 22 m</h4></div><p>Site visit and floor template included.</p><span class="price">$9,950 CAD →</span></div>
+    </div></div>
+    <div class="feature"><div class="txt"><h3>Sourced, not manufactured.</h3><p>We're not tied to one loom, so we choose the right mill for your hall, inspect every roll in Canada and fit it ourselves.</p></div><div class="viz" aria-hidden="true"></div></div>
+  </div>
+  <p class="note">Note: "0 seams under a sujood" needs your confirmation before it goes live.</p>
+</div></section>
+
+<!-- ================= C ================= -->
+<section class="tab" id="t-c"><div class="wrap">
+  <div class="dir-intro"><span class="kicker">Direction C</span><h1>Isha: night luxury</h1>
+  <p>Dark, glowing and dramatic, like a masjid at night lit by lanterns. Deep indigo, warm gold light, a carpet floor in perspective. The most premium and emotional; best with great photos.</p>
+  <div class="dir-meta"><span class="chip"><i style="background:#0A1222"></i>Midnight</span><span class="chip"><i style="background:#E7C77F"></i>Lantern Gold</span><span class="chip"><i style="background:#1C2A4A"></i>Indigo</span><span class="chip">Reem Kufi + Work Sans</span></div></div>
+  <div class="frame C">
+    <div class="nav"><span class="mark">MosqueCarpetsCanada</span><div class="links"><span>Hall sizes</span><span>Colours</span><span>Installation</span><span>About</span></div><a class="btn ghost" href="#">Request a quote</a></div>
+    <div class="hero"><div class="lamp" aria-hidden="true"></div><span class="ar">بِسْمِ اللَّهِ</span><h2>A prayer hall worthy of its jama'ah.</h2><p>Luxury carpet rolls with woven saff lines, imported from specialist mills and installed by our own team.</p><a class="btn" href="#">Shop hall sizes</a>&nbsp; <a class="btn ghost" href="#">Request a quote</a><div class="floor" aria-hidden="true"></div></div>
+    <div class="sec"><h3>Choose your hall</h3><p class="sub">Buy online in three sizes, or ask for a quote.</p>
+      <div class="cards">
+        <div class="card"><div class="dims">4 × 6 m</div><h4>Musalla, small</h4><p>One seamless roll, cut to width.</p><div class="price">from $1,150 CAD</div><a class="btn ghost" href="#">Buy now</a></div>
+        <div class="card pop"><div class="dims">8 × 12 m</div><h4>Main hall, mid-size</h4><p>Hidden seam placed between rows.</p><div class="price">from $3,650 CAD</div><a class="btn" href="#">Buy now</a></div>
+        <div class="card"><div class="dims">15 × 22 m</div><h4>Jumu'ah hall, large</h4><p>Site visit and floor template included.</p><div class="price">from $9,950 CAD</div><a class="btn ghost" href="#">Buy now</a></div>
+      </div></div>
+    <div class="sec" style="padding-top:0"><h3>Colourways</h3><p class="sub">Dyed as one run, so every row matches.</p>
+      <div class="swatches"><div style="background:#0F2A22">Masjid Green</div><div style="background:#5C2A2A">Maroon</div><div style="background:#1C2A4A">Deep Indigo</div><div style="background:#3B2A17">Walnut</div><div style="background:#8A6A2E">Camel Gold</div></div></div>
+  </div>
+  <p class="note">Dark sites need strong photos to shine; until then, the drawings carry it.</p>
+</div></section>
+
+<!-- ================= D ================= -->
+<section class="tab" id="t-d"><div class="wrap">
+  <div class="dir-intro"><span class="kicker">Direction D</span><h1>Jama'ah: warm community</h1>
+  <p>Friendly and human. Warm sand and maroon, rounded shapes, testimonials up front, photo collages of real halls and committees. Feels like a trusted local business, not a catalogue.</p>
+  <div class="dir-meta"><span class="chip"><i style="background:#5C2A2A"></i>Maroon</span><span class="chip"><i style="background:#E2B860"></i>Saffron</span><span class="chip"><i style="background:#7A8F6E"></i>Sage</span><span class="chip">DM Serif + DM Sans</span></div></div>
+  <div class="frame D">
+    <div class="nav"><span class="mark">MosqueCarpetsCanada</span><div class="links"><span>Hall sizes</span><span>Colours</span><span>Installation</span><span>About</span></div><a class="btn" href="#">Request a quote</a></div>
+    <div class="hero"><div><span class="tag">Serving masjids across Canada</span><h2>Carpet your masjid with people who pray in one.</h2><p>We source, import and install luxury prayer carpet, with lines woven straight so your rows stay straight.</p><a class="btn" href="#">Shop hall sizes</a>&nbsp; <a class="btn alt" href="#">Request a quote</a></div>
+      <div class="collage" aria-hidden="true"><div class="a">Your hall photo</div><div class="b">Install day</div><div class="c">Committee handover</div></div></div>
+    <div class="proof"><div><blockquote>"They measured on Saturday and we prayed on new carpet two weeks later."</blockquote><cite>Sample testimonial: replace with a real one</cite></div><div><b>3</b><span>row spacings</span></div><div><b>1</b><span>team, start to finish</span></div><div><b>CAD</b><span>itemised quotes</span></div></div>
+    <div class="sec"><h3>Pick your hall size</h3><p class="sub">Every size comes in five colourways.</p>
+      <div class="cards">
+        <div class="card"><div class="pic"></div><div class="body"><h4>Musalla, small</h4><p>4 × 6 m · one seamless roll</p><div class="price">from $1,150 CAD</div><a class="btn" href="#">Buy now</a></div></div>
+        <div class="card"><div class="pic"></div><div class="body"><h4>Main hall</h4><p>8 × 12 m · most ordered</p><div class="price">from $3,650 CAD</div><a class="btn" href="#">Buy now</a></div></div>
+        <div class="card"><div class="pic"></div><div class="body"><h4>Jumu'ah hall</h4><p>15 × 22 m · site visit included</p><div class="price">from $9,950 CAD</div><a class="btn" href="#">Buy now</a></div></div>
+      </div></div>
+    <div class="sec" style="padding-top:0"><h3>How it works</h3><div class="steps"><div><b>1</b><h4>Measure</h4><p>Send a floor plan or book a visit.</p></div><div><b>2</b><h4>Choose</h4><p>Size, spacing and colour, with samples.</p></div><div><b>3</b><h4>Import</h4><p>Shipped, cleared and inspected.</p></div><div><b>4</b><h4>Install</h4><p>Squared to the qibla, around salah times.</p></div></div></div>
+  </div>
+  <p class="note">This direction depends most on real photos and testimonials (items #16 and #17).</p>
+</div></section>
+
+<script>
+  (function(){
+    var tabs=document.querySelectorAll('.chrome button');
+    tabs.forEach(function(b){b.addEventListener('click',function(){
+      tabs.forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});
+      document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.id==='t-'+b.dataset.t)});
+      window.scrollTo(0,0);
+    })});
+    document.querySelectorAll('.frame a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault()})});
+  })();
+</script>
+</body>
+</html>

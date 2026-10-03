@@ -58,7 +58,15 @@ The owner published v4 (now MAIN, gid 131005284398), so this went into a new cop
 layout the cards stayed a 3-column grid: the carousel CSS was gated on `html.mcc-js`, which isn't kept there.
 Fix (commit a5b7d4c): the script's `is-ready` class alone switches the layout on; side cards tucked to ±50%.
 Uploaded to **"MosqueCarpetsCanada — Site update v6"** (gid://shopify/OnlineStoreTheme/131005546542, unpublished);
-checksums verified. Owner publishes it.
+checksums verified. Owner published v6.
+Motion blur removed at owner request (commit 7510333), uploaded to **"Site update v7 (no blur)"**
+(gid://shopify/OnlineStoreTheme/131005644846, unpublished); checksums verified. Owner publishes it.
+Note: themeFilesUpsert by URL sometimes reports done without applying; always compare checksums and retry once.
+
+## Step D: brand identity and redesign (proposal, awaiting decision)
+
+Preview: `previews/brand/brand-directions.html` (brand identity, layout review, directions A Mihrab, B Saff,
+C Isha, D Jama'ah). Nothing built in the theme yet.
 
 ## Step C: shipping (needs owner decision)
 
