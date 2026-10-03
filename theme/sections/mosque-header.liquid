@@ -35,7 +35,8 @@
       endif
     -%}
     <nav class="mcc-navlinks" aria-label="Main">
-      <a href="{{ routes.root_url }}#sizes">Shop by hall size</a>
+      <a href="{{ routes.root_url }}#sizes">Hall sizes</a>
+      <a href="{{ routes.root_url }}#colours">Colours</a>
       <a href="/pages/installation"{% if on_install %} aria-current="page"{% endif %}>Installation</a>
       <a href="/pages/about"{% if on_about %} aria-current="page"{% endif %}>About</a>
       <a href="{{ routes.root_url }}#faq">FAQ</a>
@@ -51,6 +52,7 @@
   </div>
   <nav class="mcc-mobile-nav" aria-label="Main (mobile)">
     <a href="{{ routes.root_url }}#sizes">Hall sizes</a>
+    <a href="{{ routes.root_url }}#colours">Colours</a>
     <a href="/pages/installation"{% if on_install %} aria-current="page"{% endif %}>Installation</a>
     <a href="/pages/about"{% if on_about %} aria-current="page"{% endif %}>About</a>
     <a href="{{ routes.root_url }}#faq">FAQ</a>

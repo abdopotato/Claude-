@@ -408,3 +408,42 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"] .mcc-buy-box.is-popping{animation:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="hidden"]{opacity:0; pointer-events:none; --s:.7;}
+
+/* Layout pass (owner-approved suggestions): buying first, fewer sections, alternating bands. */
+/* Trust points: a green band the hero skyline rises out of (fixes the clipped domes) */
+#mcc-app .mcc-hero-skyline{opacity:1;}
+#mcc-app .mcc-strip.mcc-trust-band{transform:none; margin:0; max-width:none; border-radius:0; background:var(--green-900);}
+#mcc-app .mcc-trust-band .mcc-wrap{max-width:1180px; margin:0 auto; padding:6px 28px 30px;}
+#mcc-app .mcc-trust-band .mcc-strip-item{color:var(--muted-on-dark); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-trust-band .mcc-strip-item strong{color:var(--plaster);}
+@media (max-width:640px){
+  #mcc-app .mcc-strip.mcc-trust-band{margin:0; transform:none;}
+  #mcc-app .mcc-trust-band .mcc-wrap{padding:4px 16px 20px;}
+}
+/* Alternating light band */
+#mcc-app .mcc-band{background:var(--plaster-dim);}
+#mcc-app .mcc-band .mcc-calc{background:var(--surface);}
+/* Spacing tip + calculator link under the hall-size slider */
+#mcc-app .mcc-size-help{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px 28px; margin-top:clamp(28px,4vw,44px); padding:18px 22px; border-top:1px solid var(--brass); border-bottom:1px solid var(--line);}
+#mcc-app .mcc-size-help-tip{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline; font-size:14.5px; color:var(--text-dim);}
+#mcc-app .mcc-size-help-tip strong{color:var(--text); font-size:15px;}
+#mcc-app .mcc-size-help-tip b{color:var(--brass-text); font-weight:600;}
+/* How it works: one dark band (steps + installation) */
+#mcc-app .mcc-how{background:var(--green-900); color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head h2{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-eyebrow{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-step-num{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step h3{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-step p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-step .mcc-when{color:var(--plaster); background:rgba(215,174,92,.16);}
+#mcc-app .mcc-how-install{display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(28px,4vw,48px); align-items:start; margin-top:clamp(40px,5vw,64px); padding-top:clamp(32px,4vw,48px); border-top:1px solid rgba(215,174,92,.35);}
+#mcc-app .mcc-how-sub{font-size:clamp(22px,2.4vw,28px); color:var(--plaster); margin-bottom:20px;}
+#mcc-app .mcc-how .mcc-install-list li{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-install-list strong{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-install-list span{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-install-card{background:var(--green-800); border:1px solid rgba(215,174,92,.45);}
+@media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
+/* Footer: one link per line (links were running together) */
+#mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}

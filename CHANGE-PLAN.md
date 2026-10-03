@@ -68,6 +68,16 @@ Note: themeFilesUpsert by URL sometimes reports done without applying; always co
 Preview: `previews/brand/brand-directions.html` (brand identity, layout review, directions A Mihrab, B Saff,
 C Isha, D Jama'ah). Nothing built in the theme yet.
 
+## Step E: layout pass (preview, awaiting owner feedback)
+
+Owner asked to apply the layout suggestions only (not directions A-D). Homepage order is now: hero (shorter copy,
+"Shop hall sizes" primary) → trust points in a green band under the skyline (fixes clipped domes) → hall sizes +
+spacing tip + calculator link → colourways → testimonial (when added) → "How it works" (four steps + installation
+merged, dark band) → sourcing → fit calculator → FAQ → closing banner. The separate line-spacing section is folded
+into the tip; header menu adds "Colours"; footer links one per line. Page ~700px shorter.
+Screenshots: `previews/layout/`. Before upload, check the live `templates/index.json` for saved hero settings
+(new hero wording is a schema default and won't show if the owner saved their own).
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.

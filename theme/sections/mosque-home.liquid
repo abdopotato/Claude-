@@ -1,6 +1,5 @@
 {{ 'mosque-design.css' | asset_url | stylesheet_tag }}
 {{ 'mosque-update.css' | asset_url | stylesheet_tag }}
-{%- assign star = '<svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z" fill="var(--brass)"/></svg>' -%}
 <div id="mcc-app">
 <section class="mcc-hero">
   <div class="mcc-hero-skyline" aria-hidden="true">
@@ -16,19 +15,13 @@
   <div class="mcc-hero-inner">
     <div class="mcc-hero-copy">
       <div class="mcc-trust-badge"><span class="mcc-dot"></span>{{ section.settings.trust_text }}</div>
-      <div class="mcc-kicker">{{ section.settings.kicker }}</div>
       <h1>{{ section.settings.heading }}</h1>
       <p>{{ section.settings.text }}</p>
       <div class="mcc-hero-actions">
-        <a href="/pages/contact" class="mcc-btn-primary">Request a quote</a>
-        <a href="#sizes" class="mcc-btn-ghost">Shop by hall size</a>
+        <a href="#sizes" class="mcc-btn-primary">Shop hall sizes</a>
+        <a href="/pages/contact" class="mcc-btn-secondary">Request a quote</a>
       </div>
       <p class="mcc-cta-note" style="margin-top:12px;">{{ section.settings.cta_note }}</p>
-      <div class="mcc-hero-mini-stats">
-        <div><strong>{{ section.settings.stat_1_value }}</strong><span>{{ section.settings.stat_1_label }}</span></div>
-        <div><strong>{{ section.settings.stat_2_value }}</strong><span>{{ section.settings.stat_2_label }}</span></div>
-        <div><strong>{{ section.settings.stat_3_value }}</strong><span>{{ section.settings.stat_3_label }}</span></div>
-      </div>
     </div>
 
     <div class="mcc-hero-card" style="--r:0deg;">
@@ -53,9 +46,7 @@
   </div>
 </section>
 
-<div class="mcc-divider-stars" aria-hidden="true">{{ star }}{{ star }}{{ star }}</div>
-
-<div class="mcc-strip">
+<div class="mcc-strip mcc-trust-band">
   <div class="mcc-wrap">
     <div class="mcc-strip-item"><strong>Woven-in saff lines</strong>True 90 / 95 / 100cm spacing, woven in and never printed</div>
     <div class="mcc-strip-item"><strong>Professional installation</strong>Measured, seamed and fitted by our crew</div>
@@ -126,10 +117,17 @@
     <button type="button" class="mcc-carousel-nav mcc-carousel-next" data-carousel-next aria-label="Next hall size" hidden>&#8250;</button>
     <p class="mcc-visually-hidden" aria-live="polite" data-carousel-status></p>
     </div>
+    <div class="mcc-size-help" data-reveal>
+      <div class="mcc-size-help-tip">
+        <strong>Which row spacing?</strong>
+        <span><b>90cm</b> tighter halls</span><span><b>95cm</b> recommended for most mosques</span><span><b>100cm</b> Jumu'ah &amp; Eid halls</span>
+      </div>
+      <a class="mcc-btn-ghost" href="#calculator">Not sure of your size? Use the fit calculator</a>
+    </div>
   </div>
 </section>
 
-<section class="mcc-section mcc-flush-top" id="colours">
+<section class="mcc-section mcc-band" id="colours">
   <div class="mcc-wrap">
     <div class="mcc-section-head" data-reveal>
       <h2>Colourways</h2>
@@ -146,7 +144,46 @@
   </div>
 </section>
 
-<section class="mcc-section mcc-flush-top" id="sourcing">
+{%- if section.settings.testimonial_quote != blank -%}
+<section class="mcc-testimonial">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H7V7zm9 0h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H16V7z"/></svg>
+  <p>{{ section.settings.testimonial_quote }}</p>
+  <cite>{{ section.settings.testimonial_author }}</cite>
+</section>
+{%- endif -%}
+
+<section class="mcc-section mcc-how mcc-on-dark" id="install">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" data-reveal><span class="mcc-eyebrow">From the mill to your masjid</span><h2>How it works: four steps, one team</h2><p>We measure, recommend, import and install, with the saff lines squared to your qibla wall.</p></div>
+    <div class="mcc-steps">
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">1</div><h3>Measure &amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class="mcc-when">Free, itemised quote</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class="mcc-when">See it before you commit</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">3</div><h3>We import &amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class="mcc-when">{{ section.settings.lead_time_text }}</span></div>
+      <div class="mcc-step" data-reveal><div class="mcc-step-num">4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class="mcc-when">Scheduled around salah</span></div>
+    </div>
+    <div class="mcc-how-install">
+      <div data-reveal>
+        <h3 class="mcc-how-sub">Installed by people who understand a prayer hall</h3>
+        <ul class="mcc-install-list">
+        <li><strong>Qibla alignment</strong><span>Lines squared to the qibla wall, not to the room</span></li>
+        <li><strong>Hidden seams</strong><span>Joins placed between rows, where no one kneels</span></li>
+        <li><strong>Old carpet removal</strong><span>Can be added to your quote</span></li>
+        <li><strong>Minimal disruption</strong><span>Scheduled around salah times and Jumu'ah</span></li>
+      </ul>
+      </div>
+    <aside class="mcc-install-card" data-reveal>
+      <h3>Two ways to order</h3>
+      <p>Every quote shows both options, so your committee can compare.</p>
+      <div class="mcc-opt"><span>Supply + install</span><span>Our carpet, fitted by our crew</span></div>
+      <div class="mcc-opt"><span>Supply only</span><span>Our carpet, your installer</span></div>
+      <div class="mcc-opt"><span>Where</span><span>{{ section.settings.service_area }}</span></div>
+      <a href="/pages/installation" class="mcc-btn-secondary">How installation works</a>
+    </aside>
+    </div>
+  </div>
+</section>
+
+<section class="mcc-section" id="sourcing">
   <div class="mcc-wrap mcc-source">
     <div class="mcc-source-visual" data-reveal>
       {%- if section.settings.sourcing_image != blank -%}
@@ -175,68 +212,7 @@
   </div>
 </section>
 
-<section class="mcc-section mcc-process">
-  <div class="mcc-wrap">
-    <div class="mcc-section-head" data-reveal><span class="mcc-eyebrow">From the mill to your masjid</span><h2>Four steps. One team.</h2></div>
-    <div class="mcc-steps">
-      <div class="mcc-step" data-reveal><div class="mcc-step-num">1</div><h3>Measure &amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class="mcc-when">Free, itemised quote</span></div>
-      <div class="mcc-step" data-reveal><div class="mcc-step-num">2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class="mcc-when">See it before you commit</span></div>
-      <div class="mcc-step" data-reveal><div class="mcc-step-num">3</div><h3>We import &amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class="mcc-when">{{ section.settings.lead_time_text }}</span></div>
-      <div class="mcc-step" data-reveal><div class="mcc-step-num">4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class="mcc-when">Scheduled around salah</span></div>
-    </div>
-  </div>
-</section>
-
-<section class="mcc-saff-section" id="saff">
-  <div class="mcc-wrap">
-    <div class="mcc-saff-copy" data-reveal>
-      <span class="mcc-ar mcc-saff-kicker">الصف</span>
-      <h2>The line spacing is the whole point</h2>
-      <p>A carpet that looks right in a photo but crowds the saff makes every rak'ah harder. Every roll we supply comes in three woven spacings, and we'll help you choose the right one before you order.</p>
-      <ul class="mcc-saff-facts">
-        <li class="mcc-saff-fact"><span class="mcc-saff-fact-num">90</span><div class="mcc-saff-fact-body"><strong>90cm</strong><span>Tight halls, high midweek attendance, smaller-framed congregations</span></div></li>
-        <li class="mcc-saff-fact mcc-saff-fact-rec"><span class="mcc-saff-fact-num">95</span><div class="mcc-saff-fact-body"><strong>95cm <em class="mcc-saff-fact-tag">Recommended</em></strong><span>The standard we recommend for most mosques: comfortable sujood without wasted floor</span></div></li>
-        <li class="mcc-saff-fact"><span class="mcc-saff-fact-num">100</span><div class="mcc-saff-fact-body"><strong>100cm</strong><span>Jumu'ah and Eid halls where rows need extra room for movement</span></div></li>
-      </ul>
-    </div>
-    <div class="mcc-saff-diagram-wrap">
-      <svg class="mcc-saff-diagram" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="0" y="0" width="480" height="300" fill="#0F2822"/>
-        <g stroke="#B8892F" stroke-width="1.4">
-          {%- for y in (0..4) -%}<line x1="30" y1="{{ y | times: 57 | plus: 40 }}" x2="450" y2="{{ y | times: 57 | plus: 40 }}"/>{%- endfor -%}
-        </g>
-        <g fill="#7C9A87" opacity="0.85">
-          {%- for r in (0..3) -%}{%- for c in (0..5) -%}<ellipse cx="{{ c | times: 60 | plus: 70 }}" cy="{{ r | times: 57 | plus: 62 }}" rx="14" ry="7"/>{%- endfor -%}{%- endfor -%}
-        </g>
-      </svg>
-      <div class="mcc-saff-diagram-tag">95cm spacing</div>
-    </div>
-  </div>
-</section>
-
-<section class="mcc-section" id="install">
-  <div class="mcc-wrap mcc-install">
-    <div>
-      <div class="mcc-section-head" style="margin-bottom:28px;" data-reveal><span class="mcc-eyebrow">Fitted, not just delivered</span><h2>Installation by people who understand a prayer hall</h2><p>A luxury carpet only looks luxurious if it's laid right. Our installers square the saff lines to the qibla wall first, then work outwards, so every row runs true.</p></div>
-      <ul class="mcc-install-list">
-        <li><strong>Qibla alignment</strong><span>Lines squared to the qibla wall, not to the room</span></li>
-        <li><strong>Hidden seams</strong><span>Joins placed between rows, where no one kneels</span></li>
-        <li><strong>Old carpet removal</strong><span>Can be added to your quote</span></li>
-        <li><strong>Minimal disruption</strong><span>Scheduled around salah times and Jumu'ah</span></li>
-      </ul>
-    </div>
-    <aside class="mcc-install-card mcc-on-dark" data-reveal>
-      <h3>Two ways to order</h3>
-      <p>Every quote shows both options, so your committee can compare.</p>
-      <div class="mcc-opt"><span>Supply + install</span><span>Our carpet, fitted by our crew</span></div>
-      <div class="mcc-opt"><span>Supply only</span><span>Our carpet, your installer</span></div>
-      <div class="mcc-opt"><span>Where</span><span>{{ section.settings.service_area }}</span></div>
-      <a href="/pages/installation" class="mcc-btn-secondary">How installation works</a>
-    </aside>
-  </div>
-</section>
-
-<section class="mcc-section mcc-flush-top" id="calculator">
+<section class="mcc-section mcc-band" id="calculator">
   <div class="mcc-wrap">
     <div class="mcc-section-head" data-reveal>
       <h2>Fit calculator</h2>
@@ -265,15 +241,7 @@
   </div>
 </section>
 
-{%- if section.settings.testimonial_quote != blank -%}
-<section class="mcc-testimonial">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H7V7zm9 0h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H16V7z"/></svg>
-  <p>{{ section.settings.testimonial_quote }}</p>
-  <cite>{{ section.settings.testimonial_author }}</cite>
-</section>
-{%- endif -%}
-
-<section class="mcc-section mcc-flush-top" id="faq">
+<section class="mcc-section" id="faq">
   <div class="mcc-wrap">
     <div class="mcc-section-head" data-reveal><h2>Questions committees ask us</h2></div>
     <div class="mcc-faq">
@@ -408,14 +376,14 @@
   "settings": [
     { "type": "header", "content": "Hero" },
     { "type": "text", "id": "trust_text", "label": "Badge above heading", "default": "Imported luxury prayer carpet, supplied & installed for Canadian mosques" },
-    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Chosen for the saff, not the showroom" },
-    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Luxury carpet rolls for your prayer hall, fitted by our own team" },
-    { "type": "textarea", "id": "text", "label": "Hero text", "default": "We source premium wall-to-wall rolls from specialist mills overseas, with prayer lines woven in at 90, 95 or 100cm. Then we import them, measure your hall and install. You deal with one team from the quote to the first salah." },
-    { "type": "text", "id": "stat_1_value", "label": "Stat 1 value", "default": "3" },
+    { "type": "text", "id": "kicker", "label": "Kicker (not shown in this layout)", "default": "Chosen for the saff, not the showroom" },
+    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Luxury prayer-hall carpet, fitted by our own team" },
+    { "type": "textarea", "id": "text", "label": "Hero text", "default": "Wall-to-wall rolls from specialist mills, with prayer lines woven in at 90, 95 or 100cm. We import, measure and install: one team from quote to first salah." },
+    { "type": "text", "id": "stat_1_value", "label": "Stat 1 value (not shown in this layout)", "default": "3" },
     { "type": "text", "id": "stat_1_label", "label": "Stat 1 label", "default": "row spacings" },
-    { "type": "text", "id": "stat_2_value", "label": "Stat 2 value", "default": "1.5–6m" },
+    { "type": "text", "id": "stat_2_value", "label": "Stat 2 value (not shown in this layout)", "default": "1.5–6m" },
     { "type": "text", "id": "stat_2_label", "label": "Stat 2 label", "default": "roll widths" },
-    { "type": "text", "id": "stat_3_value", "label": "Stat 3 value", "default": "Supply + fit" },
+    { "type": "text", "id": "stat_3_value", "label": "Stat 3 value (not shown in this layout)", "default": "Supply + fit" },
     { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "one team, one invoice" },
     { "type": "text", "id": "cta_note", "label": "Note under quote buttons", "default": "Free and itemised, with no obligation." },
     { "type": "header", "content": "Trust strip" },

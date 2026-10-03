@@ -554,6 +554,45 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
+
+/* Layout pass (owner-approved suggestions): buying first, fewer sections, alternating bands. */
+/* Trust points: a green band the hero skyline rises out of (fixes the clipped domes) */
+#mcc-app .mcc-hero-skyline{opacity:1;}
+#mcc-app .mcc-strip.mcc-trust-band{transform:none; margin:0; max-width:none; border-radius:0; background:var(--green-900);}
+#mcc-app .mcc-trust-band .mcc-wrap{max-width:1180px; margin:0 auto; padding:6px 28px 30px;}
+#mcc-app .mcc-trust-band .mcc-strip-item{color:var(--muted-on-dark); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-trust-band .mcc-strip-item strong{color:var(--plaster);}
+@media (max-width:640px){
+  #mcc-app .mcc-strip.mcc-trust-band{margin:0; transform:none;}
+  #mcc-app .mcc-trust-band .mcc-wrap{padding:4px 16px 20px;}
+}
+/* Alternating light band */
+#mcc-app .mcc-band{background:var(--plaster-dim);}
+#mcc-app .mcc-band .mcc-calc{background:var(--surface);}
+/* Spacing tip + calculator link under the hall-size slider */
+#mcc-app .mcc-size-help{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px 28px; margin-top:clamp(28px,4vw,44px); padding:18px 22px; border-top:1px solid var(--brass); border-bottom:1px solid var(--line);}
+#mcc-app .mcc-size-help-tip{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline; font-size:14.5px; color:var(--text-dim);}
+#mcc-app .mcc-size-help-tip strong{color:var(--text); font-size:15px;}
+#mcc-app .mcc-size-help-tip b{color:var(--brass-text); font-weight:600;}
+/* How it works: one dark band (steps + installation) */
+#mcc-app .mcc-how{background:var(--green-900); color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head h2{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-eyebrow{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-step-num{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step h3{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-step p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-step .mcc-when{color:var(--plaster); background:rgba(215,174,92,.16);}
+#mcc-app .mcc-how-install{display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(28px,4vw,48px); align-items:start; margin-top:clamp(40px,5vw,64px); padding-top:clamp(32px,4vw,48px); border-top:1px solid rgba(215,174,92,.35);}
+#mcc-app .mcc-how-sub{font-size:clamp(22px,2.4vw,28px); color:var(--plaster); margin-bottom:20px;}
+#mcc-app .mcc-how .mcc-install-list li{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-install-list strong{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-install-list span{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-install-card{background:var(--green-800); border:1px solid rgba(215,174,92,.45);}
+@media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
+/* Footer: one link per line (links were running together) */
+#mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -583,7 +622,8 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
     </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Shop by hall size</a>
+      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+      <a href=&quot;index.html#colours&quot;>Colours</a>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -599,6 +639,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
     <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -632,6 +673,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 
 </div>
 <main id=&quot;MainContent&quot;>
+
 <div id=&quot;mcc-app&quot;>
 <section class=&quot;mcc-hero&quot;>
   <div class=&quot;mcc-hero-skyline&quot; aria-hidden=&quot;true&quot;>
@@ -647,19 +689,13 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   <div class=&quot;mcc-hero-inner&quot;>
     <div class=&quot;mcc-hero-copy&quot;>
       <div class=&quot;mcc-trust-badge&quot;><span class=&quot;mcc-dot&quot;></span>Imported luxury prayer carpet, supplied &amp; installed for Canadian mosques</div>
-      <div class=&quot;mcc-kicker&quot;>Chosen for the saff, not the showroom</div>
-      <h1>Luxury carpet rolls for your prayer hall, fitted by our own team</h1>
-      <p>We source premium wall-to-wall rolls from specialist mills overseas, with prayer lines woven in at 90, 95 or 100cm. Then we import them, measure your hall and install. You deal with one team from the quote to the first salah.</p>
+      <h1>Luxury prayer-hall carpet, fitted by our own team</h1>
+      <p>Wall-to-wall rolls from specialist mills, with prayer lines woven in at 90, 95 or 100cm. We import, measure and install: one team from quote to first salah.</p>
       <div class=&quot;mcc-hero-actions&quot;>
-        <a href=&quot;quote.html&quot; class=&quot;mcc-btn-primary&quot;>Request a quote</a>
-        <a href=&quot;#sizes&quot; class=&quot;mcc-btn-ghost&quot;>Shop by hall size</a>
+        <a href=&quot;#sizes&quot; class=&quot;mcc-btn-primary&quot;>Shop hall sizes</a>
+        <a href=&quot;quote.html&quot; class=&quot;mcc-btn-secondary&quot;>Request a quote</a>
       </div>
       <p class=&quot;mcc-cta-note&quot; style=&quot;margin-top:12px;&quot;>Free and itemised, with no obligation.</p>
-      <div class=&quot;mcc-hero-mini-stats&quot;>
-        <div><strong>3</strong><span>row spacings</span></div>
-        <div><strong>1.5–6m</strong><span>roll widths</span></div>
-        <div><strong>Supply + fit</strong><span>one team, one invoice</span></div>
-      </div>
     </div>
 
     <div class=&quot;mcc-hero-card&quot; style=&quot;--r:0deg;&quot;>
@@ -684,9 +720,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   </div>
 </section>
 
-<div class=&quot;mcc-divider-stars&quot; aria-hidden=&quot;true&quot;><svg viewBox=&quot;0 0 40 40&quot;><path d=&quot;M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z&quot; fill=&quot;var(--brass)&quot;/></svg><svg viewBox=&quot;0 0 40 40&quot;><path d=&quot;M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z&quot; fill=&quot;var(--brass)&quot;/></svg><svg viewBox=&quot;0 0 40 40&quot;><path d=&quot;M20 2 L24 14 L36 10 L27 19 L38 24 L25 25 L28 37 L20 28 L12 37 L15 25 L2 24 L13 19 L4 10 L16 14 Z&quot; fill=&quot;var(--brass)&quot;/></svg></div>
-
-<div class=&quot;mcc-strip&quot;>
+<div class=&quot;mcc-strip mcc-trust-band&quot;>
   <div class=&quot;mcc-wrap&quot;>
     <div class=&quot;mcc-strip-item&quot;><strong>Woven-in saff lines</strong>True 90 / 95 / 100cm spacing, woven in and never printed</div>
     <div class=&quot;mcc-strip-item&quot;><strong>Professional installation</strong>Measured, seamed and fitted by our crew</div>
@@ -755,10 +789,17 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
     <button type=&quot;button&quot; class=&quot;mcc-carousel-nav mcc-carousel-next&quot; data-carousel-next aria-label=&quot;Next hall size&quot; hidden>&amp;#8250;</button>
     <p class=&quot;mcc-visually-hidden&quot; aria-live=&quot;polite&quot; data-carousel-status></p>
     </div>
+    <div class=&quot;mcc-size-help&quot; data-reveal>
+      <div class=&quot;mcc-size-help-tip&quot;>
+        <strong>Which row spacing?</strong>
+        <span><b>90cm</b> tighter halls</span><span><b>95cm</b> recommended for most mosques</span><span><b>100cm</b> Jumu'ah &amp;amp; Eid halls</span>
+      </div>
+      <a class=&quot;mcc-btn-ghost&quot; href=&quot;#calculator&quot;>Not sure of your size? Use the fit calculator</a>
+    </div>
   </div>
 </section>
 
-<section class=&quot;mcc-section mcc-flush-top&quot; id=&quot;colours&quot;>
+<section class=&quot;mcc-section mcc-band&quot; id=&quot;colours&quot;>
   <div class=&quot;mcc-wrap&quot;>
     <div class=&quot;mcc-section-head&quot; data-reveal>
       <h2>Colourways</h2>
@@ -773,9 +814,38 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
     </div>
     <p class=&quot;mcc-colorway-preview&quot; id=&quot;mccColorwayPreview&quot; aria-live=&quot;polite&quot;></p>
   </div>
+</section><section class=&quot;mcc-section mcc-how mcc-on-dark&quot; id=&quot;install&quot;>
+  <div class=&quot;mcc-wrap&quot;>
+    <div class=&quot;mcc-section-head&quot; data-reveal><span class=&quot;mcc-eyebrow&quot;>From the mill to your masjid</span><h2>How it works: four steps, one team</h2><p>We measure, recommend, import and install, with the saff lines squared to your qibla wall.</p></div>
+    <div class=&quot;mcc-steps&quot;>
+      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>1</div><h3>Measure &amp;amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class=&quot;mcc-when&quot;>Free, itemised quote</span></div>
+      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class=&quot;mcc-when&quot;>See it before you commit</span></div>
+      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>3</div><h3>We import &amp;amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class=&quot;mcc-when&quot;>Lead time in your quote</span></div>
+      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class=&quot;mcc-when&quot;>Scheduled around salah</span></div>
+    </div>
+    <div class=&quot;mcc-how-install&quot;>
+      <div data-reveal>
+        <h3 class=&quot;mcc-how-sub&quot;>Installed by people who understand a prayer hall</h3>
+        <ul class=&quot;mcc-install-list&quot;>
+        <li><strong>Qibla alignment</strong><span>Lines squared to the qibla wall, not to the room</span></li>
+        <li><strong>Hidden seams</strong><span>Joins placed between rows, where no one kneels</span></li>
+        <li><strong>Old carpet removal</strong><span>Can be added to your quote</span></li>
+        <li><strong>Minimal disruption</strong><span>Scheduled around salah times and Jumu'ah</span></li>
+      </ul>
+      </div>
+    <aside class=&quot;mcc-install-card&quot; data-reveal>
+      <h3>Two ways to order</h3>
+      <p>Every quote shows both options, so your committee can compare.</p>
+      <div class=&quot;mcc-opt&quot;><span>Supply + install</span><span>Our carpet, fitted by our crew</span></div>
+      <div class=&quot;mcc-opt&quot;><span>Supply only</span><span>Our carpet, your installer</span></div>
+      <div class=&quot;mcc-opt&quot;><span>Where</span><span>Across Canada, with travel itemised</span></div>
+      <a href=&quot;installation.html&quot; class=&quot;mcc-btn-secondary&quot;>How installation works</a>
+    </aside>
+    </div>
+  </div>
 </section>
 
-<section class=&quot;mcc-section mcc-flush-top&quot; id=&quot;sourcing&quot;>
+<section class=&quot;mcc-section&quot; id=&quot;sourcing&quot;>
   <div class=&quot;mcc-wrap mcc-source&quot;>
     <div class=&quot;mcc-source-visual&quot; data-reveal><svg viewBox=&quot;0 0 500 400&quot; preserveAspectRatio=&quot;xMidYMid slice&quot; aria-hidden=&quot;true&quot;><rect width=&quot;500&quot; height=&quot;400&quot; fill=&quot;#0F2822&quot;/>
           <g transform=&quot;translate(70,120)&quot;>
@@ -798,64 +868,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   </div>
 </section>
 
-<section class=&quot;mcc-section mcc-process&quot;>
-  <div class=&quot;mcc-wrap&quot;>
-    <div class=&quot;mcc-section-head&quot; data-reveal><span class=&quot;mcc-eyebrow&quot;>From the mill to your masjid</span><h2>Four steps. One team.</h2></div>
-    <div class=&quot;mcc-steps&quot;>
-      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>1</div><h3>Measure &amp;amp; quote</h3><p>Send your floor plan or book a site visit. We'll recommend a spacing and roll layout.</p><span class=&quot;mcc-when&quot;>Free, itemised quote</span></div>
-      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>2</div><h3>Choose your carpet</h3><p>Pick a colourway and row spacing. Samples are available for your committee.</p><span class=&quot;mcc-when&quot;>See it before you commit</span></div>
-      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>3</div><h3>We import &amp;amp; deliver</h3><p>Rolls are shipped, cleared through customs and inspected in Canada.</p><span class=&quot;mcc-when&quot;>Lead time in your quote</span></div>
-      <div class=&quot;mcc-step&quot; data-reveal><div class=&quot;mcc-step-num&quot;>4</div><h3>Professional install</h3><p>Our crew fits the carpet with the saff lines squared to the qibla wall.</p><span class=&quot;mcc-when&quot;>Scheduled around salah</span></div>
-    </div>
-  </div>
-</section>
-
-<section class=&quot;mcc-saff-section&quot; id=&quot;saff&quot;>
-  <div class=&quot;mcc-wrap&quot;>
-    <div class=&quot;mcc-saff-copy&quot; data-reveal>
-      <span class=&quot;mcc-ar mcc-saff-kicker&quot;>الصف</span>
-      <h2>The line spacing is the whole point</h2>
-      <p>A carpet that looks right in a photo but crowds the saff makes every rak'ah harder. Every roll we supply comes in three woven spacings, and we'll help you choose the right one before you order.</p>
-      <ul class=&quot;mcc-saff-facts&quot;>
-        <li class=&quot;mcc-saff-fact&quot;><span class=&quot;mcc-saff-fact-num&quot;>90</span><div class=&quot;mcc-saff-fact-body&quot;><strong>90cm</strong><span>Tight halls, high midweek attendance, smaller-framed congregations</span></div></li>
-        <li class=&quot;mcc-saff-fact mcc-saff-fact-rec&quot;><span class=&quot;mcc-saff-fact-num&quot;>95</span><div class=&quot;mcc-saff-fact-body&quot;><strong>95cm <em class=&quot;mcc-saff-fact-tag&quot;>Recommended</em></strong><span>The standard we recommend for most mosques: comfortable sujood without wasted floor</span></div></li>
-        <li class=&quot;mcc-saff-fact&quot;><span class=&quot;mcc-saff-fact-num&quot;>100</span><div class=&quot;mcc-saff-fact-body&quot;><strong>100cm</strong><span>Jumu'ah and Eid halls where rows need extra room for movement</span></div></li>
-      </ul>
-    </div>
-    <div class=&quot;mcc-saff-diagram-wrap&quot;>
-      <svg class=&quot;mcc-saff-diagram&quot; viewBox=&quot;0 0 480 300&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; aria-hidden=&quot;true&quot;>
-        <rect x=&quot;0&quot; y=&quot;0&quot; width=&quot;480&quot; height=&quot;300&quot; fill=&quot;#0F2822&quot;/>
-        <g stroke=&quot;#B8892F&quot; stroke-width=&quot;1.4&quot;><line x1=&quot;30&quot; y1=&quot;40&quot; x2=&quot;450&quot; y2=&quot;40&quot;/><line x1=&quot;30&quot; y1=&quot;97&quot; x2=&quot;450&quot; y2=&quot;97&quot;/><line x1=&quot;30&quot; y1=&quot;154&quot; x2=&quot;450&quot; y2=&quot;154&quot;/><line x1=&quot;30&quot; y1=&quot;211&quot; x2=&quot;450&quot; y2=&quot;211&quot;/><line x1=&quot;30&quot; y1=&quot;268&quot; x2=&quot;450&quot; y2=&quot;268&quot;/></g>
-        <g fill=&quot;#7C9A87&quot; opacity=&quot;0.85&quot;><ellipse cx=&quot;70&quot; cy=&quot;62&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;130&quot; cy=&quot;62&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;190&quot; cy=&quot;62&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;250&quot; cy=&quot;62&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;310&quot; cy=&quot;62&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;370&quot; cy=&quot;62&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;70&quot; cy=&quot;119&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;130&quot; cy=&quot;119&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;190&quot; cy=&quot;119&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;250&quot; cy=&quot;119&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;310&quot; cy=&quot;119&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;370&quot; cy=&quot;119&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;70&quot; cy=&quot;176&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;130&quot; cy=&quot;176&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;190&quot; cy=&quot;176&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;250&quot; cy=&quot;176&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;310&quot; cy=&quot;176&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;370&quot; cy=&quot;176&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;70&quot; cy=&quot;233&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;130&quot; cy=&quot;233&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;190&quot; cy=&quot;233&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;250&quot; cy=&quot;233&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;310&quot; cy=&quot;233&quot; rx=&quot;14&quot; ry=&quot;7&quot;/><ellipse cx=&quot;370&quot; cy=&quot;233&quot; rx=&quot;14&quot; ry=&quot;7&quot;/></g>
-      </svg>
-      <div class=&quot;mcc-saff-diagram-tag&quot;>95cm spacing</div>
-    </div>
-  </div>
-</section>
-
-<section class=&quot;mcc-section&quot; id=&quot;install&quot;>
-  <div class=&quot;mcc-wrap mcc-install&quot;>
-    <div>
-      <div class=&quot;mcc-section-head&quot; style=&quot;margin-bottom:28px;&quot; data-reveal><span class=&quot;mcc-eyebrow&quot;>Fitted, not just delivered</span><h2>Installation by people who understand a prayer hall</h2><p>A luxury carpet only looks luxurious if it's laid right. Our installers square the saff lines to the qibla wall first, then work outwards, so every row runs true.</p></div>
-      <ul class=&quot;mcc-install-list&quot;>
-        <li><strong>Qibla alignment</strong><span>Lines squared to the qibla wall, not to the room</span></li>
-        <li><strong>Hidden seams</strong><span>Joins placed between rows, where no one kneels</span></li>
-        <li><strong>Old carpet removal</strong><span>Can be added to your quote</span></li>
-        <li><strong>Minimal disruption</strong><span>Scheduled around salah times and Jumu'ah</span></li>
-      </ul>
-    </div>
-    <aside class=&quot;mcc-install-card mcc-on-dark&quot; data-reveal>
-      <h3>Two ways to order</h3>
-      <p>Every quote shows both options, so your committee can compare.</p>
-      <div class=&quot;mcc-opt&quot;><span>Supply + install</span><span>Our carpet, fitted by our crew</span></div>
-      <div class=&quot;mcc-opt&quot;><span>Supply only</span><span>Our carpet, your installer</span></div>
-      <div class=&quot;mcc-opt&quot;><span>Where</span><span>Across Canada, with travel itemised</span></div>
-      <a href=&quot;installation.html&quot; class=&quot;mcc-btn-secondary&quot;>How installation works</a>
-    </aside>
-  </div>
-</section>
-
-<section class=&quot;mcc-section mcc-flush-top&quot; id=&quot;calculator&quot;>
+<section class=&quot;mcc-section mcc-band&quot; id=&quot;calculator&quot;>
   <div class=&quot;mcc-wrap&quot;>
     <div class=&quot;mcc-section-head&quot; data-reveal>
       <h2>Fit calculator</h2>
@@ -882,7 +895,9 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
       </div>
     </div>
   </div>
-</section><section class=&quot;mcc-section mcc-flush-top&quot; id=&quot;faq&quot;>
+</section>
+
+<section class=&quot;mcc-section&quot; id=&quot;faq&quot;>
   <div class=&quot;mcc-wrap&quot;>
     <div class=&quot;mcc-section-head&quot; data-reveal><h2>Questions committees ask us</h2></div>
     <div class=&quot;mcc-faq&quot;><details  ><summary>Do you manufacture the carpet?</summary><p>No. We're specialist suppliers. We source luxury prayer carpet from partner mills, import it and inspect every roll in Canada. That lets us pick the best mill for each job instead of pushing one factory's range.</p></details><details  ><summary>How long does delivery take?</summary><p>It depends on the colourway, spacing and quantity. We confirm your delivery window in writing with your quote, before you pay anything.</p></details><details  ><summary>Is installation included?</summary><p>Installation is available on every order and quoted alongside the carpet, so you can compare supply-only and supply-and-install. The Jumu'ah hall package always includes a site visit and floor template.</p></details><details  ><summary>Is the carpet fire rated?</summary><p>Yes. The pile is certified to CAN/ULC-S102 and ASTM E648. We can send the certificates to your building inspector or insurer.</p></details><details  ><summary>Can our committee pay by purchase order?</summary><p>Yes. We accept POs and bank transfer, and we invoice in your mosque's registered name for your records.</p></details><details  ><summary>Can we see the carpet first?</summary><p>Yes. Request samples of any colourway through our quote form and we'll arrange them for your committee.</p></details></div>
@@ -1599,6 +1614,45 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
+
+/* Layout pass (owner-approved suggestions): buying first, fewer sections, alternating bands. */
+/* Trust points: a green band the hero skyline rises out of (fixes the clipped domes) */
+#mcc-app .mcc-hero-skyline{opacity:1;}
+#mcc-app .mcc-strip.mcc-trust-band{transform:none; margin:0; max-width:none; border-radius:0; background:var(--green-900);}
+#mcc-app .mcc-trust-band .mcc-wrap{max-width:1180px; margin:0 auto; padding:6px 28px 30px;}
+#mcc-app .mcc-trust-band .mcc-strip-item{color:var(--muted-on-dark); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-trust-band .mcc-strip-item strong{color:var(--plaster);}
+@media (max-width:640px){
+  #mcc-app .mcc-strip.mcc-trust-band{margin:0; transform:none;}
+  #mcc-app .mcc-trust-band .mcc-wrap{padding:4px 16px 20px;}
+}
+/* Alternating light band */
+#mcc-app .mcc-band{background:var(--plaster-dim);}
+#mcc-app .mcc-band .mcc-calc{background:var(--surface);}
+/* Spacing tip + calculator link under the hall-size slider */
+#mcc-app .mcc-size-help{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px 28px; margin-top:clamp(28px,4vw,44px); padding:18px 22px; border-top:1px solid var(--brass); border-bottom:1px solid var(--line);}
+#mcc-app .mcc-size-help-tip{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline; font-size:14.5px; color:var(--text-dim);}
+#mcc-app .mcc-size-help-tip strong{color:var(--text); font-size:15px;}
+#mcc-app .mcc-size-help-tip b{color:var(--brass-text); font-weight:600;}
+/* How it works: one dark band (steps + installation) */
+#mcc-app .mcc-how{background:var(--green-900); color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head h2{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-eyebrow{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-step-num{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step h3{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-step p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-step .mcc-when{color:var(--plaster); background:rgba(215,174,92,.16);}
+#mcc-app .mcc-how-install{display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(28px,4vw,48px); align-items:start; margin-top:clamp(40px,5vw,64px); padding-top:clamp(32px,4vw,48px); border-top:1px solid rgba(215,174,92,.35);}
+#mcc-app .mcc-how-sub{font-size:clamp(22px,2.4vw,28px); color:var(--plaster); margin-bottom:20px;}
+#mcc-app .mcc-how .mcc-install-list li{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-install-list strong{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-install-list span{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-install-card{background:var(--green-800); border:1px solid rgba(215,174,92,.45);}
+@media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
+/* Footer: one link per line (links were running together) */
+#mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -1628,7 +1682,8 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
     </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Shop by hall size</a>
+      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+      <a href=&quot;index.html#colours&quot;>Colours</a>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -1644,6 +1699,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
     <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -2393,6 +2449,45 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
+
+/* Layout pass (owner-approved suggestions): buying first, fewer sections, alternating bands. */
+/* Trust points: a green band the hero skyline rises out of (fixes the clipped domes) */
+#mcc-app .mcc-hero-skyline{opacity:1;}
+#mcc-app .mcc-strip.mcc-trust-band{transform:none; margin:0; max-width:none; border-radius:0; background:var(--green-900);}
+#mcc-app .mcc-trust-band .mcc-wrap{max-width:1180px; margin:0 auto; padding:6px 28px 30px;}
+#mcc-app .mcc-trust-band .mcc-strip-item{color:var(--muted-on-dark); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-trust-band .mcc-strip-item strong{color:var(--plaster);}
+@media (max-width:640px){
+  #mcc-app .mcc-strip.mcc-trust-band{margin:0; transform:none;}
+  #mcc-app .mcc-trust-band .mcc-wrap{padding:4px 16px 20px;}
+}
+/* Alternating light band */
+#mcc-app .mcc-band{background:var(--plaster-dim);}
+#mcc-app .mcc-band .mcc-calc{background:var(--surface);}
+/* Spacing tip + calculator link under the hall-size slider */
+#mcc-app .mcc-size-help{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px 28px; margin-top:clamp(28px,4vw,44px); padding:18px 22px; border-top:1px solid var(--brass); border-bottom:1px solid var(--line);}
+#mcc-app .mcc-size-help-tip{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline; font-size:14.5px; color:var(--text-dim);}
+#mcc-app .mcc-size-help-tip strong{color:var(--text); font-size:15px;}
+#mcc-app .mcc-size-help-tip b{color:var(--brass-text); font-weight:600;}
+/* How it works: one dark band (steps + installation) */
+#mcc-app .mcc-how{background:var(--green-900); color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head h2{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-eyebrow{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-step-num{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step h3{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-step p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-step .mcc-when{color:var(--plaster); background:rgba(215,174,92,.16);}
+#mcc-app .mcc-how-install{display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(28px,4vw,48px); align-items:start; margin-top:clamp(40px,5vw,64px); padding-top:clamp(32px,4vw,48px); border-top:1px solid rgba(215,174,92,.35);}
+#mcc-app .mcc-how-sub{font-size:clamp(22px,2.4vw,28px); color:var(--plaster); margin-bottom:20px;}
+#mcc-app .mcc-how .mcc-install-list li{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-install-list strong{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-install-list span{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-install-card{background:var(--green-800); border:1px solid rgba(215,174,92,.45);}
+@media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
+/* Footer: one link per line (links were running together) */
+#mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -2422,7 +2517,8 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
     </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Shop by hall size</a>
+      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+      <a href=&quot;index.html#colours&quot;>Colours</a>
       <a href=&quot;installation.html&quot; aria-current=&quot;page&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -2438,6 +2534,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
     <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot; aria-current=&quot;page&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -3101,6 +3198,45 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
+
+/* Layout pass (owner-approved suggestions): buying first, fewer sections, alternating bands. */
+/* Trust points: a green band the hero skyline rises out of (fixes the clipped domes) */
+#mcc-app .mcc-hero-skyline{opacity:1;}
+#mcc-app .mcc-strip.mcc-trust-band{transform:none; margin:0; max-width:none; border-radius:0; background:var(--green-900);}
+#mcc-app .mcc-trust-band .mcc-wrap{max-width:1180px; margin:0 auto; padding:6px 28px 30px;}
+#mcc-app .mcc-trust-band .mcc-strip-item{color:var(--muted-on-dark); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-trust-band .mcc-strip-item strong{color:var(--plaster);}
+@media (max-width:640px){
+  #mcc-app .mcc-strip.mcc-trust-band{margin:0; transform:none;}
+  #mcc-app .mcc-trust-band .mcc-wrap{padding:4px 16px 20px;}
+}
+/* Alternating light band */
+#mcc-app .mcc-band{background:var(--plaster-dim);}
+#mcc-app .mcc-band .mcc-calc{background:var(--surface);}
+/* Spacing tip + calculator link under the hall-size slider */
+#mcc-app .mcc-size-help{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px 28px; margin-top:clamp(28px,4vw,44px); padding:18px 22px; border-top:1px solid var(--brass); border-bottom:1px solid var(--line);}
+#mcc-app .mcc-size-help-tip{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline; font-size:14.5px; color:var(--text-dim);}
+#mcc-app .mcc-size-help-tip strong{color:var(--text); font-size:15px;}
+#mcc-app .mcc-size-help-tip b{color:var(--brass-text); font-weight:600;}
+/* How it works: one dark band (steps + installation) */
+#mcc-app .mcc-how{background:var(--green-900); color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head h2{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-eyebrow{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-step-num{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step h3{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-step p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-step .mcc-when{color:var(--plaster); background:rgba(215,174,92,.16);}
+#mcc-app .mcc-how-install{display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(28px,4vw,48px); align-items:start; margin-top:clamp(40px,5vw,64px); padding-top:clamp(32px,4vw,48px); border-top:1px solid rgba(215,174,92,.35);}
+#mcc-app .mcc-how-sub{font-size:clamp(22px,2.4vw,28px); color:var(--plaster); margin-bottom:20px;}
+#mcc-app .mcc-how .mcc-install-list li{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-install-list strong{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-install-list span{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-install-card{background:var(--green-800); border:1px solid rgba(215,174,92,.45);}
+@media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
+/* Footer: one link per line (links were running together) */
+#mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -3130,7 +3266,8 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
     </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Shop by hall size</a>
+      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+      <a href=&quot;index.html#colours&quot;>Colours</a>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot; aria-current=&quot;page&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -3146,6 +3283,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
     <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot; aria-current=&quot;page&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -3802,6 +3940,45 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
+
+/* Layout pass (owner-approved suggestions): buying first, fewer sections, alternating bands. */
+/* Trust points: a green band the hero skyline rises out of (fixes the clipped domes) */
+#mcc-app .mcc-hero-skyline{opacity:1;}
+#mcc-app .mcc-strip.mcc-trust-band{transform:none; margin:0; max-width:none; border-radius:0; background:var(--green-900);}
+#mcc-app .mcc-trust-band .mcc-wrap{max-width:1180px; margin:0 auto; padding:6px 28px 30px;}
+#mcc-app .mcc-trust-band .mcc-strip-item{color:var(--muted-on-dark); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-trust-band .mcc-strip-item strong{color:var(--plaster);}
+@media (max-width:640px){
+  #mcc-app .mcc-strip.mcc-trust-band{margin:0; transform:none;}
+  #mcc-app .mcc-trust-band .mcc-wrap{padding:4px 16px 20px;}
+}
+/* Alternating light band */
+#mcc-app .mcc-band{background:var(--plaster-dim);}
+#mcc-app .mcc-band .mcc-calc{background:var(--surface);}
+/* Spacing tip + calculator link under the hall-size slider */
+#mcc-app .mcc-size-help{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px 28px; margin-top:clamp(28px,4vw,44px); padding:18px 22px; border-top:1px solid var(--brass); border-bottom:1px solid var(--line);}
+#mcc-app .mcc-size-help-tip{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline; font-size:14.5px; color:var(--text-dim);}
+#mcc-app .mcc-size-help-tip strong{color:var(--text); font-size:15px;}
+#mcc-app .mcc-size-help-tip b{color:var(--brass-text); font-weight:600;}
+/* How it works: one dark band (steps + installation) */
+#mcc-app .mcc-how{background:var(--green-900); color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head h2{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-section-head p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-eyebrow{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-step-num{color:var(--brass-light);}
+#mcc-app .mcc-how .mcc-step h3{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-step p{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-step .mcc-when{color:var(--plaster); background:rgba(215,174,92,.16);}
+#mcc-app .mcc-how-install{display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(28px,4vw,48px); align-items:start; margin-top:clamp(40px,5vw,64px); padding-top:clamp(32px,4vw,48px); border-top:1px solid rgba(215,174,92,.35);}
+#mcc-app .mcc-how-sub{font-size:clamp(22px,2.4vw,28px); color:var(--plaster); margin-bottom:20px;}
+#mcc-app .mcc-how .mcc-install-list li{background:rgba(243,238,226,.04); border-color:rgba(243,238,226,.14);}
+#mcc-app .mcc-how .mcc-install-list strong{color:var(--plaster);}
+#mcc-app .mcc-how .mcc-install-list span{color:var(--muted-on-dark);}
+#mcc-app .mcc-how .mcc-install-card{background:var(--green-800); border:1px solid rgba(215,174,92,.45);}
+@media (max-width:900px){#mcc-app .mcc-how-install{grid-template-columns:1fr;}}
+/* Footer: one link per line (links were running together) */
+#mcc-app .mcc-foot-grid a{display:flex; width:fit-content;}
 </style></head><body>
 <a class=&quot;skip&quot; href=&quot;#MainContent&quot;>Skip to content</a>
 
@@ -3831,7 +4008,8 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         <span class=&quot;mcc-logo-ar&quot;>سجاد المساجد</span>
       </div>
     </a><nav class=&quot;mcc-navlinks&quot; aria-label=&quot;Main&quot;>
-      <a href=&quot;index.html#sizes&quot;>Shop by hall size</a>
+      <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+      <a href=&quot;index.html#colours&quot;>Colours</a>
       <a href=&quot;installation.html&quot;>Installation</a>
       <a href=&quot;about.html&quot;>About</a>
       <a href=&quot;index.html#faq&quot;>FAQ</a>
@@ -3847,6 +4025,7 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   </div>
   <nav class=&quot;mcc-mobile-nav&quot; aria-label=&quot;Main (mobile)&quot;>
     <a href=&quot;index.html#sizes&quot;>Hall sizes</a>
+    <a href=&quot;index.html#colours&quot;>Colours</a>
     <a href=&quot;installation.html&quot;>Installation</a>
     <a href=&quot;about.html&quot;>About</a>
     <a href=&quot;index.html#faq&quot;>FAQ</a>
