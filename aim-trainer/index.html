@@ -19,6 +19,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { background: var(--bg); color: var(--fg); }
 body { font: 15px/1.5 var(--font-body); padding-inline: 16px; padding-block: 20px 40px; }
 .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 18px; }
@@ -51,7 +52,7 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
 .stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
 .stage:fullscreen .stage-bar { display: none; }
-#fps { display: inline-block; width: 36ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
+#fps { display: inline-block; width: 40ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
 .bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-variant-numeric: tabular-nums; }
 label.inline { display: flex; align-items: center; gap: 8px; min-height: 44px; }
 label.inline input[type=checkbox] { width: 18px; min-height: 18px; accent-color: var(--target); }
@@ -181,9 +182,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="fov">FOV<input id="fov" type="number" min="60" max="103" step="1"></label>
       </div>
       <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely.</p>
+      <p class="note"><b>Check my 360:</b> in Overwatch, mark where your mouse starts on the pad and turn exactly 360°. Here, press the button and make the same swipe. It should read close to 360°. With raw input off, Windows pointer speed must be on the 6th notch with "Enhance pointer precision" off, or the reading will drift.</p>
       <div class="history-head"><h2 style="margin:0" id="histTitle">History</h2><span class="legend">result ÷ benchmark, last 40 runs</span></div>
       <canvas id="spark" aria-label="Chart of recent runs against their benchmarks"></canvas>
       <div class="btns">
+        <button class="btn" id="calibBtn" type="button">Check my 360</button>
         <button class="btn danger" id="resetBtn" type="button">Reset this drill</button>
       </div>
     </section>
@@ -571,7 +574,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     ctx.lineWidth = Math.max(1, s);
     drawGrid(B);
     let anyLit = false;
-    for (const o of visibleOrbs()) {
+    if (phase !== 'calib') for (const o of visibleOrbs()) {
       const lit = angTo(o.yaw, o.pitch) <= T.r;
       anyLit = anyLit || lit;
       drawOrb(B, o, T.r, lit);
@@ -601,6 +604,17 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       ctx.strokeStyle = frac >= 1 ? '#6fe8b8' : '#f0b340';
       ctx.lineWidth = 3 * k;
       ctx.beginPath(); ctx.arc(cx, cy, 22 * k, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); ctx.stroke();
+    }
+    if (phase === 'calib') {
+      if (projectAngles(B, 0, 0)) {
+        ctx.strokeStyle = '#f0b340'; ctx.lineWidth = 2 * k;
+        ctx.beginPath(); ctx.moveTo(P.x, 0); ctx.lineTo(P.x, H); ctx.stroke();
+      }
+      ctx.textBaseline = 'top'; ctx.textAlign = 'center'; ctx.fillStyle = '#e4e9ed';
+      setFont(fontBig);
+      ctx.fillText(`${Math.abs(cam.yaw).toFixed(1)}°`, cx, H * 0.12);
+      setFont(fontSmall); ctx.fillStyle = '#8d99a4';
+      ctx.fillText('Make your Overwatch 360 swipe. Click to reset to 0, Esc to finish.', cx, H * 0.12 + 90 * s);
     }
     // HUD
     if (phase === 'run' || phase === 'countdown') {
@@ -659,12 +673,17 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   function spawnOrb() {
     const T = tier();
-    // keep new orbs at least a few radii from the crosshair so each one is a real flick
-    for (let i = 0; i < 20; i++) {
+    // keep new orbs at least a few radii from the crosshair so each one is a real flick,
+    // and always inside the visible screen so you never have to search for one
+    const minDist = Math.max(T.r * 4, T.min || 0);
+    const onScreen = o => projectAngles(basis(), o.yaw, o.pitch) && P.x > W * .06 && P.x < W * .94 && P.y > H * .08 && P.y < H * .92;
+    for (let i = 0; i < 80; i++) {
       const o = { yaw: (Math.random() * 2 - 1) * T.spread, pitch: T.lo + Math.random() * (T.hi - T.lo), born: performance.now() };
-      if (angTo(o.yaw, o.pitch) > Math.max(T.r * 4, T.min || 0) && orbs.every(p => Math.hypot(p.yaw - o.yaw, p.pitch - o.pitch) > T.r * 3)) return o;
+      if (angTo(o.yaw, o.pitch) > minDist && onScreen(o) && orbs.every(p => Math.hypot(p.yaw - o.yaw, p.pitch - o.pitch) > T.r * 3)) return o;
     }
-    return { yaw: -cam.yaw, pitch: T.lo, born: performance.now() };
+    // you've turned far from the arena: place the orb on screen, back towards the centre
+    const back = cam.yaw > 0 ? -1 : 1;
+    return { yaw: cam.yaw + back * (minDist + 4 + Math.random() * 10), pitch: Math.max(T.lo, Math.min(T.hi, cam.pitch)), born: performance.now() };
   }
   function respawnPunchTarget() {
     let y;
@@ -719,7 +738,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     runStart = performance.now() + COUNTDOWN_MS;
     overlay.hidden = true;
   }
+  let resultAt = 0;
   function finishRun() {
+    resultAt = performance.now();
     phase = 'result';
     chargeStart = 0;
     const d = drill(), p = prog(), T = tier(), pt = playTiers[drillId];
@@ -774,6 +795,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   // While locked, clicks land on the canvas, not the overlay.
   const onClick = () => {
+    if (phase === 'calib' && document.pointerLockElement === cv) { cam.yaw = 0; cam.pitch = 0; dirty = true; return; }
+    // a fast click as a run ends shouldn't start the next one
+    if (phase === 'result' && performance.now() - resultAt < 700) return;
     if (document.pointerLockElement !== cv) lock();
     else if (phase === 'idle' || phase === 'result') startRun();
   };
@@ -802,10 +826,12 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   });
   document.addEventListener('pointerlockchange', () => {
     if (document.pointerLockElement === cv) {
-      if (phase !== 'run' && phase !== 'countdown') startRun();
+      if (phase !== 'run' && phase !== 'countdown' && phase !== 'calib') startRun();
     } else if (phase === 'run' || phase === 'countdown') {
       phase = 'idle'; chargeStart = 0;
       showIdle('Run cancelled');
+    } else if (phase === 'calib') {
+      phase = 'idle'; resetScene(); showIdle();
     }
   });
   let pendX = 0, pendY = 0, mouseEvents = 0;
@@ -856,6 +882,12 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const q = $('quality');
   q.value = settings.quality;
   q.addEventListener('change', () => { settings.quality = q.value; store.set('settings', settings); resize(); });
+  $('calibBtn').addEventListener('click', () => {
+    if (phase === 'run' || phase === 'countdown') return;
+    resetScene(); phase = 'calib'; overlay.hidden = true; dirty = true;
+    stage.scrollIntoView({ block: 'nearest' });
+    lock();
+  });
   const rawIn = $('rawIn'), lowLat = $('lowLat');
   rawIn.checked = settings.raw; lowLat.checked = settings.lowLatency;
   rawIn.addEventListener('change', () => {
