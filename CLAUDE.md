@@ -24,7 +24,8 @@ comes from the Claude Design Skillstack, MIT — see `.claude/skills/LICENSE-cla
   Edit here, then upload to an **unpublished** theme.
 - After every upload, compare each file's `checksumMd5` with `md5sum` of the local file. `themeFilesUpsert`
   by URL can report the job done without applying it (retry once), and Shopify silently rejects a section whose
-  schema breaks a rule (e.g. a setting label over 70 characters).
+  schema breaks a rule (e.g. a setting label over 70 characters). Upload **one file per call**: a 6-file batch
+  reported done and applied nothing, while the same files sent one at a time all applied.
 - `node previews/render.js` (needs `liquidjs@10`) renders those real files into `previews/v3/`,
   including `preview-all.html`, a self-contained file to send to the owner. Previews come from the
   theme files, never a hand-made mock-up, so what's approved is what ships.

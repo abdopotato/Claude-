@@ -105,6 +105,10 @@ Changed: `sections/mosque-installation.liquid`, `sections/mosque-footer.liquid`.
 quote button stays right after the logo, no new homepage sections, no samples strip). Kept: wording/claim fixes,
 pricing clarity, the area/price-per-m² line on cards, the Jumu'ah quote-first button, the hidden WhatsApp slot.
 Do not propose layout changes unless the owner asks.
+**Approved 2026-10-03** (wording-only version) and uploaded to **"MosqueCarpetsCanada — Site update v8 (wording)"**
+(gid://shopify/OnlineStoreTheme/131005972526, unpublished) from commit f56f155: home, header, CSS, installation,
+product, quote sections + templates/index.json; all 7 checksums verified. Owner publishes it.
+Main Hall product description edit ("order most") still needs its own approval (store data).
 
 Theme (homepage, header, product, quote, Installation):
 - Copy edits from the review table: hero badge/heading (option A)/text, trust strip, sizes intro, three card
