@@ -30,7 +30,7 @@ This manual explains what was changed, how to do the same things yourself in Sho
 
 | Date | Change | Where it lives |
 | --- | --- | --- |
-| Oct 3 | You approved the Buy now panels on the hall-size cards | Being built into a new copy: Site update v4 |
+| Oct 3 | Buy now panels approved and built into Site update v4 (buy panels), ready for you to publish | Online Store → Themes |
 | Oct 1 | Hall-size cards got a Buy now panel (preview) | Repo: theme/sections/mosque-home.liquid |
 | Oct 1 | Store homepage given a Google title and description | Online Store → Preferences |
 | Oct 1 | Collection Prayer hall carpet rolls created (fills itself) | Products → Collections |
@@ -78,7 +78,8 @@ flowchart LR
 
 | Theme | Role | Keep? |
 | --- | --- | --- |
-| Site update v3 (detail pass) | Live | Yes, this is your site |
+| Site update v4 (buy panels) | Unpublished | Publish this to put the Buy now panels live |
+| Site update v3 (detail pass) | Live | Yes, this is your site (your fallback after v4 goes live) |
 | Site update v2 | Unpublished | Yes, your one-click fallback |
 | Hero spacing | Unpublished | Optional: the design before v2 |
 | Design, Updated copy of Design, Fix colorways, Artistry carousel | Unpublished | Safe to delete once you're happy |
@@ -141,7 +142,7 @@ Your 3 products are Active, published to the Online Store, and orderable at any 
 
 ![Three hall-size cards, each ending in a Buy online panel with price, a Buy now button and a Prefer a quote first link](images/hall-cards.png)
 
-*The hall-size cards with the new Buy now panels. Approved; it goes live once Site update v4 is built and you publish it.*
+*The hall-size cards with the new Buy now panels. Approved and built into Site update v4 (buy panels); live once you publish that theme.*
 
 **Keep these tags.** The product page uses them to show the Arabic hall name, the coverage in square metres and the rows line. A product without one of these tags still works, it just shows less.
 
@@ -340,7 +341,7 @@ These need a decision or content from you. The full list with what the site says
 
 - [ ] Shipping: delivery included in the price, a flat fee per roll, or quoted after the order
 - [ ] Payments: cards, purchase order, bank transfer; activate them in Settings → Payments
-- [x] Approve the Buy now panels (approved Oct 3; Site update v4 to be built and published by you)
+- [x] Approve the Buy now panels (approved Oct 3; built into Site update v4 (buy panels); publish it in Online Store → Themes)
 - [ ] Confirm the fire rating (CAN/ULC-S102 and ASTM E648) and the wool-blend pile, both on live pages
 - [ ] Installation: included or add-on, price per m², regions covered
 - [ ] Lead times: in stock vs ordered from the mill
