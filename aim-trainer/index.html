@@ -662,13 +662,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       ctx.beginPath(); ctx.arc(cx, cy, 22 * k, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); ctx.stroke();
     }
     if (phase === 'calib') {
-      if (projectAngles(B, 0, 0)) {
+      if (projectAngles(B, calibZero, 0)) {
         ctx.strokeStyle = '#f0b340'; ctx.lineWidth = 2 * k;
         ctx.beginPath(); ctx.moveTo(P.x, 0); ctx.lineTo(P.x, H); ctx.stroke();
       }
       ctx.textBaseline = 'top'; ctx.textAlign = 'center'; ctx.fillStyle = '#e4e9ed';
       setFont(fontBig);
-      ctx.fillText(`${Math.abs(cam.yaw).toFixed(1)}°`, cx, H * 0.12);
+      ctx.fillText(`${Math.abs(cam.yaw - calibZero).toFixed(1)}°`, cx, H * 0.12);
       setFont(fontSmall); ctx.fillStyle = '#8d99a4';
       ctx.fillText('Make your Overwatch 360 swipe. Click to reset to 0, Esc to finish.', cx, H * 0.12 + 90 * s);
     }
@@ -787,11 +787,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       practice ? `Warm-up tier: runs here are logged but only tier ${prog().tier} can promote you. ` + idleBody() : idleBody(),
       'Click to start');
   }
+  // Never moves your view or the dummy: runs pick up from wherever both are.
   function resetScene() {
     dirty = true;
-    cam.yaw = 0; cam.pitch = 0;
-    Object.assign(tgt, { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0, kb: 0 });
-    if (drill().kind !== 'flick') cam.pitch = (1.17 - EYE) * dpm();   // start aimed at the chest
     orbs = [];
     if (drill().kind === 'flick') for (let i = 0; i < tier().n; i++) orbs.push(spawnOrb());
   }
@@ -799,10 +797,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     resetScene();
     timeOn = 0; timeTotal = 0; headOn = 0; hits = 0; misses = 0; chargeStart = 0;
     phase = 'countdown';
+    simAcc = 0;
     runStart = performance.now() + COUNTDOWN_MS;
     overlay.hidden = true;
   }
-  let resultAt = 0;
+  let resultAt = 0, calibZero = 0;
   function finishRun() {
     resultAt = performance.now();
     phase = 'result';
@@ -860,7 +859,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   // While locked, clicks land on the canvas, not the overlay.
   const onClick = () => {
-    if (phase === 'calib' && document.pointerLockElement === cv) { cam.yaw = 0; cam.pitch = 0; dirty = true; return; }
+    if (phase === 'calib' && document.pointerLockElement === cv) { calibZero = cam.yaw; dirty = true; return; }
     // a fast click as a run ends shouldn't start the next one
     if (phase === 'result' && performance.now() - resultAt < 700) return;
     if (document.pointerLockElement !== cv) lock();
@@ -922,6 +921,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function simulate(dt, t) {
     const k = drill().kind;
     if (k !== 'flick') stepTarget(dt, t);
+    if (phase !== 'run') return;          // countdown: the dummy moves, nothing is scored yet
     if (k === 'track') {
       timeTotal += dt;
       const h = dummyHit();
@@ -937,8 +937,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const dt = (now - last) / 1000;
     worst = Math.max(worst, now - last);
     last = now;
-    if (phase === 'countdown' && now >= runStart) { phase = 'run'; simAcc = 0; if (drill().kind !== 'flick') scheduleChange(now); orbs.forEach(o => { o.born = now; }); }
-    if (phase === 'run') {
+    if (phase === 'countdown' && now >= runStart) { phase = 'run'; orbs.forEach(o => { o.born = now; }); }
+    if (phase === 'run' || phase === 'countdown') {
       // The game updates at a fixed 120 Hz whatever the monitor's refresh rate. This frame's mouse movement
       // is spread across the sub-steps, so hits are judged where the crosshair actually was at each instant.
       simAcc += Math.min(0.1, dt);
@@ -950,7 +950,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         moveCam(mx / steps, my / steps);
         simulate(STEP, now - (steps - 1 - i) * STEP * 1000);
       }
-      if (now - runStart >= RUN_MS) finishRun();
+      if (phase === 'run' && now - runStart >= RUN_MS) finishRun();
     } else applyMouse();
     const live = phase === 'run' || phase === 'countdown' || now < flash.until;
     if (live || dirty) { draw(now); dirty = false; }
@@ -970,7 +970,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   q.addEventListener('change', () => { settings.quality = q.value; store.set('settings', settings); resize(); });
   $('calibBtn').addEventListener('click', () => {
     if (phase === 'run' || phase === 'countdown') return;
-    resetScene(); phase = 'calib'; overlay.hidden = true; dirty = true;
+    resetScene(); calibZero = cam.yaw; phase = 'calib'; overlay.hidden = true; dirty = true;
     stage.scrollIntoView({ block: 'nearest' });
     lock();
   });
@@ -988,6 +988,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function renderAll() { renderTabs(); renderProgress(); renderSpark(); }
   renderCalib();
   resize();
+  cam.pitch = (1.17 - EYE) * dpm();   // first load only: looking at the dummy's chest
   resetScene();
   renderAll();
   showIdle();
