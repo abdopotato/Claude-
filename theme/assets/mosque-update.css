@@ -364,21 +364,22 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-incl{flex:1;}
 
 /* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
-   Without JavaScript the cards stay a normal grid. */
+   Without JavaScript the cards stay a normal grid. Only the script's is-ready class switches the layout on;
+   don't depend on html.mcc-js here, the live Horizon layout doesn't keep it. */
 #mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
 #mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
 #mcc-app .mcc-size-carousel{position:relative;}
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
+#mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
   grid-area:1 / 1; width:min(420px, 78vw); --x:0%; --s:1;
   transform:translateX(var(--x)) scale(var(--s)); opacity:.3; z-index:1;
   transition:transform .45s cubic-bezier(.22,.8,.24,1), opacity .45s ease, box-shadow .3s ease;
 }
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card:hover{transform:translateX(var(--x)) scale(var(--s));}
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="prev"]{--x:-64%; --s:.86; cursor:pointer;}
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="next"]{--x:64%; --s:.86; cursor:pointer;}
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
-.mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card:hover{transform:translateX(var(--x)) scale(var(--s));}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="prev"]{--x:-50%; --s:.86; cursor:pointer;}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="next"]{--x:50%; --s:.86; cursor:pointer;}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
+#mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
 #mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
 #mcc-app .mcc-carousel-nav[hidden]{display:none;}
 #mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
@@ -387,26 +388,26 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-carousel-prev{left:0;}
 #mcc-app .mcc-carousel-next{right:0;}
 @media (max-width:700px){
-  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="prev"]{--x:-30%; --s:.84;}
-  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="next"]{--x:30%; --s:.84;}
+  #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="prev"]{--x:-30%; --s:.84;}
+  #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="next"]{--x:30%; --s:.84;}
   #mcc-app .mcc-carousel-nav{width:44px; height:44px; top:auto; bottom:6px; transform:none;}
   #mcc-app .mcc-carousel-nav:active{transform:scale(.94);}
   #mcc-app .mcc-carousel-prev{left:calc(50% - 56px);}
   #mcc-app .mcc-carousel-next{right:calc(50% - 56px);}
-  .mcc-js #mcc-app .mcc-size-carousel.is-ready{padding-bottom:64px;}
+  #mcc-app .mcc-size-carousel.is-ready{padding-bottom:64px;}
 }
 /* Buy section pops out toward the viewer on the card in front */
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transform-origin:50% 0; transition:transform .35s ease, box-shadow .35s ease;}
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"] .mcc-buy-box{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset; border-radius:var(--radius-lg);}
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"] .mcc-buy-box.is-popping{animation:mcc-buy-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+#mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transform-origin:50% 0; transition:transform .35s ease, box-shadow .35s ease;}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"] .mcc-buy-box{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset; border-radius:var(--radius-lg);}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"] .mcc-buy-box.is-popping{animation:mcc-buy-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
 @keyframes mcc-buy-pop{
   0%{transform:translateY(0) scale(1); box-shadow:0 0 0 rgba(15,40,34,0);}
   100%{transform:translateY(-6px) scale(1.04); box-shadow:0 22px 40px -18px rgba(15,40,34,.55), 0 2px 0 var(--brass) inset;}
 }
 @media (prefers-reduced-motion:reduce){
-  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
-  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
-  .mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"] .mcc-buy-box.is-popping{animation:none;}
-  .mcc-js #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
+  #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
+  #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
+  #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="active"] .mcc-buy-box.is-popping{animation:none;}
+  #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
 }
-.mcc-js #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="hidden"]{opacity:0; pointer-events:none; --s:.7;}
+#mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos="hidden"]{opacity:0; pointer-events:none; --s:.7;}
