@@ -51,8 +51,10 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
 .stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
 .stage:fullscreen .stage-bar { display: none; }
+#fps { display: inline-block; width: 36ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
 .bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-variant-numeric: tabular-nums; }
-label.inline { display: flex; align-items: center; gap: 8px; }
+label.inline { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+label.inline input[type=checkbox] { width: 18px; min-height: 18px; accent-color: var(--target); }
 select { min-height: 40px; background: var(--bg); border: 1px solid var(--line); color: var(--fg); font: 13px var(--font-data); padding: 6px 8px; }
 select:focus-visible { outline: 2px solid var(--target); outline-offset: 2px; }
 
@@ -143,6 +145,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
             <option value="sharp">Sharp (full resolution)</option>
           </select>
         </label>
+        <label class="inline" for="rawIn"><input id="rawIn" type="checkbox"> Raw input</label>
+        <label class="inline" for="lowLat"><input id="lowLat" type="checkbox"> Low latency</label>
         <button class="btn" id="fsBtn" type="button">Fullscreen</button>
       </span>
     </div>
@@ -290,7 +294,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', ...store.get('settings', {}) };
+  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', raw: true, lowLatency: false, ...store.get('settings', {}) };
   const progs = {}, playTiers = {};
   for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
   let hist = store.get('hist', []).map(h => ({ drill: 'track', v: h.acc, ...h }));
@@ -303,7 +307,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const fmt = (v, d = drill()) => d.unit === '%' ? v.toFixed(1) + '%' : (Math.round(v * 10) / 10) + d.unit;
 
   const $ = id => document.getElementById(id);
-  const cv = $('cv'), ctx = cv.getContext('2d', { alpha: false, desynchronized: true });
+  const cv = $('cv'), ctx = cv.getContext('2d', { alpha: false, desynchronized: !!settings.lowLatency });
   const stage = $('stage'), overlay = $('overlay');
   const D2R = Math.PI / 180;
 
@@ -464,6 +468,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     H = cv.height = Math.max(1, Math.round(cv.clientHeight * scale));
     // Overwatch's FOV is horizontal at 16:9; the screen is always 16:9.
     focal = (W / 2) / Math.tan(settings.fov / 2 * D2R);
+    fontSmall = `500 ${Math.round(16 * W / 1280)}px "IBM Plex Mono", monospace`;
+    fontBig = `700 ${Math.round(72 * W / 1280)}px "Saira Condensed", sans-serif`;
+    fontNow = '';
     dirty = true;
   }
   new ResizeObserver(() => { resize(); renderSpark(); }).observe(cv);
@@ -472,23 +479,37 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const y = yaw * D2R, p = pitch * D2R;
     return [Math.cos(p) * Math.sin(y), Math.sin(p), Math.cos(p) * Math.cos(y)];
   }
+  // Hot-path math writes into reused objects so a frame allocates nothing (no garbage-collection pauses).
+  const B = { f: [0, 0, 1], r: [1, 0, 0], u: [0, 1, 0] };
   function basis() {
-    const y = cam.yaw * D2R, p = cam.pitch * D2R;
-    return {
-      f: dir(cam.yaw, cam.pitch),
-      r: [Math.cos(y), 0, -Math.sin(y)],
-      u: [-Math.sin(p) * Math.sin(y), Math.cos(p), -Math.sin(p) * Math.cos(y)],
-    };
+    const sy = Math.sin(cam.yaw * D2R), cy = Math.cos(cam.yaw * D2R);
+    const sp = Math.sin(cam.pitch * D2R), cp = Math.cos(cam.pitch * D2R);
+    B.f[0] = cp * sy; B.f[1] = sp; B.f[2] = cp * cy;
+    B.r[0] = cy; B.r[1] = 0; B.r[2] = -sy;
+    B.u[0] = -sp * sy; B.u[1] = cp; B.u[2] = -sp * cy;
+    return B;
   }
   const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-  function project(B, d) {
-    const z = dot(d, B.f);
-    if (z <= 0.05) return null;
-    return { x: W / 2 + focal * dot(d, B.r) / z, y: H / 2 - focal * dot(d, B.u) / z, z };
+  const P = { x: 0, y: 0, z: 0 };
+  // Projects a yaw/pitch direction into P; returns false when it's behind the camera.
+  function projectAngles(B, yaw, pitch) {
+    const sy = Math.sin(yaw * D2R), cy = Math.cos(yaw * D2R), sp = Math.sin(pitch * D2R), cp = Math.cos(pitch * D2R);
+    const dx = cp * sy, dy = sp, dz = cp * cy;
+    const z = dx * B.f[0] + dy * B.f[1] + dz * B.f[2];
+    if (z <= 0.05) return false;
+    P.x = W / 2 + focal * (dx * B.r[0] + dz * B.r[2]) / z;
+    P.y = H / 2 - focal * (dx * B.u[0] + dy * B.u[1] + dz * B.u[2]) / z;
+    P.z = z;
+    return true;
   }
-  const angTo = (yaw, pitch) => Math.acos(Math.min(1, dot(dir(cam.yaw, cam.pitch), dir(yaw, pitch)))) / D2R;
+  function angTo(yaw, pitch) {
+    const a = cam.yaw * D2R, b = cam.pitch * D2R, c = yaw * D2R, d = pitch * D2R;
+    const cosA = Math.cos(b) * Math.cos(d) * Math.cos(a - c) + Math.sin(b) * Math.sin(d);
+    return Math.acos(Math.min(1, cosA)) / D2R;
+  }
   const onTarget = () => angTo(tgt.yaw, tgt.pitch) <= tier().r;
-  const visibleOrbs = () => drill().kind === 'flick' ? orbs : [{ yaw: tgt.yaw, pitch: tgt.pitch }];
+  const single = [tgt];
+  const visibleOrbs = () => drill().kind === 'flick' ? orbs : single;
 
   // Grid direction vectors are computed once; each frame only projects them, in three batched strokes.
   // Lines of constant yaw are great circles and project to straight lines, so they need few points.
@@ -534,14 +555,17 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   const ORB = orbSprite('#ffe2a3', '#c7861c'), ORB_LIT = orbSprite('#c9ffe9', '#2fbf8a');
   function drawOrb(B, o, r, lit) {
-    const c = project(B, dir(o.yaw, o.pitch));
-    if (!c) return;
-    const rad = focal * Math.tan(r * D2R) / c.z;
-    ctx.drawImage(lit ? ORB_LIT : ORB, c.x - rad, c.y - rad, rad * 2, rad * 2);
+    if (!projectAngles(B, o.yaw, o.pitch)) return;
+    const rad = focal * Math.tan(r * D2R) / P.z;
+    ctx.drawImage(lit ? ORB_LIT : ORB, P.x - rad, P.y - rad, rad * 2, rad * 2);
   }
 
+  const hud = { at: 0, pass: false, left: '', right: '' };
+  let fontNow = '', fontSmall = '', fontBig = '';
+  const setFont = f => { if (f !== fontNow) { ctx.font = f; fontNow = f; } };
   function draw(now) {
-    const B = basis(), s = W / 1280, T = tier(), d = drill();
+    basis();
+    const s = W / 1280, T = tier(), d = drill();
     ctx.fillStyle = '#0b0f13';
     ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = Math.max(1, s);
@@ -552,12 +576,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       anyLit = anyLit || lit;
       drawOrb(B, o, T.r, lit);
       if (T.life && phase === 'run') {
-        const c = project(B, dir(o.yaw, o.pitch));
-        if (c) {
-          const rad = focal * Math.tan(T.r * D2R) / c.z, left = Math.max(0, 1 - (now - o.born) / T.life);
+        if (projectAngles(B, o.yaw, o.pitch)) {
+          const rad = focal * Math.tan(T.r * D2R) / P.z, left = Math.max(0, 1 - (now - o.born) / T.life);
           ctx.strokeStyle = left < .3 ? '#ef6f5e' : '#f0b340';
           ctx.lineWidth = Math.max(1.5, 2 * s);
-          ctx.beginPath(); ctx.arc(c.x, c.y, rad + 5 * s, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(P.x, P.y, rad + 5 * s, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); ctx.stroke();
         }
       }
     }
@@ -581,23 +604,28 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     }
     // HUD
     if (phase === 'run' || phase === 'countdown') {
-      ctx.font = `500 ${Math.round(16 * s)}px "IBM Plex Mono", monospace`;
       ctx.textBaseline = 'top';
       if (phase === 'countdown') {
         const left = Math.ceil((runStart - now) / 1000);
         ctx.textAlign = 'center'; ctx.fillStyle = '#e4e9ed';
-        ctx.font = `700 ${Math.round(72 * s)}px "Saira Condensed", sans-serif`;
+        setFont(fontBig);
         ctx.fillText(String(Math.max(1, left)), cx, H * 0.18);
       } else {
+        setFont(fontSmall);
         const frac = Math.min(1, (now - runStart) / RUN_MS);
         ctx.fillStyle = '#25303a'; ctx.fillRect(0, 0, W, 6 * s);
         ctx.fillStyle = '#f0b340'; ctx.fillRect(0, 0, W * (1 - frac), 6 * s);
-        const v = result();
-        ctx.textAlign = 'left'; ctx.fillStyle = v >= T.bench ? '#6fe8b8' : '#e4e9ed';
-        const extra = d.kind === 'track' ? '' : `  ·  ${misses} miss${misses === 1 ? '' : 'es'}`;
-        ctx.fillText(`${fmt(v)}  ·  need ${fmt(T.bench)}${extra}`, 18 * s, 18 * s);
+        if (now - hud.at > 100) {
+          const v = result();
+          hud.at = now; hud.pass = v >= T.bench;
+          const extra = d.kind === 'track' ? '' : `  ·  ${misses} miss${misses === 1 ? '' : 'es'}`;
+          hud.left = `${fmt(v)}  ·  need ${fmt(T.bench)}${extra}`;
+          hud.right = `${Math.max(0, (RUN_MS - (now - runStart)) / 1000).toFixed(1)} s`;
+        }
+        ctx.textAlign = 'left'; ctx.fillStyle = hud.pass ? '#6fe8b8' : '#e4e9ed';
+        ctx.fillText(hud.left, 18 * s, 18 * s);
         ctx.textAlign = 'right'; ctx.fillStyle = '#8d99a4';
-        ctx.fillText(`${((RUN_MS - (now - runStart)) / 1000).toFixed(1)} s`, W - 18 * s, 18 * s);
+        ctx.fillText(hud.right, W - 18 * s, 18 * s);
       }
     }
   }
@@ -734,6 +762,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   let rawInput = null;
   async function lock() {
     try {
+      if (!settings.raw) throw 0;
       await cv.requestPointerLock({ unadjustedMovement: true });
       rawInput = true;
     } catch {
@@ -754,6 +783,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const setFlash = col => { flash.until = performance.now() + 140; flash.col = col; };
   cv.addEventListener('mousedown', () => {
     if (phase !== 'run' || document.pointerLockElement !== cv) return;
+    applyMouse();
     const k = drill().kind, T = tier();
     if (k === 'punch' && !chargeStart) chargeStart = performance.now();
     if (k === 'flick') {
@@ -764,6 +794,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   });
   document.addEventListener('mouseup', () => {
     if (!chargeStart || phase !== 'run') { chargeStart = 0; return; }
+    applyMouse();
     const held = (performance.now() - chargeStart) / 1000;
     chargeStart = 0;
     if (held >= tier().charge && onTarget()) { hits++; setFlash('#6fe8b8'); respawnPunchTarget(); }
@@ -777,23 +808,31 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       showIdle('Run cancelled');
     }
   });
+  let pendX = 0, pendY = 0, mouseEvents = 0;
   document.addEventListener('mousemove', e => {
     if (document.pointerLockElement !== cv) return;
+    pendX += e.movementX; pendY += e.movementY; mouseEvents++;
+  }, { passive: true });
+  function applyMouse() {
+    if (!pendX && !pendY) return;
     const k = degPerCount();
-    cam.yaw += e.movementX * k;
-    cam.pitch = Math.max(-89, Math.min(89, cam.pitch - e.movementY * k));
+    cam.yaw += pendX * k;
+    cam.pitch = Math.max(-89, Math.min(89, cam.pitch - pendY * k));
+    pendX = pendY = 0;
     dirty = true;
-  });
+  }
   $('fsBtn').addEventListener('click', () => {
     (document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen?.())?.catch?.(() => {});
   });
 
   // ---------- loop ----------
-  let last = performance.now(), fpsFrames = 0, fpsStart = last;
+  let last = performance.now(), fpsFrames = 0, fpsStart = last, worst = 0;
   const fpsEl = $('fps');
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
+    worst = Math.max(worst, now - last);
     last = now;
+    applyMouse();
     if (phase === 'countdown' && now >= runStart) { phase = 'run'; if (drill().kind !== 'flick') scheduleChange(now); orbs.forEach(o => { o.born = now; }); }
     if (phase === 'run') {
       if (drill().kind !== 'flick') stepTarget(dt, now);
@@ -807,8 +846,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     fpsFrames++;
     if (now - fpsStart >= 500) {
       const fps = fpsFrames * 1000 / (now - fpsStart);
-      fpsEl.textContent = live ? `${Math.round(fps)} fps · ${W}×${H}` : `${W}×${H}`;
-      fpsFrames = 0; fpsStart = now;
+      const ev = Math.round(mouseEvents * 1000 / (now - fpsStart));
+      fpsEl.textContent = live ? `${Math.round(fps)} fps · worst ${Math.round(worst)} ms · mouse ${ev}/s` : `${W}×${H}`;
+      fpsFrames = 0; fpsStart = now; worst = 0; mouseEvents = 0;
     }
     requestAnimationFrame(frame);
   }
@@ -816,6 +856,16 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const q = $('quality');
   q.value = settings.quality;
   q.addEventListener('change', () => { settings.quality = q.value; store.set('settings', settings); resize(); });
+  const rawIn = $('rawIn'), lowLat = $('lowLat');
+  rawIn.checked = settings.raw; lowLat.checked = settings.lowLatency;
+  rawIn.addEventListener('change', () => {
+    settings.raw = rawIn.checked; store.set('settings', settings);
+    $('inputMode').textContent = 'Mouse input: applies the next time the mouse locks';
+  });
+  lowLat.addEventListener('change', () => {
+    settings.lowLatency = lowLat.checked; store.set('settings', settings);
+    $('inputMode').textContent = 'Low latency: reload the page to apply';
+  });
 
   function renderAll() { renderTabs(); renderProgress(); renderSpark(); }
   renderCalib();
