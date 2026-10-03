@@ -509,11 +509,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
 
-/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%, no motion blur.
    Without JavaScript the cards stay a normal grid. Only the script's is-ready class switches the layout on;
    don't depend on html.mcc-js here, the live Horizon layout doesn't keep it. */
 #mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
-#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
 #mcc-app .mcc-size-carousel{position:relative;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
@@ -525,7 +524,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
-#mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
 #mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
 #mcc-app .mcc-carousel-nav[hidden]{display:none;}
 #mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
@@ -554,7 +552,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
   #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
-  #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
@@ -757,7 +754,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         </article></div>
     <button type=&quot;button&quot; class=&quot;mcc-carousel-nav mcc-carousel-next&quot; data-carousel-next aria-label=&quot;Next hall size&quot; hidden>&amp;#8250;</button>
     <p class=&quot;mcc-visually-hidden&quot; aria-live=&quot;polite&quot; data-carousel-status></p>
-    <svg class=&quot;mcc-blur-defs&quot; width=&quot;0&quot; height=&quot;0&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;><filter id=&quot;mccMotionBlur&quot; x=&quot;-20%&quot; y=&quot;0&quot; width=&quot;140%&quot; height=&quot;100%&quot;><feGaussianBlur in=&quot;SourceGraphic&quot; stdDeviation=&quot;0 0&quot;/></filter></svg>
     </div>
   </div>
 </section>
@@ -944,9 +940,8 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
       if(cards.length < 2) return;
       var prevBtn = root.querySelector('[data-carousel-prev]'), nextBtn = root.querySelector('[data-carousel-next]');
       var status = root.querySelector('[data-carousel-status]');
-      var blur = root.querySelector('#mccMotionBlur feGaussianBlur');
       var still = window.matchMedia &amp;&amp; window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var n = cards.length, active = Math.floor((n - 1) / 2), raf = null, timer = null;
+      var n = cards.length, active = Math.floor((n - 1) / 2), timer = null;
 
       function layout(){
         cards.forEach(function(card, i){
@@ -969,28 +964,11 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
         box.classList.remove('is-popping'); void box.offsetWidth; box.classList.add('is-popping');
       }
 
-      function motionBlur(dir){
-        if(still || !blur) return;
-        var start = null, dur = 450;
-        root.classList.add('is-moving');
-        cancelAnimationFrame(raf);
-        function step(t){
-          if(start === null) start = t;
-          var k = Math.min(1, (t - start) / dur);
-          var amount = 9 * Math.sin(Math.PI * k);
-          blur.setAttribute('stdDeviation', amount.toFixed(2) + ' 0');
-          if(k < 1){ raf = requestAnimationFrame(step); }
-          else { blur.setAttribute('stdDeviation', '0 0'); root.classList.remove('is-moving'); }
-        }
-        raf = requestAnimationFrame(step);
-      }
-
       function go(index){
         var next = (index + n) % n;
         if(next === active) return;
         cards.forEach(function(c){ var b = c.querySelector('.mcc-buy-box'); if(b){ b.classList.remove('is-popping'); } });
         active = next;
-        motionBlur();
         layout();
         clearTimeout(timer);
         timer = setTimeout(pop, still ? 0 : 260);
@@ -1576,11 +1554,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
 
-/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%, no motion blur.
    Without JavaScript the cards stay a normal grid. Only the script's is-ready class switches the layout on;
    don't depend on html.mcc-js here, the live Horizon layout doesn't keep it. */
 #mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
-#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
 #mcc-app .mcc-size-carousel{position:relative;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
@@ -1592,7 +1569,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
-#mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
 #mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
 #mcc-app .mcc-carousel-nav[hidden]{display:none;}
 #mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
@@ -1621,7 +1597,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
   #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
-  #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
@@ -2373,11 +2348,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
 
-/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%, no motion blur.
    Without JavaScript the cards stay a normal grid. Only the script's is-ready class switches the layout on;
    don't depend on html.mcc-js here, the live Horizon layout doesn't keep it. */
 #mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
-#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
 #mcc-app .mcc-size-carousel{position:relative;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
@@ -2389,7 +2363,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
-#mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
 #mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
 #mcc-app .mcc-carousel-nav[hidden]{display:none;}
 #mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
@@ -2418,7 +2391,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
   #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
-  #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
@@ -3084,11 +3056,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
 
-/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%, no motion blur.
    Without JavaScript the cards stay a normal grid. Only the script's is-ready class switches the layout on;
    don't depend on html.mcc-js here, the live Horizon layout doesn't keep it. */
 #mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
-#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
 #mcc-app .mcc-size-carousel{position:relative;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
@@ -3100,7 +3071,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
-#mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
 #mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
 #mcc-app .mcc-carousel-nav[hidden]{display:none;}
 #mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
@@ -3129,7 +3099,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
   #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
-  #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>
@@ -3788,11 +3757,10 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-card p{flex:0 0 auto;}
 #mcc-app .mcc-incl{flex:1;}
 
-/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%.
+/* Hall-size carousel (owner request): arrows, middle card in front, side cards behind at 30%, no motion blur.
    Without JavaScript the cards stay a normal grid. Only the script's is-ready class switches the layout on;
    don't depend on html.mcc-js here, the live Horizon layout doesn't keep it. */
 #mcc-app .mcc-visually-hidden{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
-#mcc-app .mcc-blur-defs{position:absolute; width:0; height:0; overflow:hidden;}
 #mcc-app .mcc-size-carousel{position:relative;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-grid-by-size{display:grid; grid-template-columns:1fr; justify-items:center; padding:18px 0 8px; overflow:visible;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card{
@@ -3804,7 +3772,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;prev&quot;]{--x:-50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;next&quot;]{--x:50%; --s:.86; cursor:pointer;}
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;]{--x:0%; --s:1; opacity:1; z-index:3; box-shadow:var(--shadow-2);}
-#mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:url(#mccMotionBlur);}
 #mcc-app .mcc-carousel-nav{position:absolute; top:50%; z-index:5; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:var(--surface); color:var(--green-900); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 8px 20px -8px rgba(0,0,0,.45); transition:background .2s ease, transform .2s ease;}
 #mcc-app .mcc-carousel-nav[hidden]{display:none;}
 #mcc-app .mcc-carousel-nav:hover{background:var(--brass-light);}
@@ -3833,7 +3800,6 @@ html body #header-group{position:sticky; top:-44px; z-index:40;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card,
   #mcc-app .mcc-size-carousel.is-ready .mcc-buy-box{transition:none;}
   #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;active&quot;] .mcc-buy-box.is-popping{animation:none;}
-  #mcc-app .mcc-size-carousel.is-moving .mcc-size-card{filter:none;}
 }
 #mcc-app .mcc-size-carousel.is-ready .mcc-size-card[data-pos=&quot;hidden&quot;]{opacity:0; pointer-events:none; --s:.7;}
 </style></head><body>

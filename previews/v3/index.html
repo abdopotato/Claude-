@@ -204,7 +204,6 @@
         </article></div>
     <button type="button" class="mcc-carousel-nav mcc-carousel-next" data-carousel-next aria-label="Next hall size" hidden>&#8250;</button>
     <p class="mcc-visually-hidden" aria-live="polite" data-carousel-status></p>
-    <svg class="mcc-blur-defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="mccMotionBlur" x="-20%" y="0" width="140%" height="100%"><feGaussianBlur in="SourceGraphic" stdDeviation="0 0"/></filter></svg>
     </div>
   </div>
 </section>
@@ -391,9 +390,8 @@
       if(cards.length < 2) return;
       var prevBtn = root.querySelector('[data-carousel-prev]'), nextBtn = root.querySelector('[data-carousel-next]');
       var status = root.querySelector('[data-carousel-status]');
-      var blur = root.querySelector('#mccMotionBlur feGaussianBlur');
       var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var n = cards.length, active = Math.floor((n - 1) / 2), raf = null, timer = null;
+      var n = cards.length, active = Math.floor((n - 1) / 2), timer = null;
 
       function layout(){
         cards.forEach(function(card, i){
@@ -416,28 +414,11 @@
         box.classList.remove('is-popping'); void box.offsetWidth; box.classList.add('is-popping');
       }
 
-      function motionBlur(dir){
-        if(still || !blur) return;
-        var start = null, dur = 450;
-        root.classList.add('is-moving');
-        cancelAnimationFrame(raf);
-        function step(t){
-          if(start === null) start = t;
-          var k = Math.min(1, (t - start) / dur);
-          var amount = 9 * Math.sin(Math.PI * k);
-          blur.setAttribute('stdDeviation', amount.toFixed(2) + ' 0');
-          if(k < 1){ raf = requestAnimationFrame(step); }
-          else { blur.setAttribute('stdDeviation', '0 0'); root.classList.remove('is-moving'); }
-        }
-        raf = requestAnimationFrame(step);
-      }
-
       function go(index){
         var next = (index + n) % n;
         if(next === active) return;
         cards.forEach(function(c){ var b = c.querySelector('.mcc-buy-box'); if(b){ b.classList.remove('is-popping'); } });
         active = next;
-        motionBlur();
         layout();
         clearTimeout(timer);
         timer = setTimeout(pop, still ? 0 : 260);
