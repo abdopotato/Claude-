@@ -43,6 +43,12 @@ h3 { font: 700 20px/1.1 var(--font-display); letter-spacing: .02em; text-transfo
 .stage:fullscreen { display: grid; place-items: center; border: 0; }
 .stage:fullscreen .screen { width: min(100vw, 177.78vh); }
 canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+.xhair { position: absolute; left: 50%; top: 50%; overflow: visible; width: 1px; height: 1px; pointer-events: none; }
+.xhair circle { fill: none; stroke: #ffffff; shape-rendering: geometricPrecision; }
+.xhair.lit circle { stroke: #6fe8b8; }
+.xhair.head circle { stroke: #ffe066; }
+.xhair.hit circle { stroke: #6fe8b8; }
+.xhair.miss circle { stroke: #ef6f5e; }
 .overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(8, 11, 14, .72); text-align: center; cursor: pointer; }
 .overlay-card { max-width: 540px; display: grid; gap: 10px; justify-items: center; }
 .ov-eyebrow { font: 500 12px/1 var(--font-data); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
@@ -52,7 +58,7 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
 .stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
 .stage:fullscreen .stage-bar { display: none; }
-#fps { display: inline-block; width: 40ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
+#fps { display: inline-block; width: 52ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
 .bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-variant-numeric: tabular-nums; }
 label.inline { display: flex; align-items: center; gap: 8px; min-height: 44px; }
 label.inline input[type=checkbox] { width: 18px; min-height: 18px; accent-color: var(--target); }
@@ -126,11 +132,12 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   <section class="stage" id="stage">
     <div class="screen">
       <canvas id="cv" aria-label="Aim trainer. Click to lock the mouse and start a 30 second run."></canvas>
+      <svg id="xhair" class="xhair" aria-hidden="true"><circle id="xcirc" cx="0" cy="0" r="3"></circle></svg>
       <div class="overlay" id="overlay">
         <div class="overlay-card">
           <div class="ov-eyebrow" id="ovEyebrow">Tier 1 · 30 s run</div>
           <div class="ov-title" id="ovTitle">Click to start</div>
-          <div class="ov-body" id="ovBody">Keep the crosshair on the orb while it strafes.</div>
+          <div class="ov-body" id="ovBody">Keep the crosshair on the dummy while it strafes.</div>
           <div class="ov-cta" id="ovCta">Click to start</div>
         </div>
       </div>
@@ -180,6 +187,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="dpi">DPI<input id="dpi" type="number" min="100" max="32000" step="50"></label>
         <label for="sens">OW sens<input id="sens" type="number" min="0.01" max="100" step="0.01"></label>
         <label for="fov">FOV<input id="fov" type="number" min="60" max="103" step="1"></label>
+        <label for="xgap">Crosshair gap<input id="xgap" type="number" min="1" max="30" step="1"></label>
+        <label for="xthick">Thickness<input id="xthick" type="number" min="0.5" max="10" step="0.5"></label>
       </div>
       <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely.</p>
       <p class="note"><b>Check my 360:</b> in Overwatch, mark where your mouse starts on the pad and turn exactly 360°. Here, press the button and make the same swipe. It should read close to 360°. With raw input off, Windows pointer speed must be on the 6th notch with "Enhance pointer precision" off, or the reading will drift.</p>
@@ -201,7 +210,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <li><b>Sleep is part of training.</b><span>Motor skills consolidate during sleep, so it's normal to score higher the next day than at the end of a session. Don't chase a personal best when you're tired; stop and come back tomorrow.</span></li>
         <li><b>Train where you fail some of the time.</b><span>The challenge point framework says learning is fastest when a task is hard enough that you miss regularly. That's why the ladder moves you up the moment you pass instead of letting you farm an easy tier.</span></li>
         <li><b>Mix your drills.</b><span>Interleaving different tasks (contextual interference) lowers your score during a session but improves what you keep and how well it carries into real games. Rotate tracking with the Doomfist drills rather than doing 10 runs of one.</span></li>
-        <li><b>Watch the target, not your hand.</b><span>Research on attentional focus finds that an external focus (keep the crosshair on the centre of the orb) learns faster than thinking about wrist or arm movement. Check your grip and posture between runs, not during them.</span></li>
+        <li><b>Watch the target, not your hand.</b><span>Research on attentional focus finds that an external focus (keep the crosshair on the target's chest or head) learns faster than thinking about wrist or arm movement. Check your grip and posture between runs, not during them.</span></li>
         <li><b>Keep your sensitivity fixed.</b><span>Your brain is learning a mapping from hand distance to turn angle. Every sens change resets part of it. Stay on 2.55 at 1600 DPI for at least a few months unless something is clearly wrong.</span></li>
         <li><b>Expect a slow first run.</b><span>The first runs of a day are lower (warm-up decrement). Judge yourself on the week's trend in the history chart, not on single runs. Flat stretches of one to two weeks are normal before a jump.</span></li>
         <li><b>Carry it into real games.</b><span>Trainers build raw control; games teach timing and target choice. After your session, play a few minutes of Doomfist in a custom game or deathmatch and use the same focus.</span></li>
@@ -227,11 +236,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const RUN_MS = 30000;
   const COUNTDOWN_MS = 2000;
   const POINTS_PER_TIER = 5;
-  // Tracking-style tiers: orb angular radius (deg), top strafe speed (deg/s), direction-change window (ms),
+  // Tracking-style tiers: dummy half shoulder width (deg; sets its distance), top strafe speed (deg/s), direction-change window (ms),
   // acceleration (deg/s^2), jump chance per change, benchmark, estimated percentile once cleared.
   const DRILLS = {
     track: {
-      label: 'Reactive tracking', tag: 'Main ladder', kind: 'track', unit: '%', jv: 26,
+      label: 'Reactive tracking', tag: 'Main ladder', kind: 'track', unit: '%',
       tiers: [
         { r: 2.6,  v: 22, c: [900, 1500], a: 120, j: 0,    bench: 65, pct: 10 },
         { r: 2.4,  v: 27, c: [800, 1300], a: 160, j: 0,    bench: 65, pct: 15 },
@@ -248,7 +257,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       ],
     },
     punch: {
-      label: 'Rocket Punch', tag: 'Doomfist', kind: 'punch', unit: ' hits', jv: 26,
+      label: 'Rocket Punch', tag: 'Doomfist', kind: 'punch', unit: ' hits',
       tiers: [
         { r: 2.6, v: 20, c: [900, 1400], a: 150, j: 0,    charge: 0.4, bench: 15 },
         { r: 2.3, v: 28, c: [700, 1200], a: 250, j: 0,    charge: 0.6, bench: 14 },
@@ -258,7 +267,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       ],
     },
     close: {
-      label: 'Hand Cannon range', tag: 'Doomfist', kind: 'track', unit: '%', jv: 40,
+      label: 'Hand Cannon range', tag: 'Doomfist', kind: 'track', unit: '%',
       tiers: [
         { r: 4.2, v: 50,  c: [700, 1100], a: 300,  j: 0.15, bench: 62 },
         { r: 3.9, v: 65,  c: [550,  950], a: 450,  j: 0.25, bench: 60 },
@@ -297,7 +306,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', raw: true, lowLatency: false, ...store.get('settings', {}) };
+  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, ...store.get('settings', {}) };
   const progs = {}, playTiers = {};
   for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
   let hist = store.get('hist', []).map(h => ({ drill: 'track', v: h.acc, ...h }));
@@ -320,16 +329,17 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const cm360 = 360 / degPerCount() / settings.dpi * 2.54;
     $('calib').innerHTML = `<b>${settings.dpi}</b> DPI · sens <b>${settings.sens}</b> · FOV <b>${settings.fov}</b> · <b>${cm360.toFixed(1)}</b> cm/360`;
   }
-  for (const k of ['dpi', 'sens', 'fov']) {
+  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10] };
+  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick']) {
     const el = $(k);
     el.value = settings[k];
     el.addEventListener('change', () => {
       const v = parseFloat(el.value);
       if (!isFinite(v) || v <= 0) { el.value = settings[k]; return; }
-      settings[k] = k === 'fov' ? Math.min(103, Math.max(60, v)) : v;
+      settings[k] = LIMITS[k] ? Math.min(LIMITS[k][1], Math.max(LIMITS[k][0], v)) : v;
       el.value = settings[k];
       store.set('settings', settings);
-      renderCalib(); resize();
+      renderCalib(); resize(); layoutCrosshair();
     });
   }
 
@@ -389,9 +399,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       b.type = 'button';
       b.disabled = n > p.tier;
       b.setAttribute('aria-pressed', String(n === playTiers[drillId]));
-      const spec = d.kind === 'punch' ? `${tt.bench} hits · ${tt.charge}s charge · ${tt.v}°/s`
+      const spec = d.kind === 'punch' ? `${tt.bench} hits · ${tt.charge}s charge · ${distM(tt.r)} m`
         : d.kind === 'flick' ? (tt.life ? `${tt.bench} pts · ${tt.life / 1000}s to hit · r ${tt.r}°` : `${tt.bench} pts · ${tt.n} orbs · ±${tt.spread}° · r ${tt.r}°`)
-        : `${tt.bench}% · ${tt.v}°/s · r ${tt.r}°${tt.j ? ' · jumps' : ''}`;
+        : `${tt.bench}% · ${tt.v}°/s · ${distM(tt.r)} m${tt.j ? ' · jumps' : ''}`;
       const right = isCleared ? 'cleared' : tt.pct ? '~' + tt.pct + 'th' : n === p.tier ? 'current' : '';
       b.innerHTML = `<span class="n">${n}</span><span><span class="spec">${spec}</span><br><span class="spec sub">score ${n * POINTS_PER_TIER} unlocks ${n < d.tiers.length ? 'tier ' + (n + 1) : 'the final mark'}</span></span><span class="pct">${right}</span>`;
       b.addEventListener('click', () => { playTiers[drillId] = n; renderProgress(); showIdle(); });
@@ -457,7 +467,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 
   // ---------- 3D view ----------
   const cam = { yaw: 0, pitch: 0 };
-  const tgt = { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 };
+  const tgt = { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0, kb: 0 };
   let orbs = [];            // flick targets
   let W = 0, H = 0, focal = 1, dirty = true;
 
@@ -476,7 +486,18 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     fontNow = '';
     dirty = true;
   }
-  new ResizeObserver(() => { resize(); renderSpark(); }).observe(cv);
+  new ResizeObserver(() => { resize(); renderSpark(); layoutCrosshair(); }).observe(cv);
+  // Sizes follow Overwatch's 1080p pixel units, scaled to the game view's height.
+  const xhair = $('xhair'), xcirc = $('xcirc');
+  let xState = '';
+  function layoutCrosshair() {
+    const k = cv.clientHeight / 1080;
+    xcirc.setAttribute('r', String(Math.max(0.5, settings.xgap * k)));
+    xcirc.setAttribute('stroke-width', String(Math.max(0.75, settings.xthick * k)));
+  }
+  function setCrosshair(state) {
+    if (state !== xState) { xhair.setAttribute('class', 'xhair ' + state); xState = state; }
+  }
 
   function dir(yaw, pitch) {
     const y = yaw * D2R, p = pitch * D2R;
@@ -510,9 +531,51 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const cosA = Math.cos(b) * Math.cos(d) * Math.cos(a - c) + Math.sin(b) * Math.sin(d);
     return Math.acos(Math.min(1, cosA)) / D2R;
   }
-  const onTarget = () => angTo(tgt.yaw, tgt.pitch) <= tier().r;
-  const single = [tgt];
-  const visibleOrbs = () => drill().kind === 'flick' ? orbs : single;
+  // Training dummy for the moving-target drills. What's drawn is exactly the hitbox: a head sphere plus
+  // torso and leg capsules, proportioned like an average Overwatch hero (1.8 m tall, ~0.55 m shoulders).
+  // A tier's r is the half shoulder width in degrees, which sets how far away the dummy stands.
+  const EYE = 1.6;
+  const PARTS = [{ h0: 0.12, h1: 0.85, r: 0.16 }, { h0: 0.98, h1: 1.21, r: 0.26 }];   // legs, torso (shoulders top out at 1.47 m)
+  const HEAD = { h: 1.62, r: 0.14 };
+  const dpm = () => tier().r / 0.3;                       // degrees per metre at the dummy's distance
+  const distM = r => (0.3 / Math.tan(r * D2R)).toFixed(1);
+  // 0 = off, 1 = body, 2 = head
+  function dummyHit() {
+    const m = dpm(), dx = (cam.yaw - tgt.yaw) * Math.cos(cam.pitch * D2R), feet = tgt.pitch - EYE * m;
+    if (Math.hypot(dx, cam.pitch - (feet + HEAD.h * m)) <= HEAD.r * m) return 2;
+    for (const p of PARTS) {
+      const lo = feet + p.h0 * m, hi = feet + p.h1 * m;
+      const dy = cam.pitch < lo ? lo - cam.pitch : cam.pitch > hi ? cam.pitch - hi : 0;
+      if (Math.hypot(dx, dy) <= p.r * m) return 1;
+    }
+    return 0;
+  }
+  const onTarget = () => dummyHit() > 0;
+  const visibleOrbs = () => orbs;
+  function drawDummy(B, hit) {
+    const m = dpm(), feet = tgt.pitch - EYE * m, seg = [];
+    for (const p of PARTS) {
+      if (!projectAngles(B, tgt.yaw, feet + p.h0 * m)) return;
+      const x0 = P.x, y0 = P.y;
+      if (!projectAngles(B, tgt.yaw, feet + p.h1 * m)) return;
+      seg.push([x0, y0, P.x, P.y, Math.max(1, 2 * focal * Math.tan(p.r * m * D2R) / P.z)]);
+    }
+    ctx.lineCap = 'round';
+    for (const [pass, colour] of [[0, hit === 1 ? '#2fbf8a' : '#c7861c'], [1, hit === 1 ? '#8ff5cd' : '#e9a944']]) {
+      ctx.strokeStyle = colour;
+      for (const [x0, y0, x1, y1, w] of seg) {
+        ctx.lineWidth = pass ? w * 0.35 : w;
+        const off = pass ? -w * 0.18 : 0;
+        ctx.beginPath(); ctx.moveTo(x0 + off, y0); ctx.lineTo(x1 + off, y1); ctx.stroke();
+      }
+    }
+    if (projectAngles(B, tgt.yaw, feet + HEAD.h * m)) {
+      const hr = focal * Math.tan(HEAD.r * m * D2R) / P.z;
+      ctx.fillStyle = hit === 2 ? '#c9ffe9' : '#f0b340';
+      ctx.beginPath(); ctx.arc(P.x, P.y, Math.max(1, hr), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.lineCap = 'butt';
+  }
 
   // Grid direction vectors are computed once; each frame only projects them, in three batched strokes.
   // Lines of constant yaw are great circles and project to straight lines, so they need few points.
@@ -573,10 +636,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = Math.max(1, s);
     drawGrid(B);
-    let anyLit = false;
-    if (phase !== 'calib') for (const o of visibleOrbs()) {
+    let anyLit = 0;
+    if (phase !== 'calib' && d.kind !== 'flick') { anyLit = dummyHit(); drawDummy(B, anyLit); }
+    if (phase !== 'calib' && d.kind === 'flick') for (const o of visibleOrbs()) {
       const lit = angTo(o.yaw, o.pitch) <= T.r;
-      anyLit = anyLit || lit;
+      anyLit = anyLit || (lit ? 1 : 0);
       drawOrb(B, o, T.r, lit);
       if (T.life && phase === 'run') {
         if (projectAngles(B, o.yaw, o.pitch)) {
@@ -587,17 +651,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         }
       }
     }
-    // crosshair, flashing on a punch or flick result
+    // crosshair colour: hit/miss flash, then head, then body
     const cx = W / 2, cy = H / 2, k = Math.max(1, s * 1.5);
-    const flashCol = now < flash.until ? flash.col : null;
-    ctx.strokeStyle = flashCol || (anyLit ? '#6fe8b8' : '#ffffff');
-    ctx.lineWidth = 2 * k;
-    ctx.beginPath();
-    ctx.moveTo(cx - 12 * k, cy); ctx.lineTo(cx - 4 * k, cy);
-    ctx.moveTo(cx + 4 * k, cy); ctx.lineTo(cx + 12 * k, cy);
-    ctx.moveTo(cx, cy - 12 * k); ctx.lineTo(cx, cy - 4 * k);
-    ctx.moveTo(cx, cy + 4 * k); ctx.lineTo(cx, cy + 12 * k);
-    ctx.stroke();
+    setCrosshair(now < flash.until ? flash.cls : anyLit === 2 ? 'head' : anyLit ? 'lit' : '');
     // Rocket Punch charge ring
     if (d.kind === 'punch' && chargeStart && phase === 'run') {
       const held = (now - chargeStart) / 1000, frac = Math.min(1, held / T.charge);
@@ -632,7 +688,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         if (now - hud.at > 100) {
           const v = result();
           hud.at = now; hud.pass = v >= T.bench;
-          const extra = d.kind === 'track' ? '' : `  ·  ${misses} miss${misses === 1 ? '' : 'es'}`;
+          const extra = d.kind === 'track' ? `  ·  head ${timeTotal ? Math.round(headOn / timeTotal * 100) : 0}%` : `  ·  ${misses} miss${misses === 1 ? '' : 'es'}`;
           hud.left = `${fmt(v)}  ·  need ${fmt(T.bench)}${extra}`;
           hud.right = `${Math.max(0, (RUN_MS - (now - runStart)) / 1000).toFixed(1)} s`;
         }
@@ -646,16 +702,22 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 
   // ---------- target movement ----------
   const BOUND_YAW = 35;
+  // Jumps follow Overwatch-like physics: about 1 m high and 0.6 s in the air, converted to degrees.
+  const JUMP_H = 1.0, AIR = 0.6;
+  const jumpV = () => 4 * JUMP_H * dpm() / AIR;
+  const gravity = () => 8 * JUMP_H * dpm() / (AIR * AIR);
   function scheduleChange(now) {
-    const T = tier();
-    tgt.next = now + T.c[0] + Math.random() * (T.c[1] - T.c[0]);
-    // bias away from the arena edges so strafes stay in view
-    const bias = -tgt.yaw / BOUND_YAW * 0.45;
-    const sign = Math.random() < 0.5 + bias ? 1 : -1;
-    let speed = T.v * (0.55 + 0.45 * Math.random());
-    if (playTiers[drillId] >= 3 && Math.random() < 0.1) speed = 0;     // brief stop
-    tgt.want = sign * speed;
-    if (tgt.pitch === 0 && Math.random() < T.j) tgt.vp = drill().jv + Math.random() * 8;  // jump
+    const T = tier(), lvl = (playTiers[drillId] - 1) / Math.max(1, drill().tiers.length - 1);
+    // mix quick ADAD taps with longer strafes; taps get more common at higher tiers
+    const tap = Math.random() < 0.2 + 0.3 * lvl;
+    tgt.next = now + (tap ? 110 + Math.random() * 190 : T.c[0] + Math.random() * (T.c[1] - T.c[0]));
+    const cur = Math.sign(tgt.want) || (Math.random() < 0.5 ? 1 : -1);
+    // usually reverse, sometimes keep going at a new speed, so the rhythm can't be read
+    let sign = Math.random() < 0.72 ? -cur : cur;
+    // steer back towards the middle near the arena edges
+    if (Math.random() < Math.abs(tgt.yaw) / BOUND_YAW * 0.6) sign = -Math.sign(tgt.yaw);
+    tgt.want = sign * T.v * (0.6 + 0.4 * Math.random());
+    if (tgt.pitch === 0 && !tgt.vp && Math.random() < T.j) tgt.vp = jumpV();
   }
   function stepTarget(dt, now) {
     const T = tier();
@@ -664,9 +726,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (tgt.yaw < -BOUND_YAW && tgt.want < 0) tgt.want = -tgt.want;
     const dv = tgt.want - tgt.vy, maxDv = T.a * dt;
     tgt.vy += Math.max(-maxDv, Math.min(maxDv, dv));
-    tgt.yaw += tgt.vy * dt;
+    tgt.yaw += (tgt.vy + tgt.kb) * dt;
+    tgt.kb *= Math.exp(-dt / 0.15);                  // punch knockback slides out smoothly
+    if (Math.abs(tgt.kb) < 0.05) tgt.kb = 0;
     if (tgt.vp || tgt.pitch > 0) {
-      tgt.vp -= 60 * dt;
+      tgt.vp -= gravity() * dt;
       tgt.pitch += tgt.vp * dt;
       if (tgt.pitch <= 0) { tgt.pitch = 0; tgt.vp = 0; }
     }
@@ -685,16 +749,15 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const back = cam.yaw > 0 ? -1 : 1;
     return { yaw: cam.yaw + back * (minDist + 4 + Math.random() * 10), pitch: Math.max(T.lo, Math.min(T.hi, cam.pitch)), born: performance.now() };
   }
-  function respawnPunchTarget() {
-    let y;
-    do { y = (Math.random() * 2 - 1) * 30; } while (Math.abs(y - tgt.yaw) < 12);
-    Object.assign(tgt, { yaw: y, pitch: 0, vy: 0, want: 0, vp: 0 });
-    scheduleChange(performance.now());
+  // A landed punch knocks the dummy back along its strafe (~2 m over a third of a second) instead of moving it instantly.
+  function knockback() {
+    const side = Math.sign(tgt.vy) || (tgt.yaw > cam.yaw ? 1 : -1);
+    tgt.kb = side * 6 * dpm();
   }
 
   // ---------- run flow ----------
   let phase = 'idle', runStart = 0, timeOn = 0, timeTotal = 0, hits = 0, misses = 0, chargeStart = 0;
-  const flash = { until: 0, col: '' };
+  const flash = { until: 0, col: '', cls: '' };
   const result = () => {
     const k = drill().kind;
     if (k === 'track') return timeTotal ? timeOn / timeTotal * 100 : 0;
@@ -710,11 +773,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   };
   function idleBody() {
     const T = tier(), d = drill();
-    if (d.kind === 'punch') return `Hold any mouse button to charge for at least ${T.charge} s while staying on the orb, then release on it. Land ${T.bench} punches in 30 s.`;
+    if (d.kind === 'punch') return `Hold any mouse button to charge for at least ${T.charge} s while staying on the dummy, then release on it. A landed punch knocks it back. Land ${T.bench} punches in 30 s.`;
     if (drillId === 'frenzy') return `One orb at a time, anywhere on screen. Hit it within ${T.life / 1000} s (watch the ring) or it counts as a miss. Score is hits minus half your misses; reach ${T.bench}.`;
     if (d.kind === 'flick') return `Flick to an orb and click it. Most sit below the horizon, like aiming Seismic Slam. Score is hits minus half your misses; reach ${T.bench}.`;
-    if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel. Stay on the orb for ${T.bench}% of the run.`;
-    return `Keep the crosshair on the orb for ${T.bench}% of the run to clear this tier. The mouse locks to the game; press Esc to leave.`;
+    if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel, about ${distM(T.r)} m away. Stay on the dummy for ${T.bench}% of the run.`;
+    return `Keep the crosshair on the dummy (about ${distM(T.r)} m away) for ${T.bench}% of the run to clear this tier. Head and body both count. The mouse locks to the game; press Esc to leave.`;
   }
   function showIdle(msg) {
     dirty = true;
@@ -727,13 +790,14 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function resetScene() {
     dirty = true;
     cam.yaw = 0; cam.pitch = 0;
-    Object.assign(tgt, { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 });
+    Object.assign(tgt, { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0, kb: 0 });
+    if (drill().kind !== 'flick') cam.pitch = (1.17 - EYE) * dpm();   // start aimed at the chest
     orbs = [];
     if (drill().kind === 'flick') for (let i = 0; i < tier().n; i++) orbs.push(spawnOrb());
   }
   function startRun() {
     resetScene();
-    timeOn = 0; timeTotal = 0; hits = 0; misses = 0; chargeStart = 0;
+    timeOn = 0; timeTotal = 0; headOn = 0; hits = 0; misses = 0; chargeStart = 0;
     phase = 'countdown';
     runStart = performance.now() + COUNTDOWN_MS;
     overlay.hidden = true;
@@ -775,6 +839,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       body = p.goal && pt === d.tiers.length ? 'Maintenance run at the final tier.' : `Warm-up logged. Switch to tier ${p.tier} when you're ready to go for the benchmark.`;
     }
     if (d.kind !== 'track') body += ` ${hits} hit${hits === 1 ? '' : 's'}, ${misses} miss${misses === 1 ? '' : 'es'}.`;
+    else body += ` On the head ${timeTotal ? Math.round(headOn / timeTotal * 100) : 0}% of the run.`;
     renderAll();
     show(`${d.label} · tier ${pt} · needed ${fmt(T.bench)}`, title, body, 'Click for next run', passed ? 'pass' : '');
   }
@@ -804,7 +869,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   overlay.addEventListener('click', onClick);
   cv.addEventListener('click', onClick);
   cv.addEventListener('contextmenu', e => e.preventDefault());
-  const setFlash = col => { flash.until = performance.now() + 140; flash.col = col; };
+  const setFlash = col => { flash.until = performance.now() + 140; flash.col = col; flash.cls = col === '#6fe8b8' ? 'hit' : 'miss'; };
   cv.addEventListener('mousedown', () => {
     if (phase !== 'run' || document.pointerLockElement !== cv) return;
     applyMouse();
@@ -821,7 +886,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     applyMouse();
     const held = (performance.now() - chargeStart) / 1000;
     chargeStart = 0;
-    if (held >= tier().charge && onTarget()) { hits++; setFlash('#6fe8b8'); respawnPunchTarget(); }
+    if (held >= tier().charge && onTarget()) { hits++; setFlash('#6fe8b8'); knockback(); }
     else { misses++; setFlash('#ef6f5e'); }
   });
   document.addEventListener('pointerlockchange', () => {
@@ -839,46 +904,67 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (document.pointerLockElement !== cv) return;
     pendX += e.movementX; pendY += e.movementY; mouseEvents++;
   }, { passive: true });
-  function applyMouse() {
-    if (!pendX && !pendY) return;
+  function moveCam(x, y) {
+    if (!x && !y) return;
     const k = degPerCount();
-    cam.yaw += pendX * k;
-    cam.pitch = Math.max(-89, Math.min(89, cam.pitch - pendY * k));
-    pendX = pendY = 0;
+    cam.yaw += x * k;
+    cam.pitch = Math.max(-89, Math.min(89, cam.pitch - y * k));
     dirty = true;
   }
+  function applyMouse() { moveCam(pendX, pendY); pendX = pendY = 0; }
   $('fsBtn').addEventListener('click', () => {
     (document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen?.())?.catch?.(() => {});
   });
 
   // ---------- loop ----------
+  const SIM_HZ = 120, STEP = 1 / SIM_HZ;
+  let simAcc = 0, headOn = 0;
+  function simulate(dt, t) {
+    const k = drill().kind;
+    if (k !== 'flick') stepTarget(dt, t);
+    if (k === 'track') {
+      timeTotal += dt;
+      const h = dummyHit();
+      if (h) timeOn += dt;
+      if (h === 2) headOn += dt;
+    }
+    const life = tier().life;
+    if (life) orbs.forEach((o, i) => { if (t - o.born > life) { misses++; setFlash('#ef6f5e'); orbs[i] = spawnOrb(); } });
+  }
   let last = performance.now(), fpsFrames = 0, fpsStart = last, worst = 0;
   const fpsEl = $('fps');
   function frame(now) {
-    const dt = Math.min(0.05, (now - last) / 1000);
+    const dt = (now - last) / 1000;
     worst = Math.max(worst, now - last);
     last = now;
-    applyMouse();
-    if (phase === 'countdown' && now >= runStart) { phase = 'run'; if (drill().kind !== 'flick') scheduleChange(now); orbs.forEach(o => { o.born = now; }); }
+    if (phase === 'countdown' && now >= runStart) { phase = 'run'; simAcc = 0; if (drill().kind !== 'flick') scheduleChange(now); orbs.forEach(o => { o.born = now; }); }
     if (phase === 'run') {
-      if (drill().kind !== 'flick') stepTarget(dt, now);
-      if (drill().kind === 'track') { timeTotal += dt; if (onTarget()) timeOn += dt; }
-      const life = tier().life;
-      if (life) orbs.forEach((o, i) => { if (now - o.born > life) { misses++; setFlash('#ef6f5e'); orbs[i] = spawnOrb(); } });
+      // The game updates at a fixed 120 Hz whatever the monitor's refresh rate. This frame's mouse movement
+      // is spread across the sub-steps, so hits are judged where the crosshair actually was at each instant.
+      simAcc += Math.min(0.1, dt);
+      const steps = Math.floor(simAcc / STEP);
+      simAcc -= steps * STEP;
+      if (!steps) applyMouse();
+      const mx = pendX, my = pendY; pendX = pendY = 0;
+      for (let i = 0; i < steps; i++) {
+        moveCam(mx / steps, my / steps);
+        simulate(STEP, now - (steps - 1 - i) * STEP * 1000);
+      }
       if (now - runStart >= RUN_MS) finishRun();
-    }
+    } else applyMouse();
     const live = phase === 'run' || phase === 'countdown' || now < flash.until;
     if (live || dirty) { draw(now); dirty = false; }
     fpsFrames++;
     if (now - fpsStart >= 500) {
       const fps = fpsFrames * 1000 / (now - fpsStart);
       const ev = Math.round(mouseEvents * 1000 / (now - fpsStart));
-      fpsEl.textContent = live ? `${Math.round(fps)} fps · worst ${Math.round(worst)} ms · mouse ${ev}/s` : `${W}×${H}`;
+      fpsEl.textContent = live ? `${Math.round(fps)} fps · game 120 Hz · worst ${Math.round(worst)} ms · mouse ${ev}/s` : `${W}×${H}`;
       fpsFrames = 0; fpsStart = now; worst = 0; mouseEvents = 0;
     }
     requestAnimationFrame(frame);
   }
 
+  layoutCrosshair();
   const q = $('quality');
   q.value = settings.quality;
   q.addEventListener('change', () => { settings.quality = q.value; store.set('settings', settings); resize(); });
