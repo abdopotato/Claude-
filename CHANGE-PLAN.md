@@ -75,6 +75,11 @@ Owner asked to apply the layout suggestions only (not directions A-D). Homepage 
 spacing tip + calculator link → colourways → testimonial (when added) → "How it works" (four steps + installation
 merged, dark band) → sourcing → fit calculator → FAQ → closing banner. The separate line-spacing section is folded
 into the tip; header menu adds "Colours"; footer links one per line. Page ~700px shorter.
+Then (owner): removed everything between Colourways and the FAQ (How it works, sourcing, fit calculator, testimonial
+slot); homepage only, other pages untouched. Homepage is now hero → trust band → hall sizes → colourways → FAQ →
+closing banner (page ~4,300px, was ~7,600px). Their settings stay in the schema, labelled "not shown".
+Still pointing at the removed calculator (not homepage files, left as asked): Installation page "Try the fit
+calculator" button and footer "Fit calculator" link.
 Screenshots: `previews/layout/`. Before upload, check the live `templates/index.json` for saved hero settings
 (new hero wording is a schema default and won't show if the owner saved their own).
 
