@@ -38,6 +38,18 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | 18 | One line about who runs the business (founder, year, city) | About page |
 | 19 | Rename the store from **"My Store"** to **"MosqueCarpetsCanada.ca"**? | Browser tab, emails, Google results |
 
+## From the marketing review (2026-10-03)
+
+| # | Question | What the preview says for now |
+|---|----------|-------------------------------|
+| 21 | Your installer background: how many years, and roughly how many halls/floors fitted? Can we name you (About page heading)? | Hero says "fitted by professional installers"; About unchanged |
+| 22 | Can you reply to quote requests **within 1 business day**? | Quote form and thank-you message promise it (remove if not) |
+| 23 | Are colour samples **free** to committees? | "Colour samples sent to your committee" (no price claim) |
+| 24 | WhatsApp number for the chat button | Button hidden until a number is entered in the header settings |
+| 25 | Is the site visit free, and where? | "Book a site visit" (the word "free" removed) |
+| 26 | Typical lead time in weeks, and do you offer a warranty? (FAQ) | Delivery FAQ gives no number; no warranty FAQ yet |
+| 27 | Connect the mosquecarpetscanada.ca domain as the primary domain, and a business email | Not changed (Shopify settings) |
+
 ## Answered
 
 _(none yet)_

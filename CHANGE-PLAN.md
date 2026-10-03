@@ -99,6 +99,26 @@ Owner chose to move the calculator to the Installation page (it was removed from
 calculator" now scrolls to it on the same page; footer "Fit calculator" links to /pages/installation#calculator.
 Changed: `sections/mosque-installation.liquid`, `sections/mosque-footer.liquid`.
 
+## Step G: marketing review (`MARKETING-REVIEW.md`) — preview, awaiting approval
+
+Theme (homepage, header, product, quote, Installation):
+- Copy edits from the review table: hero badge/heading (option A)/text, trust strip, sizes intro, three card
+  descriptions, "Most ordered" → "Recommended", buy note, colour notes, FAQ 1–3 rewritten, new FAQs (Jumu'ah during
+  install, old carpet removal, care), closing banner "prayer hall", quote thank-you + reply time.
+- No unproven claims left in the theme ("most ordered", "most-ordered shade", "free site visit").
+- Pricing clarity: product page defaults to **Supply only**; installation option says it's quoted after measuring
+  and not charged today; calculator gives a carpet-supply range ($30–$48/m², matching the three products) and
+  says installation is quoted after measuring; delivery FAQ no longer says "before you pay anything".
+- Hall cards: "Covers about N m² · about $X CAD per m²"; Jumu'ah size is quote-first ("Get a quote & site visit",
+  with "Or buy online now") via a new block setting; side by side on desktop/tablet, slider on phones only.
+- Header: quote button back on the right next to the cart (reverses the owner's earlier placement; review item).
+- Homepage: compact 3-step "How it works" (Measure → Quote → Install) and the testimonial slot (shows when filled);
+  samples offer under the colourways; optional WhatsApp chat button (header setting, hidden until a number is set).
+Store data (separate approval): Main Hall product description "The configuration mosques order most." →
+"Our recommended configuration for most main halls."
+Not done (needs owner content): photos/pile close-ups, installer story and name, committee PDF pack, domain,
+business email, lead times, warranty. Screenshots: `previews/review/`.
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.

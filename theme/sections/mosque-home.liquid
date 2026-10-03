@@ -48,7 +48,7 @@
 
 <div class="mcc-strip mcc-trust-band">
   <div class="mcc-wrap">
-    <div class="mcc-strip-item"><strong>Woven-in saff lines</strong>True 90 / 95 / 100cm spacing, woven in and never printed</div>
+    <div class="mcc-strip-item"><strong>Woven-in saff lines</strong>Woven in at 90, 95 or 100cm, so they never fade or peel</div>
     <div class="mcc-strip-item"><strong>Professional installation</strong>Measured, seamed and fitted by our crew</div>
     <div class="mcc-strip-item"><strong>Fire rated</strong>{{ section.settings.fire_rating }}</div>
     <div class="mcc-strip-item"><strong>Committee invoicing</strong>{{ section.settings.payment_text }}</div>
@@ -61,15 +61,28 @@
       <h2>{{ section.settings.sizes_heading }}</h2>
       <p>{{ section.settings.sizes_text }}</p>
     </div>
-    <div class="mcc-size-carousel" data-size-carousel data-reveal role="region" aria-roledescription="carousel" aria-label="Hall sizes">
+    <div class="mcc-size-carousel" data-size-carousel data-reveal aria-label="Hall sizes">
     <button type="button" class="mcc-carousel-nav mcc-carousel-prev" data-carousel-prev aria-label="Previous hall size" hidden>&#8249;</button>
     <div class="mcc-grid-by-size" data-carousel-track>
       {%- for block in section.blocks -%}
         {%- if block.type != 'hall_size' -%}{%- continue -%}{%- endif -%}
         {%- assign p = block.settings.product -%}
         {%- if p != blank -%}{%- assign card_url = p.url -%}{%- else -%}{%- assign card_url = routes.all_products_collection_url -%}{%- endif -%}
-        <article class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" data-carousel-card aria-roledescription="slide" {{ block.shopify_attributes }}>
-          {%- if block.settings.popular -%}<span class="mcc-pop-tag">Most ordered</span>{%- endif -%}
+        {%- liquid
+          assign dparts = block.settings.dims | split: '×'
+          assign area = 0
+          if dparts.size == 2
+            assign d_w = dparts[0] | strip | times: 1
+            assign d_l = dparts[1] | strip | times: 1
+            assign area = d_w | times: d_l
+          endif
+          assign quote_url = '/pages/contact'
+          if p != blank
+            assign quote_url = '/pages/contact?product=' | append: p.handle
+          endif
+        -%}
+        <article class="mcc-size-card{% if block.settings.popular %} mcc-pop{% endif %}" data-carousel-card {{ block.shopify_attributes }}>
+          {%- if block.settings.popular -%}<span class="mcc-pop-tag">Recommended</span>{%- endif -%}
           <div class="mcc-card-media">
             {%- if p != blank and p.featured_media -%}
               {%- assign alt = p.featured_media.alt | default: p.title -%}
@@ -91,25 +104,33 @@
           <h3><a class="mcc-card-title-link" href="{{ card_url }}">{{ block.settings.title }}</a></h3>
           <p>{{ block.settings.description }}</p>
           {%- if block.settings.rows != blank -%}<div class="mcc-rows">{{ block.settings.rows }}</div>{%- endif -%}
+          {%- if area > 0 and p != blank -%}
+            {%- assign per_m2 = p.price_min | divided_by: 100.0 | divided_by: area | round -%}
+            <div class="mcc-size-area">Covers about {{ area }} m² · about ${{ per_m2 }} {{ cart.currency.iso_code }} per m²</div>
+          {%- endif -%}
           {%- if block.settings.include_1 != blank or block.settings.include_2 != blank -%}
             <ul class="mcc-incl">
               {%- if block.settings.include_1 != blank -%}<li>{{ block.settings.include_1 }}</li>{%- endif -%}
               {%- if block.settings.include_2 != blank -%}<li>{{ block.settings.include_2 }}</li>{%- endif -%}
             </ul>
           {%- endif -%}
-          <div class="mcc-buy-box">
+          <div class="mcc-buy-box{% if block.settings.quote_first %} mcc-buy-box-quote{% endif %}">
             <div class="mcc-buy-top">
-              <span class="mcc-buy-label">Buy online</span>
+              <span class="mcc-buy-label">{% if block.settings.quote_first %}Quote first{% else %}Buy online{% endif %}</span>
               <span class="mcc-price">{% if p != blank %}from {{ p.price_min | money_without_trailing_zeros }} {{ cart.currency.iso_code }}{% else %}{{ block.settings.price_text }}{% endif %}</span>
             </div>
-            {%- if p != blank and p.available -%}
+            {%- if block.settings.quote_first -%}
+              <a class="mcc-btn-primary mcc-buy-btn" href="{{ quote_url }}{% if p != blank %}&{% else %}?{% endif %}need=site-visit">Get a quote &amp; site visit</a>
+              <p class="mcc-buy-note">We visit, template your floor and send an itemised quote before you pay anything.</p>
+              {%- if p != blank and p.available -%}<a class="mcc-buy-quote" href="{{ p.url }}">Or buy online now</a>{%- endif -%}
+            {%- elsif p != blank and p.available -%}
               <a class="mcc-btn-primary mcc-buy-btn" href="{{ p.url }}" aria-label="Buy now: {{ block.settings.title | escape }}">Buy now</a>
-              <p class="mcc-buy-note">Choose row spacing, colourway and installation on the next step.</p>
+              <p class="mcc-buy-note">Next: pick your row spacing, colour and installation.</p>
+              <a class="mcc-buy-quote" href="{{ quote_url }}">Prefer a quote first?</a>
             {%- else -%}
-              <a class="mcc-btn-primary mcc-buy-btn" href="/pages/contact{% if p != blank %}?product={{ p.handle | url_encode }}{% endif %}">Request a quote</a>
+              <a class="mcc-btn-primary mcc-buy-btn" href="{{ quote_url }}">Request a quote</a>
               <p class="mcc-buy-note">Online ordering for this size opens soon.</p>
             {%- endif -%}
-            <a class="mcc-buy-quote" href="/pages/contact{% if p != blank %}?product={{ p.handle | url_encode }}{% endif %}">Prefer a quote first?</a>
           </div>
         </article>
       {%- endfor -%}
@@ -134,17 +155,41 @@
       <p>Each colourway is dyed and woven as one production run at the mill, so pile depth and line contrast match across your whole order. Tap a shade to ask about samples.</p>
     </div>
     <div class="mcc-colorways">
-      <button type="button" class="mcc-swatch" data-name="Masjid Green" aria-pressed="false"><div class="mcc-block" style="background:#0F2822"></div><p>Masjid Green</p><div class="mcc-ar-name">أخضر</div><span>Our most-ordered shade</span></button>
+      <button type="button" class="mcc-swatch" data-name="Masjid Green" aria-pressed="false"><div class="mcc-block" style="background:#0F2822"></div><p>Masjid Green</p><div class="mcc-ar-name">أخضر</div><span>The classic masjid choice</span></button>
       <button type="button" class="mcc-swatch" data-name="Maroon" aria-pressed="false"><div class="mcc-block" style="background:#5C2A2A"></div><p>Maroon</p><div class="mcc-ar-name">عنابي</div><span>Traditional, low-glare</span></button>
-      <button type="button" class="mcc-swatch" data-name="Deep Indigo" aria-pressed="false"><div class="mcc-block" style="background:#1B2A4A"></div><p>Deep Indigo</p><div class="mcc-ar-name">نيلي</div><span>Evening-lit halls</span></button>
+      <button type="button" class="mcc-swatch" data-name="Deep Indigo" aria-pressed="false"><div class="mcc-block" style="background:#1B2A4A"></div><p>Deep Indigo</p><div class="mcc-ar-name">نيلي</div><span>Rich under evening lighting</span></button>
       <button type="button" class="mcc-swatch" data-name="Walnut Brown" aria-pressed="false"><div class="mcc-block" style="background:#3B2A17"></div><p>Walnut Brown</p><div class="mcc-ar-name">بني</div><span>Hides daily foot traffic</span></button>
-      <button type="button" class="mcc-swatch" data-name="Camel Gold" aria-pressed="false"><div class="mcc-block" style="background:#8A6A2E"></div><p>Camel Gold</p><div class="mcc-ar-name">ذهبي</div><span>Bright, south-facing halls</span></button>
+      <button type="button" class="mcc-swatch" data-name="Camel Gold" aria-pressed="false"><div class="mcc-block" style="background:#8A6A2E"></div><p>Camel Gold</p><div class="mcc-ar-name">ذهبي</div><span>Warm and bright, suits sunlit halls</span></button>
     </div>
     <p class="mcc-colorway-preview" id="mccColorwayPreview" aria-live="polite"></p>
+    <div class="mcc-samples-offer" data-reveal>
+      <div><strong>See and feel it before you decide</strong><span>Colour samples sent to your committee, so the whole board can compare.</span></div>
+      <a class="mcc-btn-secondary" href="/pages/contact?need=samples">Request samples</a>
+    </div>
   </div>
 </section>
 
-<section class="mcc-section" id="faq">
+<section class="mcc-section mcc-how-short" id="how">
+  <div class="mcc-wrap">
+    <div class="mcc-section-head" data-reveal><span class="mcc-eyebrow">How it works</span><h2>Measure, quote, install</h2></div>
+    <ol class="mcc-how3">
+      <li data-reveal><span class="mcc-step-num">1</span><h3>Measure</h3><p>Send your hall size or a floor plan, or book a site visit.</p></li>
+      <li data-reveal><span class="mcc-step-num">2</span><h3>Quote</h3><p>An itemised quote with supply-only and supply + installation prices, plus samples for your committee.</p></li>
+      <li data-reveal><span class="mcc-step-num">3</span><h3>Install</h3><p>We import and inspect the carpet, then fit it with the saff lines squared to the qibla wall, scheduled around salah.</p></li>
+    </ol>
+    <a class="mcc-btn-ghost mcc-how-link" href="/pages/installation">How installation works</a>
+  </div>
+</section>
+
+{%- if section.settings.testimonial_quote != blank -%}
+<section class="mcc-testimonial">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H7V7zm9 0h5v5c0 3-2 5-5 5v-2c1.5 0 2.5-1 2.5-2.5H16V7z"/></svg>
+  <p>{{ section.settings.testimonial_quote }}</p>
+  <cite>{{ section.settings.testimonial_author }}</cite>
+</section>
+{%- endif -%}
+
+<section class="mcc-section mcc-band" id="faq">
   <div class="mcc-wrap">
     <div class="mcc-section-head" data-reveal><h2>Questions committees ask us</h2></div>
     <div class="mcc-faq">
@@ -191,7 +236,8 @@
       var prevBtn = root.querySelector('[data-carousel-prev]'), nextBtn = root.querySelector('[data-carousel-next]');
       var status = root.querySelector('[data-carousel-status]');
       var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var n = cards.length, active = Math.floor((n - 1) / 2), timer = null;
+      var n = cards.length, active = Math.floor((n - 1) / 2), timer = null, on = false;
+      var phone = window.matchMedia('(max-width: 700px)');
 
       function layout(){
         cards.forEach(function(card, i){
@@ -215,6 +261,7 @@
       }
 
       function go(index){
+        if(!on) return;
         var next = (index + n) % n;
         if(next === active) return;
         cards.forEach(function(c){ var b = c.querySelector('.mcc-buy-box'); if(b){ b.classList.remove('is-popping'); } });
@@ -229,13 +276,14 @@
 
       root.addEventListener('click', function(e){
         var card = e.target.closest('[data-carousel-card]');
-        if(card && card.getAttribute('data-pos') !== 'active'){
+        if(on && card && card.getAttribute('data-pos') !== 'active'){
           e.preventDefault(); e.stopPropagation();
           go(cards.indexOf(card));
         }
       }, true);
 
       root.addEventListener('keydown', function(e){
+        if(!on) return;
         if(e.key === 'ArrowLeft'){ e.preventDefault(); go(active - 1); prevBtn.focus(); }
         if(e.key === 'ArrowRight'){ e.preventDefault(); go(active + 1); nextBtn.focus(); }
       });
@@ -248,10 +296,31 @@
         if(Math.abs(dx) > 40){ go(active + (dx < 0 ? 1 : -1)); }
       }, { passive: true });
 
-      prevBtn.hidden = false; nextBtn.hidden = false;
-      root.classList.add('is-ready');
-      layout();
-      setTimeout(pop, 300);
+      // Slider on phones only; tablets and desktops show the three sizes side by side to compare.
+      function enable(){
+        on = true;
+        prevBtn.hidden = false; nextBtn.hidden = false;
+        root.setAttribute('role', 'region'); root.setAttribute('aria-roledescription', 'carousel');
+        cards.forEach(function(c){ c.setAttribute('aria-roledescription', 'slide'); });
+        root.classList.add('is-ready');
+        layout();
+        setTimeout(pop, 300);
+      }
+      function disable(){
+        on = false;
+        prevBtn.hidden = true; nextBtn.hidden = true;
+        root.classList.remove('is-ready');
+        root.removeAttribute('role'); root.removeAttribute('aria-roledescription');
+        cards.forEach(function(c){
+          ['data-pos', 'aria-hidden', 'aria-label', 'aria-roledescription'].forEach(function(a){ c.removeAttribute(a); });
+          c.querySelectorAll('[tabindex="-1"]').forEach(function(el){ el.removeAttribute('tabindex'); });
+          var b = c.querySelector('.mcc-buy-box'); if(b){ b.classList.remove('is-popping'); }
+        });
+        if(status){ status.textContent = ''; }
+      }
+      function sync(){ if(phone.matches){ if(!on){ enable(); } } else if(on){ disable(); } }
+      if(phone.addEventListener){ phone.addEventListener('change', sync); } else if(phone.addListener){ phone.addListener(sync); }
+      sync();
     }catch(e){ console.error('Hall size carousel error', e); }
   })();
 </script>
@@ -261,10 +330,10 @@
   "name": "Mosque carpet home",
   "settings": [
     { "type": "header", "content": "Hero" },
-    { "type": "text", "id": "trust_text", "label": "Badge above heading", "default": "Imported luxury prayer carpet, supplied & installed for Canadian mosques" },
+    { "type": "text", "id": "trust_text", "label": "Badge above heading", "default": "Prayer-hall carpet for Canadian mosques, supplied and installed" },
     { "type": "text", "id": "kicker", "label": "Kicker (hidden on homepage)", "default": "Chosen for the saff, not the showroom" },
-    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Luxury prayer-hall carpet, fitted by our own team" },
-    { "type": "textarea", "id": "text", "label": "Hero text", "default": "Wall-to-wall rolls from specialist mills, with prayer lines woven in at 90, 95 or 100cm. We import, measure and install: one team from quote to first salah." },
+    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Luxury prayer carpet, chosen and fitted by professional installers" },
+    { "type": "textarea", "id": "text", "label": "Hero text", "default": "Wall-to-wall rolls from specialist mills, with prayer lines woven in at 90, 95 or 100cm. We import the carpet, measure your hall and fit it ourselves, so one team answers for the result, from quote to first salah." },
     { "type": "text", "id": "stat_1_value", "label": "Stat 1 value (hidden on homepage)", "default": "3" },
     { "type": "text", "id": "stat_1_label", "label": "Stat 1 label", "default": "row spacings" },
     { "type": "text", "id": "stat_2_value", "label": "Stat 2 value (hidden on homepage)", "default": "1.5–6m" },
@@ -274,10 +343,10 @@
     { "type": "text", "id": "cta_note", "label": "Note under quote buttons", "default": "Free and itemised, with no obligation." },
     { "type": "header", "content": "Trust strip" },
     { "type": "text", "id": "fire_rating", "label": "Fire rating text", "default": "CAN/ULC-S102 & ASTM E648 certified pile" },
-    { "type": "text", "id": "payment_text", "label": "Payment text", "default": "PO and bank transfer accepted" },
+    { "type": "text", "id": "payment_text", "label": "Payment text", "default": "Invoiced in your mosque's name. PO and bank transfer accepted." },
     { "type": "header", "content": "Hall sizes" },
     { "type": "text", "id": "sizes_heading", "label": "Hall size heading", "default": "Shop by hall size" },
-    { "type": "textarea", "id": "sizes_text", "label": "Hall size text", "default": "Buy online in three standard sizes, or request a quote for any hall. Either way, we confirm exact measurements before anything is cut." },
+    { "type": "textarea", "id": "sizes_text", "label": "Hall size text", "default": "Order one of three standard sizes online, or get a quote for any hall. Either way, nothing is cut until we've confirmed your measurements." },
     { "type": "header", "content": "Sourcing" },
     { "type": "image_picker", "id": "sourcing_image", "label": "Photo (replaces the illustration) (hidden on homepage)" },
     { "type": "text", "id": "sourcing_kicker", "label": "Kicker (hidden on homepage)", "default": "Sourced, not manufactured, and that's the point" },
@@ -287,10 +356,10 @@
     { "type": "text", "id": "lead_time_text", "label": "Step 3 badge (lead time) (hidden on homepage)", "default": "Lead time in your quote" },
     { "type": "text", "id": "service_area", "label": "Service area (hidden on homepage)", "default": "Across Canada, with travel itemised" },
     { "type": "header", "content": "Testimonial (hidden until filled in)" },
-    { "type": "textarea", "id": "testimonial_quote", "label": "Quote (hidden on homepage)" },
-    { "type": "text", "id": "testimonial_author", "label": "Attribution (hidden on homepage)" },
+    { "type": "textarea", "id": "testimonial_quote", "label": "Quote" },
+    { "type": "text", "id": "testimonial_author", "label": "Attribution" },
     { "type": "header", "content": "Closing call-to-action" },
-    { "type": "text", "id": "cta_heading", "label": "Heading", "default": "Ready to re-carpet your musalla?" },
+    { "type": "text", "id": "cta_heading", "label": "Heading", "default": "Ready to re-carpet your prayer hall?" },
     { "type": "textarea", "id": "cta_text", "label": "Text", "default": "Send your hall dimensions or a floor plan. We'll reply with a spacing recommendation, a roll layout and an itemised quote covering supply, import and installation." }
   ],
   "blocks": [
@@ -305,7 +374,8 @@
         { "type": "textarea", "id": "description", "label": "Description" },
         { "type": "text", "id": "include_1", "label": "Included line 1" },
         { "type": "text", "id": "include_2", "label": "Included line 2" },
-        { "type": "checkbox", "id": "popular", "label": "Show \"Most ordered\" tag", "default": false },
+        { "type": "checkbox", "id": "popular", "label": "Show \"Recommended\" tag", "default": false },
+        { "type": "checkbox", "id": "quote_first", "label": "Make \"Get a quote & site visit\" the main button", "default": false },
         { "type": "text", "id": "rows", "label": "Rows line", "default": "≈ 5 prayer rows at 95cm spacing" },
         { "type": "text", "id": "price_text", "label": "Price text (used until a product is linked)", "default": "from $1,150 CAD" },
         { "type": "product", "id": "product", "label": "Linked product" }

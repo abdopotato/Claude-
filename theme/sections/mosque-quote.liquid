@@ -10,7 +10,7 @@
 <div class="mcc-wrap mcc-quote-grid">
   {%- form 'contact', id: 'mcc-quote-form', class: 'mcc-form' -%}
     {%- if form.posted_successfully? -%}
-      <div class="mcc-form-ok mcc-full" role="status" tabindex="-1" id="mccQuoteOk">Thank you. We've received your request and will reply by email with next steps.</div>
+      <div class="mcc-form-ok mcc-full" role="status" tabindex="-1" id="mccQuoteOk">JazakAllahu khayran. We've received your request and will reply within 1 business day with next steps.</div>
     {%- endif -%}
     {%- if form.errors -%}
       <div class="mcc-form-error mcc-full" role="alert">{{ form.errors | default_errors }}</div>
@@ -42,7 +42,7 @@
       </select></div>
     <input type="hidden" id="q-product" name="contact[Product]" value="">
     <div class="mcc-full"><label for="q-body">Anything else? (old carpet removal, timing, floor plan link)</label><textarea id="q-body" name="contact[body]"></textarea></div>
-    <div class="mcc-full" style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;"><button class="mcc-btn-primary" type="submit">Request a quote</button><span class="mcc-fine"><span class="mcc-req" aria-hidden="true">*</span> Required. We reply by email with next steps.</span></div>
+    <div class="mcc-full" style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;"><button class="mcc-btn-primary" type="submit">Request a quote</button><span class="mcc-fine"><span class="mcc-req" aria-hidden="true">*</span> Required. We reply within 1 business day.</span></div>
   {%- endform -%}
 
   <aside class="mcc-side">
