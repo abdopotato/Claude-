@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: 16:9 range screen on top, a three-column control strip below (progress, ladder, settings and history). */
+/* Layout: drill tabs, 16:9 range screen, a three-column control strip, then a two-column tips section. */
 :root {
   --bg: #0c1014;
   --panel: #141a20;
@@ -26,8 +26,16 @@ header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content:
 h1 { font: 700 30px/1 var(--font-display); letter-spacing: .02em; margin: 0; text-transform: uppercase; }
 h1 span { color: var(--target); }
 h2 { font: 700 13px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+h3 { font: 700 20px/1.1 var(--font-display); letter-spacing: .02em; text-transform: uppercase; margin: 0 0 12px; text-wrap: balance; }
 .calib { font: 13px/1.4 var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
 .calib b { color: var(--fg); font-weight: 500; }
+
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { min-height: 44px; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); font: 500 14px/1.2 var(--font-body); cursor: pointer; text-align: left; display: grid; gap: 2px; }
+.tab small { font: 11px/1 var(--font-data); letter-spacing: .06em; text-transform: uppercase; }
+.tab:hover { color: var(--fg); border-color: var(--muted); }
+.tab[aria-selected="true"] { color: var(--fg); border-color: var(--target); }
+.tab[aria-selected="true"] small { color: var(--target); }
 
 .stage { position: relative; background: #000; border: 1px solid var(--line); }
 .screen { position: relative; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; margin: 0 auto; }
@@ -35,12 +43,11 @@ h2 { font: 700 13px/1 var(--font-display); letter-spacing: .14em; text-transform
 .stage:fullscreen .screen { width: min(100vw, 177.78vh); }
 canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(8, 11, 14, .72); text-align: center; cursor: pointer; }
-.overlay-card { max-width: 520px; display: grid; gap: 10px; justify-items: center; }
+.overlay-card { max-width: 540px; display: grid; gap: 10px; justify-items: center; }
 .ov-eyebrow { font: 500 12px/1 var(--font-data); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .ov-title { font: 700 clamp(28px, 5vw, 52px)/1 var(--font-display); text-transform: uppercase; letter-spacing: .02em; text-wrap: balance; }
 .ov-title.pass { color: var(--hit); }
-.ov-title.fail { color: var(--fg); }
-.ov-body { color: var(--muted); max-width: 46ch; text-wrap: pretty; }
+.ov-body { color: var(--muted); max-width: 48ch; text-wrap: pretty; }
 .ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
 .stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
 .stage:fullscreen .stage-bar { display: none; }
@@ -69,6 +76,7 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .ladder .n { font: 700 20px/1 var(--font-display); color: var(--fg); }
 .ladder .cleared .n { color: var(--hit); }
 .ladder .spec { font: 12px/1.3 var(--font-data); font-variant-numeric: tabular-nums; }
+.ladder .sub { color: var(--muted); }
 .ladder .pct { font: 12px/1 var(--font-data); text-align: right; font-variant-numeric: tabular-nums; }
 .ladder .current .pct { color: var(--target); }
 .ladder .final .pct { color: var(--hit); }
@@ -83,8 +91,20 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 .btn:hover { border-color: var(--muted); }
 .btn.danger { color: var(--miss); }
 #spark { width: 100%; height: 120px; display: block; margin-top: 4px; }
-.history-head { display: flex; justify-content: space-between; align-items: baseline; margin-top: 20px; }
-.legend { font: 11px/1 var(--font-data); color: var(--muted); }
+.history-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 20px; }
+.legend { font: 11px/1 var(--font-data); color: var(--muted); text-align: right; }
+
+.tips { display: grid; gap: 18px; grid-template-columns: 1.3fr 1fr; align-items: start; }
+@media (max-width: 900px) { .tips { grid-template-columns: 1fr; } }
+.tip-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.tip-list li { display: grid; gap: 2px; max-width: 68ch; }
+.tip-list b { font-weight: 500; }
+.tip-list span { color: var(--muted); font-size: 14px; }
+.drill-why { display: grid; gap: 14px; }
+.drill-why div { display: grid; gap: 2px; padding-left: 12px; border-left: 2px solid var(--line); }
+.drill-why b { font: 700 16px/1.2 var(--font-display); letter-spacing: .03em; text-transform: uppercase; }
+.drill-why span { color: var(--muted); font-size: 14px; }
+.source { font-size: 13px; color: var(--muted); margin: 16px 0 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
@@ -94,6 +114,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     <div class="calib" id="calib"></div>
   </header>
 
+  <nav class="tabs" role="tablist" aria-label="Drill" id="tabs"></nav>
+
   <section class="stage" id="stage">
     <div class="screen">
       <canvas id="cv" aria-label="Aim trainer. Click to lock the mouse and start a 30 second run."></canvas>
@@ -101,7 +123,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <div class="overlay-card">
           <div class="ov-eyebrow" id="ovEyebrow">Tier 1 · 30 s run</div>
           <div class="ov-title" id="ovTitle">Click to start</div>
-          <div class="ov-body" id="ovBody">Keep the crosshair on the orb while it strafes. The mouse locks to the game; press Esc to leave.</div>
+          <div class="ov-body" id="ovBody">Keep the crosshair on the orb while it strafes.</div>
           <div class="ov-cta" id="ovCta">Click to start</div>
         </div>
       </div>
@@ -115,17 +137,17 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   <div class="grid">
     <section class="panel" aria-labelledby="h-progress">
       <h2 id="h-progress">Overall score</h2>
-      <div class="score"><span class="big" id="score">0.0</span><span class="of">/ 60</span></div>
+      <div class="score"><span class="big" id="score">0.0</span><span class="of" id="scoreMax">/ 60</span></div>
       <div class="meter"><i id="meter"></i></div>
-      <div class="ticks"><span>0</span><span>15</span><span>30</span><span>45</span><span>60</span></div>
+      <div class="ticks" id="ticks"></div>
       <dl class="kv">
         <dt>Current tier</dt><dd id="kvTier">1</dd>
         <dt>Next benchmark</dt><dd id="kvNext">5.0</dd>
-        <dt>Accuracy needed</dt><dd id="kvBench">65%</dd>
+        <dt>Needed in one run</dt><dd id="kvBench">65%</dd>
         <dt>Best this tier</dt><dd id="kvBest">–</dd>
-        <dt>Estimated percentile</dt><dd id="kvPct">–</dd>
+        <dt id="kvPctLabel">Estimated percentile</dt><dd id="kvPct">–</dd>
       </dl>
-      <p class="routine"><b>Daily routine:</b> 2 warm-up runs one tier below your current one, then up to 8 runs at your current tier. Stop after 10 runs; tracking improves with rest between sessions, not with grinding. A run at your current tier that meets the benchmark promotes you on the spot.</p>
+      <p class="routine"><b>Daily routine:</b> 2 warm-up runs of reactive tracking one tier below your current one, then 6 benchmark runs, then one run each of the three Doomfist drills. About 15 minutes. A run at your current tier that meets the benchmark promotes you on the spot.</p>
     </section>
 
     <section class="panel" aria-labelledby="h-ladder">
@@ -141,13 +163,40 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="fov">FOV<input id="fov" type="number" min="60" max="103" step="1"></label>
       </div>
       <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely.</p>
-      <div class="history-head"><h2 style="margin:0">History</h2><span class="legend">accuracy ÷ benchmark, last 40 runs</span></div>
+      <div class="history-head"><h2 style="margin:0" id="histTitle">History</h2><span class="legend">result ÷ benchmark, last 40 runs</span></div>
       <canvas id="spark" aria-label="Chart of recent runs against their benchmarks"></canvas>
       <div class="btns">
-        <button class="btn danger" id="resetBtn" type="button">Reset progress</button>
+        <button class="btn danger" id="resetBtn" type="button">Reset this drill</button>
       </div>
     </section>
   </div>
+
+  <section class="panel tips" aria-labelledby="h-tips">
+    <div>
+      <h2 id="h-tips">Improving, by the evidence</h2>
+      <h3>How motor skills actually get better</h3>
+      <ul class="tip-list">
+        <li><b>Short daily sessions beat long weekly ones.</b><span>Spaced practice is one of the most reliable findings in motor learning: the same total minutes spread over several days are retained better than one long block. Aim for 15 to 20 focused minutes a day.</span></li>
+        <li><b>Sleep is part of training.</b><span>Motor skills consolidate during sleep, so it's normal to score higher the next day than at the end of a session. Don't chase a personal best when you're tired; stop and come back tomorrow.</span></li>
+        <li><b>Train where you fail some of the time.</b><span>The challenge point framework says learning is fastest when a task is hard enough that you miss regularly. That's why the ladder moves you up the moment you pass instead of letting you farm an easy tier.</span></li>
+        <li><b>Mix your drills.</b><span>Interleaving different tasks (contextual interference) lowers your score during a session but improves what you keep and how well it carries into real games. Rotate tracking with the Doomfist drills rather than doing 10 runs of one.</span></li>
+        <li><b>Watch the target, not your hand.</b><span>Research on attentional focus finds that an external focus (keep the crosshair on the centre of the orb) learns faster than thinking about wrist or arm movement. Check your grip and posture between runs, not during them.</span></li>
+        <li><b>Keep your sensitivity fixed.</b><span>Your brain is learning a mapping from hand distance to turn angle. Every sens change resets part of it. Stay on 2.55 at 1600 DPI for at least a few months unless something is clearly wrong.</span></li>
+        <li><b>Expect a slow first run.</b><span>The first runs of a day are lower (warm-up decrement). Judge yourself on the week's trend in the history chart, not on single runs. Flat stretches of one to two weeks are normal before a jump.</span></li>
+        <li><b>Carry it into real games.</b><span>Trainers build raw control; games teach timing and target choice. After your session, play a few minutes of Doomfist in a custom game or deathmatch and use the same focus.</span></li>
+      </ul>
+      <p class="source">Background: Schmidt and Lee, <i>Motor Control and Learning</i>; Guadagnoli and Lee (2004) on the challenge point framework; Wulf (2013) on attentional focus; Walker et al. (2002) on sleep and motor consolidation.</p>
+    </div>
+    <div>
+      <h2>Doomfist drills</h2>
+      <h3>Why these three</h3>
+      <div class="drill-why">
+        <div><b>Rocket Punch</b><span>Charge while tracking a moving enemy, then release only when you're on them. Most punches miss because the aim drifts during the charge, not because of the release. Hold any mouse button to charge.</span></div>
+        <div><b>Hand Cannon range</b><span>Doomfist fights at a few metres, where a strafing enemy crosses your screen far faster than at range. Same tracking skill, much higher angular speed, bigger target and more jumps.</span></div>
+        <div><b>Slam &amp; switch flicks</b><span>Seismic Slam is aimed at the ground under enemies, and diving the backline means snapping between targets. Orbs sit mostly below the horizon at wide angles. Score is hits minus half your misses, so clicking blindly costs you.</span></div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -156,32 +205,75 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const RUN_MS = 30000;
   const COUNTDOWN_MS = 2000;
   const POINTS_PER_TIER = 5;
-  // Each tier: orb angular radius (deg), top strafe speed (deg/s), direction-change window (ms),
-  // acceleration (deg/s^2), jump chance per change, accuracy needed, estimated percentile once cleared.
-  const TIERS = [
-    { r: 2.6,  v: 22, c: [900, 1500], a: 120, j: 0,    bench: 65, pct: 10 },
-    { r: 2.4,  v: 27, c: [800, 1300], a: 160, j: 0,    bench: 65, pct: 15 },
-    { r: 2.2,  v: 32, c: [700, 1200], a: 200, j: 0,    bench: 65, pct: 20 },
-    { r: 2.0,  v: 37, c: [600, 1050], a: 260, j: 0,    bench: 65, pct: 25 },
-    { r: 1.9,  v: 41, c: [550,  950], a: 320, j: 0.10, bench: 62, pct: 30 },
-    { r: 1.75, v: 45, c: [500,  880], a: 380, j: 0.15, bench: 62, pct: 36 },
-    { r: 1.6,  v: 49, c: [450,  800], a: 450, j: 0.20, bench: 62, pct: 42 },
-    { r: 1.5,  v: 53, c: [400,  720], a: 520, j: 0.25, bench: 60, pct: 48 },
-    { r: 1.4,  v: 57, c: [350,  650], a: 600, j: 0.30, bench: 58, pct: 54 },
-    { r: 1.3,  v: 61, c: [320,  600], a: 700, j: 0.35, bench: 57, pct: 59 },
-    { r: 1.2,  v: 65, c: [280,  540], a: 800, j: 0.40, bench: 56, pct: 64 },
-    { r: 1.1,  v: 70, c: [250,  480], a: 900, j: 0.45, bench: 55, pct: 70 },
-  ];
-  const MAX_SCORE = TIERS.length * POINTS_PER_TIER;
+  // Tracking-style tiers: orb angular radius (deg), top strafe speed (deg/s), direction-change window (ms),
+  // acceleration (deg/s^2), jump chance per change, benchmark, estimated percentile once cleared.
+  const DRILLS = {
+    track: {
+      label: 'Reactive tracking', tag: 'Main ladder', kind: 'track', unit: '%', jv: 26,
+      tiers: [
+        { r: 2.6,  v: 22, c: [900, 1500], a: 120, j: 0,    bench: 65, pct: 10 },
+        { r: 2.4,  v: 27, c: [800, 1300], a: 160, j: 0,    bench: 65, pct: 15 },
+        { r: 2.2,  v: 32, c: [700, 1200], a: 200, j: 0,    bench: 65, pct: 20 },
+        { r: 2.0,  v: 37, c: [600, 1050], a: 260, j: 0,    bench: 65, pct: 25 },
+        { r: 1.9,  v: 41, c: [550,  950], a: 320, j: 0.10, bench: 62, pct: 30 },
+        { r: 1.75, v: 45, c: [500,  880], a: 380, j: 0.15, bench: 62, pct: 36 },
+        { r: 1.6,  v: 49, c: [450,  800], a: 450, j: 0.20, bench: 62, pct: 42 },
+        { r: 1.5,  v: 53, c: [400,  720], a: 520, j: 0.25, bench: 60, pct: 48 },
+        { r: 1.4,  v: 57, c: [350,  650], a: 600, j: 0.30, bench: 58, pct: 54 },
+        { r: 1.3,  v: 61, c: [320,  600], a: 700, j: 0.35, bench: 57, pct: 59 },
+        { r: 1.2,  v: 65, c: [280,  540], a: 800, j: 0.40, bench: 56, pct: 64 },
+        { r: 1.1,  v: 70, c: [250,  480], a: 900, j: 0.45, bench: 55, pct: 70 },
+      ],
+    },
+    punch: {
+      label: 'Rocket Punch', tag: 'Doomfist', kind: 'punch', unit: ' hits', jv: 26,
+      tiers: [
+        { r: 2.6, v: 20, c: [900, 1400], a: 150, j: 0,    charge: 0.4, bench: 15 },
+        { r: 2.3, v: 28, c: [700, 1200], a: 250, j: 0,    charge: 0.6, bench: 14 },
+        { r: 2.0, v: 36, c: [600, 1000], a: 350, j: 0.10, charge: 0.8, bench: 12 },
+        { r: 1.8, v: 44, c: [500,  850], a: 450, j: 0.20, charge: 1.0, bench: 10 },
+        { r: 1.6, v: 52, c: [400,  700], a: 600, j: 0.30, charge: 1.0, bench: 11 },
+      ],
+    },
+    close: {
+      label: 'Hand Cannon range', tag: 'Doomfist', kind: 'track', unit: '%', jv: 40,
+      tiers: [
+        { r: 4.2, v: 50,  c: [700, 1100], a: 300,  j: 0.15, bench: 62 },
+        { r: 3.9, v: 65,  c: [550,  950], a: 450,  j: 0.25, bench: 60 },
+        { r: 3.6, v: 80,  c: [450,  800], a: 650,  j: 0.30, bench: 58 },
+        { r: 3.3, v: 95,  c: [350,  650], a: 850,  j: 0.40, bench: 56 },
+        { r: 3.0, v: 110, c: [280,  520], a: 1100, j: 0.50, bench: 55 },
+      ],
+    },
+    slam: {
+      label: 'Slam & switch flicks', tag: 'Doomfist', kind: 'flick', unit: ' pts',
+      // n targets alive, yaw spread (±deg), pitch range [lo, hi]
+      tiers: [
+        { r: 2.6, n: 3, spread: 30, lo: -24, hi: 6,  bench: 30 },
+        { r: 2.3, n: 3, spread: 35, lo: -26, hi: 8,  bench: 32 },
+        { r: 2.0, n: 3, spread: 40, lo: -28, hi: 10, bench: 34 },
+        { r: 1.8, n: 2, spread: 45, lo: -30, hi: 12, bench: 34 },
+        { r: 1.6, n: 2, spread: 50, lo: -32, hi: 14, bench: 35 },
+      ],
+    },
+  };
 
   const store = {
     get(k, d) { try { const v = localStorage.getItem('tl.' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
+  const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
   let settings = store.get('settings', { dpi: 1600, sens: 2.55, fov: 103 });
-  let prog = store.get('prog', { tier: 1, best: 0, goal: false });
-  let hist = store.get('hist', []);
-  let playTier = prog.tier;
+  const progs = {}, playTiers = {};
+  for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
+  let hist = store.get('hist', []).map(h => ({ drill: 'track', v: h.acc, ...h }));
+  let drillId = store.get('drill', 'track');
+  if (!DRILLS[drillId]) drillId = 'track';
+
+  const drill = () => DRILLS[drillId];
+  const prog = () => progs[drillId];
+  const tier = () => drill().tiers[playTiers[drillId] - 1];
+  const fmt = (v, d = drill()) => d.unit === '%' ? v.toFixed(1) + '%' : (Math.round(v * 10) / 10) + d.unit;
 
   const $ = id => document.getElementById(id);
   const cv = $('cv'), ctx = cv.getContext('2d');
@@ -203,39 +295,72 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       settings[k] = k === 'fov' ? Math.min(103, Math.max(60, v)) : v;
       el.value = settings[k];
       store.set('settings', settings);
-      renderCalib();
+      renderCalib(); resize();
     });
   }
 
+  // ---------- tabs ----------
+  function renderTabs() {
+    const nav = $('tabs');
+    nav.innerHTML = '';
+    for (const id in DRILLS) {
+      const d = DRILLS[id], p = progs[id];
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(id === drillId));
+      b.innerHTML = `<small>${d.tag} · ${p.goal ? 'cleared' : 'tier ' + p.tier + '/' + d.tiers.length}</small>${d.label}`;
+      b.addEventListener('click', () => {
+        if (phase === 'run' || phase === 'countdown') return;
+        drillId = id; store.set('drill', id);
+        resetScene(); renderAll(); showIdle();
+      });
+      nav.appendChild(b);
+    }
+  }
+
   // ---------- progress ----------
-  const overall = () => prog.goal ? MAX_SCORE
-    : (prog.tier - 1) * POINTS_PER_TIER + POINTS_PER_TIER * Math.min(1, prog.best / TIERS[prog.tier - 1].bench);
+  const maxScore = (d = drill()) => d.tiers.length * POINTS_PER_TIER;
+  const overall = (id = drillId) => {
+    const d = DRILLS[id], p = progs[id];
+    return p.goal ? maxScore(d) : (p.tier - 1) * POINTS_PER_TIER + POINTS_PER_TIER * Math.min(1, p.best / d.tiers[p.tier - 1].bench);
+  };
 
   function renderProgress() {
-    const s = overall();
+    const d = drill(), p = prog(), s = overall(), max = maxScore();
+    $('h-progress').textContent = drillId === 'track' ? 'Overall score' : d.label + ' score';
     $('score').textContent = s.toFixed(1);
-    $('meter').style.width = (s / MAX_SCORE * 100) + '%';
-    const t = TIERS[prog.tier - 1];
-    $('kvTier').textContent = prog.goal ? '12 (cleared)' : prog.tier;
-    $('kvNext').textContent = prog.goal ? 'Goal reached' : (prog.tier * POINTS_PER_TIER).toFixed(1);
-    $('kvBench').textContent = t.bench + '%';
-    $('kvBest').textContent = prog.best ? prog.best.toFixed(1) + '%' : '–';
-    const cleared = prog.goal ? TIERS.length : prog.tier - 1;
-    $('kvPct').textContent = cleared ? '~' + TIERS[cleared - 1].pct + 'th' : 'below 10th';
+    $('scoreMax').textContent = '/ ' + max;
+    $('meter').style.width = (s / max * 100) + '%';
+    const step = max > 30 ? 15 : 5;
+    $('ticks').innerHTML = Array.from({ length: max / step + 1 }, (_, i) => `<span>${i * step}</span>`).join('');
+    const t = d.tiers[p.tier - 1];
+    $('kvTier').textContent = p.goal ? `${d.tiers.length} (cleared)` : p.tier;
+    $('kvNext').textContent = p.goal ? 'Goal reached' : (p.tier * POINTS_PER_TIER).toFixed(1);
+    $('kvBench').textContent = fmt(t.bench);
+    $('kvBest').textContent = p.best ? fmt(p.best) : '–';
+    const isMain = drillId === 'track';
+    $('kvPctLabel').hidden = $('kvPct').hidden = !isMain;
+    const cleared = p.goal ? d.tiers.length : p.tier - 1;
+    $('kvPct').textContent = cleared ? '~' + d.tiers[cleared - 1].pct + 'th' : 'below 10th';
+    $('histTitle').textContent = 'History · ' + d.label;
 
     const ol = $('ladder');
     ol.innerHTML = '';
-    TIERS.forEach((tt, i) => {
+    d.tiers.forEach((tt, i) => {
       const n = i + 1;
       const li = document.createElement('li');
-      const isCleared = n < prog.tier || prog.goal;
-      li.className = [isCleared ? 'cleared' : '', n === prog.tier && !prog.goal ? 'current' : '', n === TIERS.length ? 'final' : ''].join(' ');
+      const isCleared = n < p.tier || p.goal;
+      li.className = [isCleared ? 'cleared' : '', n === p.tier && !p.goal ? 'current' : '', n === d.tiers.length ? 'final' : ''].join(' ');
       const b = document.createElement('button');
       b.type = 'button';
-      b.disabled = n > prog.tier;
-      b.setAttribute('aria-pressed', String(n === playTier));
-      b.innerHTML = `<span class="n">${n}</span><span><span class="spec">${tt.bench}% · ${tt.v}°/s · r ${tt.r}°${tt.j ? ' · jumps' : ''}</span><br><span class="spec" style="color:var(--muted)">score ${(n * POINTS_PER_TIER)} unlocks ${n < TIERS.length ? 'tier ' + (n + 1) : 'goal'}</span></span><span class="pct">${isCleared ? 'cleared' : '~' + tt.pct + 'th'}</span>`;
-      b.addEventListener('click', () => { playTier = n; renderProgress(); showIdle(); });
+      b.disabled = n > p.tier;
+      b.setAttribute('aria-pressed', String(n === playTiers[drillId]));
+      const spec = d.kind === 'punch' ? `${tt.bench} hits · ${tt.charge}s charge · ${tt.v}°/s`
+        : d.kind === 'flick' ? `${tt.bench} pts · ${tt.n} orbs · ±${tt.spread}° · r ${tt.r}°`
+        : `${tt.bench}% · ${tt.v}°/s · r ${tt.r}°${tt.j ? ' · jumps' : ''}`;
+      const right = isCleared ? 'cleared' : tt.pct ? '~' + tt.pct + 'th' : n === p.tier ? 'current' : '';
+      b.innerHTML = `<span class="n">${n}</span><span><span class="spec">${spec}</span><br><span class="spec sub">score ${n * POINTS_PER_TIER} unlocks ${n < d.tiers.length ? 'tier ' + (n + 1) : 'the final mark'}</span></span><span class="pct">${right}</span>`;
+      b.addEventListener('click', () => { playTiers[drillId] = n; renderProgress(); showIdle(); });
       li.appendChild(b);
       ol.appendChild(li);
     });
@@ -244,13 +369,14 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   $('resetBtn').addEventListener('click', e => {
     const b = e.currentTarget;
     if (b.dataset.armed) {
-      prog = { tier: 1, best: 0, goal: false }; hist = []; playTier = 1;
-      store.set('prog', prog); store.set('hist', hist);
-      b.textContent = 'Reset progress'; delete b.dataset.armed;
-      renderProgress(); renderSpark(); showIdle();
+      progs[drillId] = { tier: 1, best: 0, goal: false }; playTiers[drillId] = 1;
+      hist = hist.filter(h => h.drill !== drillId);
+      store.set(progKey(drillId), progs[drillId]); store.set('hist', hist);
+      b.textContent = 'Reset this drill'; delete b.dataset.armed;
+      renderAll(); showIdle();
     } else {
       b.dataset.armed = '1'; b.textContent = 'Click again to erase';
-      setTimeout(() => { if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset progress'; } }, 3000);
+      setTimeout(() => { if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset this drill'; } }, 3000);
     }
   });
 
@@ -276,27 +402,29 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       sctx.fillText(Math.round(v * 100) + '%', padL - 6, y(v));
     }
     sctx.setLineDash([]);
-    const runs = hist.slice(-40);
+    const d = drill();
+    const runs = hist.filter(r => r.drill === drillId).slice(-40);
     if (!runs.length) {
       sctx.textAlign = 'center'; sctx.fillStyle = col('--muted');
       sctx.fillText('Your runs will appear here', (w + padL) / 2, h / 2 + 18);
       return;
     }
+    const val = r => r.v / d.tiers[r.tier - 1].bench;
     const x = i => padL + 6 + (runs.length === 1 ? 0 : i / (runs.length - 1)) * (w - padL - padR - 12);
     sctx.strokeStyle = col('--muted'); sctx.lineWidth = 1.5;
     sctx.beginPath();
-    runs.forEach((r, i) => { const v = r.acc / TIERS[r.tier - 1].bench; i ? sctx.lineTo(x(i), y(v)) : sctx.moveTo(x(i), y(v)); });
+    runs.forEach((r, i) => { i ? sctx.lineTo(x(i), y(val(r))) : sctx.moveTo(x(i), y(val(r))); });
     sctx.stroke();
     runs.forEach((r, i) => {
-      const v = r.acc / TIERS[r.tier - 1].bench;
-      sctx.fillStyle = v >= 1 ? col('--hit') : col('--fg');
-      sctx.beginPath(); sctx.arc(x(i), y(v), i === runs.length - 1 ? 4 : 2.5, 0, Math.PI * 2); sctx.fill();
+      sctx.fillStyle = val(r) >= 1 ? col('--hit') : col('--fg');
+      sctx.beginPath(); sctx.arc(x(i), y(val(r)), i === runs.length - 1 ? 4 : 2.5, 0, Math.PI * 2); sctx.fill();
     });
   }
 
   // ---------- 3D view ----------
   const cam = { yaw: 0, pitch: 0 };
   const tgt = { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 };
+  let orbs = [];            // flick targets
   let W = 0, H = 0, focal = 1;
 
   function resize() {
@@ -326,7 +454,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (z <= 0.05) return null;
     return { x: W / 2 + focal * dot(d, B.r) / z, y: H / 2 - focal * dot(d, B.u) / z, z };
   }
-  const onTarget = () => Math.acos(Math.min(1, dot(dir(cam.yaw, cam.pitch), dir(tgt.yaw, tgt.pitch)))) / D2R <= TIERS[playTier - 1].r;
+  const angTo = (yaw, pitch) => Math.acos(Math.min(1, dot(dir(cam.yaw, cam.pitch), dir(yaw, pitch)))) / D2R;
+  const onTarget = () => angTo(tgt.yaw, tgt.pitch) <= tier().r;
+  const visibleOrbs = () => drill().kind === 'flick' ? orbs : [{ yaw: tgt.yaw, pitch: tgt.pitch }];
 
   function polyline(B, pts) {
     ctx.beginPath();
@@ -340,9 +470,19 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     ctx.stroke();
   }
 
-  function draw(hit) {
-    const B = basis();
-    const s = W / 1280;
+  function drawOrb(B, o, r, lit) {
+    const c = project(B, dir(o.yaw, o.pitch));
+    if (!c) return;
+    const rad = focal * Math.tan(r * D2R) / c.z;
+    const g = ctx.createRadialGradient(c.x - rad * .35, c.y - rad * .35, rad * .1, c.x, c.y, rad);
+    g.addColorStop(0, lit ? '#c9ffe9' : '#ffe2a3');
+    g.addColorStop(1, lit ? '#2fbf8a' : '#c7861c');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(c.x, c.y, rad, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function draw(now) {
+    const B = basis(), s = W / 1280, T = tier(), d = drill();
     ctx.fillStyle = '#0b0f13';
     ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = Math.max(1, s);
@@ -354,20 +494,16 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       ctx.strokeStyle = pt === 0 ? '#3a4855' : '#171e25';
       const pts = []; for (let yw = -120; yw <= 120; yw += 3) pts.push([yw, pt]); polyline(B, pts);
     }
-    // orb
-    const T = TIERS[playTier - 1];
-    const c = project(B, dir(tgt.yaw, tgt.pitch));
-    if (c) {
-      const rad = focal * Math.tan(T.r * D2R) / c.z;
-      const g = ctx.createRadialGradient(c.x - rad * .35, c.y - rad * .35, rad * .1, c.x, c.y, rad);
-      g.addColorStop(0, hit ? '#c9ffe9' : '#ffe2a3');
-      g.addColorStop(1, hit ? '#2fbf8a' : '#c7861c');
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(c.x, c.y, rad, 0, Math.PI * 2); ctx.fill();
+    let anyLit = false;
+    for (const o of visibleOrbs()) {
+      const lit = angTo(o.yaw, o.pitch) <= T.r;
+      anyLit = anyLit || lit;
+      drawOrb(B, o, T.r, lit);
     }
-    // crosshair
+    // crosshair, flashing on a punch or flick result
     const cx = W / 2, cy = H / 2, k = Math.max(1, s * 1.5);
-    ctx.strokeStyle = hit ? '#6fe8b8' : '#ffffff';
+    const flashCol = now < flash.until ? flash.col : null;
+    ctx.strokeStyle = flashCol || (anyLit ? '#6fe8b8' : '#ffffff');
     ctx.lineWidth = 2 * k;
     ctx.beginPath();
     ctx.moveTo(cx - 12 * k, cy); ctx.lineTo(cx - 4 * k, cy);
@@ -375,9 +511,15 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     ctx.moveTo(cx, cy - 12 * k); ctx.lineTo(cx, cy - 4 * k);
     ctx.moveTo(cx, cy + 4 * k); ctx.lineTo(cx, cy + 12 * k);
     ctx.stroke();
+    // Rocket Punch charge ring
+    if (d.kind === 'punch' && chargeStart && phase === 'run') {
+      const held = (now - chargeStart) / 1000, frac = Math.min(1, held / T.charge);
+      ctx.strokeStyle = frac >= 1 ? '#6fe8b8' : '#f0b340';
+      ctx.lineWidth = 3 * k;
+      ctx.beginPath(); ctx.arc(cx, cy, 22 * k, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); ctx.stroke();
+    }
     // HUD
     if (phase === 'run' || phase === 'countdown') {
-      const now = performance.now();
       ctx.font = `500 ${Math.round(16 * s)}px "IBM Plex Mono", monospace`;
       ctx.textBaseline = 'top';
       if (phase === 'countdown') {
@@ -389,9 +531,10 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         const frac = Math.min(1, (now - runStart) / RUN_MS);
         ctx.fillStyle = '#25303a'; ctx.fillRect(0, 0, W, 6 * s);
         ctx.fillStyle = '#f0b340'; ctx.fillRect(0, 0, W * (1 - frac), 6 * s);
-        const acc = timeTotal ? timeOn / timeTotal * 100 : 0;
-        ctx.textAlign = 'left'; ctx.fillStyle = acc >= T.bench ? '#6fe8b8' : '#e4e9ed';
-        ctx.fillText(`${acc.toFixed(1)}%  ·  need ${T.bench}%`, 18 * s, 18 * s);
+        const v = result();
+        ctx.textAlign = 'left'; ctx.fillStyle = v >= T.bench ? '#6fe8b8' : '#e4e9ed';
+        const extra = d.kind === 'track' ? '' : `  ·  ${misses} miss${misses === 1 ? '' : 'es'}`;
+        ctx.fillText(`${fmt(v)}  ·  need ${fmt(T.bench)}${extra}`, 18 * s, 18 * s);
         ctx.textAlign = 'right'; ctx.fillStyle = '#8d99a4';
         ctx.fillText(`${((RUN_MS - (now - runStart)) / 1000).toFixed(1)} s`, W - 18 * s, 18 * s);
       }
@@ -401,18 +544,18 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   // ---------- target movement ----------
   const BOUND_YAW = 35;
   function scheduleChange(now) {
-    const T = TIERS[playTier - 1];
+    const T = tier();
     tgt.next = now + T.c[0] + Math.random() * (T.c[1] - T.c[0]);
     // bias away from the arena edges so strafes stay in view
     const bias = -tgt.yaw / BOUND_YAW * 0.45;
-    let sign = Math.random() < 0.5 + bias ? 1 : -1;
+    const sign = Math.random() < 0.5 + bias ? 1 : -1;
     let speed = T.v * (0.55 + 0.45 * Math.random());
-    if (playTier >= 3 && Math.random() < 0.1) speed = 0;     // brief stop
+    if (playTiers[drillId] >= 3 && Math.random() < 0.1) speed = 0;     // brief stop
     tgt.want = sign * speed;
-    if (tgt.pitch === 0 && Math.random() < T.j) tgt.vp = 26 + Math.random() * 8;  // jump
+    if (tgt.pitch === 0 && Math.random() < T.j) tgt.vp = drill().jv + Math.random() * 8;  // jump
   }
   function stepTarget(dt, now) {
-    const T = TIERS[playTier - 1];
+    const T = tier();
     if (now >= tgt.next) scheduleChange(now);
     if (tgt.yaw > BOUND_YAW && tgt.want > 0) tgt.want = -tgt.want;
     if (tgt.yaw < -BOUND_YAW && tgt.want < 0) tgt.want = -tgt.want;
@@ -425,9 +568,31 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       if (tgt.pitch <= 0) { tgt.pitch = 0; tgt.vp = 0; }
     }
   }
+  function spawnOrb() {
+    const T = tier();
+    // keep new orbs at least a few radii from the crosshair so each one is a real flick
+    for (let i = 0; i < 20; i++) {
+      const o = { yaw: (Math.random() * 2 - 1) * T.spread, pitch: T.lo + Math.random() * (T.hi - T.lo) };
+      if (angTo(o.yaw, o.pitch) > T.r * 4 && orbs.every(p => Math.hypot(p.yaw - o.yaw, p.pitch - o.pitch) > T.r * 3)) return o;
+    }
+    return { yaw: -cam.yaw, pitch: T.lo };
+  }
+  function respawnPunchTarget() {
+    let y;
+    do { y = (Math.random() * 2 - 1) * 30; } while (Math.abs(y - tgt.yaw) < 12);
+    Object.assign(tgt, { yaw: y, pitch: 0, vy: 0, want: 0, vp: 0 });
+    scheduleChange(performance.now());
+  }
 
   // ---------- run flow ----------
-  let phase = 'idle', runStart = 0, timeOn = 0, timeTotal = 0;
+  let phase = 'idle', runStart = 0, timeOn = 0, timeTotal = 0, hits = 0, misses = 0, chargeStart = 0;
+  const flash = { until: 0, col: '' };
+  const result = () => {
+    const k = drill().kind;
+    if (k === 'track') return timeTotal ? timeOn / timeTotal * 100 : 0;
+    if (k === 'punch') return hits;
+    return Math.max(0, hits - misses / 2);
+  };
   const show = (eyebrow, title, body, cta, cls = '') => {
     $('ovEyebrow').textContent = eyebrow;
     const t = $('ovTitle'); t.textContent = title; t.className = 'ov-title ' + cls;
@@ -435,61 +600,70 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     $('ovCta').textContent = cta;
     overlay.hidden = false;
   };
+  function idleBody() {
+    const T = tier(), d = drill();
+    if (d.kind === 'punch') return `Hold any mouse button to charge for at least ${T.charge} s while staying on the orb, then release on it. Land ${T.bench} punches in 30 s.`;
+    if (d.kind === 'flick') return `Flick to an orb and click it. Most sit below the horizon, like aiming Seismic Slam. Score is hits minus half your misses; reach ${T.bench}.`;
+    if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel. Stay on the orb for ${T.bench}% of the run.`;
+    return `Keep the crosshair on the orb for ${T.bench}% of the run to clear this tier. The mouse locks to the game; press Esc to leave.`;
+  }
   function showIdle(msg) {
-    const T = TIERS[playTier - 1];
-    const practice = playTier < prog.tier;
-    show(`Tier ${playTier} · 30 s run${practice ? ' · warm-up' : ''}`,
+    const practice = playTiers[drillId] < prog().tier;
+    show(`${drill().label} · tier ${playTiers[drillId]} · 30 s${practice ? ' · warm-up' : ''}`,
       msg || 'Click to start',
-      practice
-        ? `Warm-up tier: runs here are logged but only your current tier (${prog.tier}) can promote you.`
-        : `Keep the crosshair on the orb for ${T.bench}% of the run to clear this tier. The mouse locks to the game; press Esc to leave.`,
+      practice ? `Warm-up tier: runs here are logged but only tier ${prog().tier} can promote you. ` + idleBody() : idleBody(),
       'Click to start');
   }
   function resetScene() {
     cam.yaw = 0; cam.pitch = 0;
     Object.assign(tgt, { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 });
+    orbs = [];
+    if (drill().kind === 'flick') for (let i = 0; i < tier().n; i++) orbs.push(spawnOrb());
   }
   function startRun() {
     resetScene();
-    timeOn = 0; timeTotal = 0;
+    timeOn = 0; timeTotal = 0; hits = 0; misses = 0; chargeStart = 0;
     phase = 'countdown';
     runStart = performance.now() + COUNTDOWN_MS;
     overlay.hidden = true;
   }
   function finishRun() {
     phase = 'result';
-    const acc = timeTotal ? timeOn / timeTotal * 100 : 0;
-    const T = TIERS[playTier - 1];
-    hist.push({ ts: Date.now(), tier: playTier, acc: +acc.toFixed(2) });
-    if (hist.length > 500) hist = hist.slice(-500);
+    chargeStart = 0;
+    const d = drill(), p = prog(), T = tier(), pt = playTiers[drillId];
+    const v = result();
+    hist.push({ ts: Date.now(), drill: drillId, tier: pt, v: +v.toFixed(2) });
+    if (hist.length > 1000) hist = hist.slice(-1000);
     store.set('hist', hist);
-    const counts = playTier === prog.tier && !prog.goal;
-    const passed = acc >= T.bench;
-    let eyebrow = `Tier ${playTier} · needed ${T.bench}%`, title, body, cls = passed ? 'pass' : 'fail';
+    const counts = pt === p.tier && !p.goal;
+    const passed = v >= T.bench;
+    let title, body;
     if (counts) {
-      prog.best = Math.max(prog.best, acc);
+      p.best = Math.max(p.best, v);
       if (passed) {
-        if (prog.tier < TIERS.length) {
-          prog.tier++; prog.best = 0; playTier = prog.tier;
-          const N = TIERS[prog.tier - 1];
-          title = `${acc.toFixed(1)}% · Tier ${prog.tier} unlocked`;
-          body = `Score ${overall().toFixed(1)}. Next run is harder: ${N.v}°/s strafes, ${N.r}° orb${N.j ? ', jumps' : ''}. Benchmark ${N.bench}%.`;
+        if (p.tier < d.tiers.length) {
+          p.tier++; p.best = 0; playTiers[drillId] = p.tier;
+          title = `${fmt(v)} · Tier ${p.tier} unlocked`;
+          body = `Score ${overall().toFixed(1)}. The next run is harder. Benchmark: ${fmt(d.tiers[p.tier - 1].bench)}.`;
         } else {
-          prog.goal = true;
-          title = `${acc.toFixed(1)}% · Goal reached`;
-          body = 'You cleared the final tier, about the 70th percentile for reactive tracking. Keep one or two runs a day here to hold it.';
+          p.goal = true;
+          title = `${fmt(v)} · Final tier cleared`;
+          body = drillId === 'track'
+            ? 'You cleared the final tier, about the 70th percentile for reactive tracking. One or two runs a day here will hold it.'
+            : `${d.label} ladder complete. Keep it in your rotation so it stays sharp.`;
         }
       } else {
-        title = `${acc.toFixed(1)}%`;
-        body = `${(T.bench - acc).toFixed(1)} points short. Score ${overall().toFixed(1)}; ${(prog.tier * POINTS_PER_TIER).toFixed(1)} unlocks tier ${prog.tier + 1 <= TIERS.length ? prog.tier + 1 : 'goal'}.`;
+        title = fmt(v);
+        body = `${fmt(T.bench - v)} short. Score ${overall().toFixed(1)}; ${(p.tier * POINTS_PER_TIER).toFixed(1)} unlocks ${p.tier < d.tiers.length ? 'tier ' + (p.tier + 1) : 'the final mark'}.`;
       }
-      store.set('prog', prog);
+      store.set(progKey(drillId), p);
     } else {
-      title = `${acc.toFixed(1)}%`;
-      body = prog.goal && playTier === TIERS.length ? 'Maintenance run at the final tier.' : `Warm-up logged. Switch to tier ${prog.tier} when you're ready to go for the benchmark.`;
+      title = fmt(v);
+      body = p.goal && pt === d.tiers.length ? 'Maintenance run at the final tier.' : `Warm-up logged. Switch to tier ${p.tier} when you're ready to go for the benchmark.`;
     }
-    renderProgress(); renderSpark();
-    show(eyebrow, title, body, 'Click for next run', cls);
+    if (d.kind !== 'track') body += ` ${hits} hit${hits === 1 ? '' : 's'}, ${misses} miss${misses === 1 ? '' : 'es'}.`;
+    renderAll();
+    show(`${d.label} · tier ${pt} · needed ${fmt(T.bench)}`, title, body, 'Click for next run', passed ? 'pass' : '');
   }
 
   // ---------- input ----------
@@ -512,11 +686,30 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   };
   overlay.addEventListener('click', onClick);
   cv.addEventListener('click', onClick);
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  const setFlash = col => { flash.until = performance.now() + 140; flash.col = col; };
+  cv.addEventListener('mousedown', () => {
+    if (phase !== 'run' || document.pointerLockElement !== cv) return;
+    const k = drill().kind, T = tier();
+    if (k === 'punch' && !chargeStart) chargeStart = performance.now();
+    if (k === 'flick') {
+      const i = orbs.findIndex(o => angTo(o.yaw, o.pitch) <= T.r);
+      if (i >= 0) { hits++; orbs.splice(i, 1); orbs.push(spawnOrb()); setFlash('#6fe8b8'); }
+      else { misses++; setFlash('#ef6f5e'); }
+    }
+  });
+  document.addEventListener('mouseup', () => {
+    if (!chargeStart || phase !== 'run') { chargeStart = 0; return; }
+    const held = (performance.now() - chargeStart) / 1000;
+    chargeStart = 0;
+    if (held >= tier().charge && onTarget()) { hits++; setFlash('#6fe8b8'); respawnPunchTarget(); }
+    else { misses++; setFlash('#ef6f5e'); }
+  });
   document.addEventListener('pointerlockchange', () => {
     if (document.pointerLockElement === cv) {
       if (phase !== 'run' && phase !== 'countdown') startRun();
     } else if (phase === 'run' || phase === 'countdown') {
-      phase = 'idle';
+      phase = 'idle'; chargeStart = 0;
       showIdle('Run cancelled');
     }
   });
@@ -535,24 +728,21 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
-    let hit = false;
-    if (phase === 'countdown' && now >= runStart) { phase = 'run'; scheduleChange(now); }
+    if (phase === 'countdown' && now >= runStart) { phase = 'run'; if (drill().kind !== 'flick') scheduleChange(now); }
     if (phase === 'run') {
-      stepTarget(dt, now);
-      hit = onTarget();
-      timeTotal += dt; if (hit) timeOn += dt;
+      if (drill().kind !== 'flick') stepTarget(dt, now);
+      if (drill().kind === 'track') { timeTotal += dt; if (onTarget()) timeOn += dt; }
       if (now - runStart >= RUN_MS) finishRun();
-    } else if (phase === 'countdown') {
-      hit = onTarget();
     }
-    draw(hit);
+    draw(now);
     requestAnimationFrame(frame);
   }
 
+  function renderAll() { renderTabs(); renderProgress(); renderSpark(); }
   renderCalib();
-  renderProgress();
   resize();
-  renderSpark();
+  resetScene();
+  renderAll();
   showIdle();
   requestAnimationFrame(frame);
 })();
