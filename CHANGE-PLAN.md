@@ -37,7 +37,7 @@ from commit f8269ec. **Published by the owner (MAIN) on 2026-10-01.**
 4. **Store name:** "My Store" → "MosqueCarpetsCanada.ca" (owner does this in Settings → Store details if the connector can't).
 5. ✅ **Homepage SEO (done 2026-10-01):** shop `global.title_tag` / `global.description_tag` set.
 
-## Step A.3: "Buy now" panels on hall-size cards (approved 2026-10-03, uploaded)
+## Step A.3: "Buy now" panels on hall-size cards (approved 2026-10-03, uploaded, published by owner as v4)
 
 Owner asked for a clear buy section under each hall-size card. Each card now ends in a buy panel: "Buy online" label,
 price, a gold **Buy now** button (to the product page, where spacing, colourway and installation are chosen),
@@ -46,14 +46,15 @@ and a "Prefer a quote first?" link. The rest of the card still opens the product
 (gid://shopify/OnlineStoreTheme/131005284398, unpublished); checksums verified. The connector cannot publish themes,
 so the owner publishes it in Online Store → Themes.
 
-## Step A.4: hall-size carousel with pop-out buy panel (preview, awaiting approval)
+## Step A.4: hall-size carousel with pop-out buy panel (approved 2026-10-03, uploaded)
 
 Owner asked for left/right arrows on the three hall-size cards (same style as the "Artistry carousel" theme):
 the middle card (Main hall) starts in front, the other two sit behind it at 30% opacity, and switching cards
 slides them with a short motion blur. The front card's buy panel then pops out toward the viewer. Clicking a side
 card brings it to the front; swipe and arrow keys work; reduced-motion users get no blur or pop.
 Changed: `sections/mosque-home.liquid`, `assets/mosque-update.css`. Demo: `previews/carousel-demo.mp4`.
-Once approved, upload to the unpublished "Site update v4 (buy panels)" theme (if not yet published) or a new copy.
+The owner published v4 (now MAIN, gid 131005284398), so this went into a new copy: **"MosqueCarpetsCanada — Site update v5 (carousel)"**
+(gid://shopify/OnlineStoreTheme/131005513774, unpublished), from commit 45d6b84; checksums verified. Owner publishes it.
 
 ## Step C: shipping (needs owner decision)
 
