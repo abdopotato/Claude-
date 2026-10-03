@@ -51,6 +51,10 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
 .stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
 .stage:fullscreen .stage-bar { display: none; }
+.bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-variant-numeric: tabular-nums; }
+label.inline { display: flex; align-items: center; gap: 8px; }
+select { min-height: 40px; background: var(--bg); border: 1px solid var(--line); color: var(--fg); font: 13px var(--font-data); padding: 6px 8px; }
+select:focus-visible { outline: 2px solid var(--target); outline-offset: 2px; }
 
 .grid { display: grid; gap: 18px; grid-template-columns: 1fr 1.1fr 1fr; align-items: start; }
 @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
@@ -130,7 +134,17 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     </div>
     <div class="stage-bar">
       <span id="inputMode">Mouse input: not locked yet</span>
-      <button class="btn" id="fsBtn" type="button">Fullscreen</button>
+      <span class="bar-right">
+        <span id="fps" aria-live="off"></span>
+        <label class="inline" for="quality">Graphics
+          <select id="quality">
+            <option value="fast">Fast (best for laptops)</option>
+            <option value="balanced">Balanced</option>
+            <option value="sharp">Sharp (full resolution)</option>
+          </select>
+        </label>
+        <button class="btn" id="fsBtn" type="button">Fullscreen</button>
+      </span>
     </div>
   </section>
 
@@ -147,7 +161,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <dt>Best this tier</dt><dd id="kvBest">–</dd>
         <dt id="kvPctLabel">Estimated percentile</dt><dd id="kvPct">–</dd>
       </dl>
-      <p class="routine"><b>Daily routine:</b> 2 warm-up runs of reactive tracking one tier below your current one, then 6 benchmark runs, then one run each of the three Doomfist drills. About 15 minutes. A run at your current tier that meets the benchmark promotes you on the spot.</p>
+      <p class="routine"><b>Daily routine:</b> 2 warm-up runs of reactive tracking one tier below your current one, then 6 benchmark runs, then one run each of the Doomfist drills and Flick frenzy. About 17 minutes. A run at your current tier that meets the benchmark promotes you on the spot.</p>
     </section>
 
     <section class="panel" aria-labelledby="h-ladder">
@@ -188,12 +202,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       <p class="source">Background: Schmidt and Lee, <i>Motor Control and Learning</i>; Guadagnoli and Lee (2004) on the challenge point framework; Wulf (2013) on attentional focus; Walker et al. (2002) on sleep and motor consolidation.</p>
     </div>
     <div>
-      <h2>Doomfist drills</h2>
-      <h3>Why these three</h3>
+      <h2>The drills</h2>
+      <h3>What each one trains</h3>
       <div class="drill-why">
         <div><b>Rocket Punch</b><span>Charge while tracking a moving enemy, then release only when you're on them. Most punches miss because the aim drifts during the charge, not because of the release. Hold any mouse button to charge.</span></div>
         <div><b>Hand Cannon range</b><span>Doomfist fights at a few metres, where a strafing enemy crosses your screen far faster than at range. Same tracking skill, much higher angular speed, bigger target and more jumps.</span></div>
         <div><b>Slam &amp; switch flicks</b><span>Seismic Slam is aimed at the ground under enemies, and diving the backline means snapping between targets. Orbs sit mostly below the horizon at wide angles. Score is hits minus half your misses, so clicking blindly costs you.</span></div>
+        <div><b>Flick frenzy</b><span>Pure target acquisition: one orb at a time, anywhere on screen, on a timer that shortens each tier. Trains reacting and snapping fast without overshooting, which is what landing a punch on a fleeing enemy needs.</span></div>
       </div>
     </div>
   </section>
@@ -256,6 +271,18 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         { r: 1.6, n: 2, spread: 50, lo: -32, hi: 14, bench: 35 },
       ],
     },
+    frenzy: {
+      label: 'Flick frenzy', tag: 'Flicking', kind: 'flick', unit: ' pts',
+      // one orb at a time, at least `min` degrees from your crosshair; it expires after `life` ms (counts as a miss)
+      tiers: [
+        { r: 2.6, n: 1, spread: 35, lo: -18, hi: 20, min: 10, life: 2000, bench: 30 },
+        { r: 2.3, n: 1, spread: 38, lo: -20, hi: 22, min: 12, life: 1700, bench: 33 },
+        { r: 2.1, n: 1, spread: 41, lo: -22, hi: 24, min: 14, life: 1450, bench: 36 },
+        { r: 1.9, n: 1, spread: 44, lo: -24, hi: 26, min: 16, life: 1250, bench: 38 },
+        { r: 1.7, n: 1, spread: 46, lo: -25, hi: 27, min: 18, life: 1100, bench: 40 },
+        { r: 1.5, n: 1, spread: 48, lo: -26, hi: 28, min: 20, life: 950,  bench: 42 },
+      ],
+    },
   };
 
   const store = {
@@ -263,7 +290,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = store.get('settings', { dpi: 1600, sens: 2.55, fov: 103 });
+  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', ...store.get('settings', {}) };
   const progs = {}, playTiers = {};
   for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
   let hist = store.get('hist', []).map(h => ({ drill: 'track', v: h.acc, ...h }));
@@ -276,7 +303,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const fmt = (v, d = drill()) => d.unit === '%' ? v.toFixed(1) + '%' : (Math.round(v * 10) / 10) + d.unit;
 
   const $ = id => document.getElementById(id);
-  const cv = $('cv'), ctx = cv.getContext('2d');
+  const cv = $('cv'), ctx = cv.getContext('2d', { alpha: false, desynchronized: true });
   const stage = $('stage'), overlay = $('overlay');
   const D2R = Math.PI / 180;
 
@@ -356,7 +383,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       b.disabled = n > p.tier;
       b.setAttribute('aria-pressed', String(n === playTiers[drillId]));
       const spec = d.kind === 'punch' ? `${tt.bench} hits · ${tt.charge}s charge · ${tt.v}°/s`
-        : d.kind === 'flick' ? `${tt.bench} pts · ${tt.n} orbs · ±${tt.spread}° · r ${tt.r}°`
+        : d.kind === 'flick' ? (tt.life ? `${tt.bench} pts · ${tt.life / 1000}s to hit · r ${tt.r}°` : `${tt.bench} pts · ${tt.n} orbs · ±${tt.spread}° · r ${tt.r}°`)
         : `${tt.bench}% · ${tt.v}°/s · r ${tt.r}°${tt.j ? ' · jumps' : ''}`;
       const right = isCleared ? 'cleared' : tt.pct ? '~' + tt.pct + 'th' : n === p.tier ? 'current' : '';
       b.innerHTML = `<span class="n">${n}</span><span><span class="spec">${spec}</span><br><span class="spec sub">score ${n * POINTS_PER_TIER} unlocks ${n < d.tiers.length ? 'tier ' + (n + 1) : 'the final mark'}</span></span><span class="pct">${right}</span>`;
@@ -425,14 +452,19 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const cam = { yaw: 0, pitch: 0 };
   const tgt = { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 };
   let orbs = [];            // flick targets
-  let W = 0, H = 0, focal = 1;
+  let W = 0, H = 0, focal = 1, dirty = true;
 
+  // Internal render width per quality level; the browser scales the image up for free.
+  const QUALITY = { fast: 960, balanced: 1280, sharp: Infinity };
   function resize() {
     const dpr = window.devicePixelRatio || 1;
-    W = cv.width = Math.round(cv.clientWidth * dpr);
-    H = cv.height = Math.round(cv.clientHeight * dpr);
+    const cap = QUALITY[settings.quality] || QUALITY.fast;
+    const scale = Math.min(dpr, cap / Math.max(1, cv.clientWidth));
+    W = cv.width = Math.max(1, Math.round(cv.clientWidth * scale));
+    H = cv.height = Math.max(1, Math.round(cv.clientHeight * scale));
     // Overwatch's FOV is horizontal at 16:9; the screen is always 16:9.
     focal = (W / 2) / Math.tan(settings.fov / 2 * D2R);
+    dirty = true;
   }
   new ResizeObserver(() => { resize(); renderSpark(); }).observe(cv);
 
@@ -458,27 +490,54 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const onTarget = () => angTo(tgt.yaw, tgt.pitch) <= tier().r;
   const visibleOrbs = () => drill().kind === 'flick' ? orbs : [{ yaw: tgt.yaw, pitch: tgt.pitch }];
 
-  function polyline(B, pts) {
-    ctx.beginPath();
-    let pen = false;
-    for (const [yw, pt] of pts) {
-      const p = project(B, dir(yw, pt));
-      if (!p) { pen = false; continue; }
-      pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
-      pen = true;
+  // Grid direction vectors are computed once; each frame only projects them, in three batched strokes.
+  // Lines of constant yaw are great circles and project to straight lines, so they need few points.
+  const GRID = { '#25303a': [], '#171e25': [], '#3a4855': [] };
+  for (let yw = -120; yw <= 120; yw += 10) {
+    const line = []; for (let pt = -60; pt <= 60; pt += 15) line.push(dir(yw, pt));
+    GRID[yw % 30 === 0 ? '#25303a' : '#171e25'].push(line);
+  }
+  for (let pt = -60; pt <= 60; pt += 10) {
+    const line = []; for (let yw = -120; yw <= 120; yw += 6) line.push(dir(yw, pt));
+    GRID[pt === 0 ? '#3a4855' : '#171e25'].push(line);
+  }
+  function drawGrid(B) {
+    const cx = W / 2, cy = H / 2;
+    for (const colour in GRID) {
+      ctx.strokeStyle = colour;
+      ctx.beginPath();
+      for (const line of GRID[colour]) {
+        let pen = false;
+        for (const d of line) {
+          const z = d[0] * B.f[0] + d[1] * B.f[1] + d[2] * B.f[2];
+          if (z <= 0.05) { pen = false; continue; }
+          const x = cx + focal * (d[0] * B.r[0] + d[2] * B.r[2]) / z;
+          const y = cy - focal * (d[0] * B.u[0] + d[1] * B.u[1] + d[2] * B.u[2]) / z;
+          pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          pen = true;
+        }
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
   }
 
+  // Orbs are drawn once into small sprites and stamped each frame instead of building a gradient per frame.
+  function orbSprite(inner, outer) {
+    const c = document.createElement('canvas'), n = 128;
+    c.width = c.height = n;
+    const g2 = c.getContext('2d');
+    const g = g2.createRadialGradient(n * .325, n * .325, n * .05, n / 2, n / 2, n / 2);
+    g.addColorStop(0, inner); g.addColorStop(1, outer);
+    g2.fillStyle = g;
+    g2.beginPath(); g2.arc(n / 2, n / 2, n / 2, 0, Math.PI * 2); g2.fill();
+    return c;
+  }
+  const ORB = orbSprite('#ffe2a3', '#c7861c'), ORB_LIT = orbSprite('#c9ffe9', '#2fbf8a');
   function drawOrb(B, o, r, lit) {
     const c = project(B, dir(o.yaw, o.pitch));
     if (!c) return;
     const rad = focal * Math.tan(r * D2R) / c.z;
-    const g = ctx.createRadialGradient(c.x - rad * .35, c.y - rad * .35, rad * .1, c.x, c.y, rad);
-    g.addColorStop(0, lit ? '#c9ffe9' : '#ffe2a3');
-    g.addColorStop(1, lit ? '#2fbf8a' : '#c7861c');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(c.x, c.y, rad, 0, Math.PI * 2); ctx.fill();
+    ctx.drawImage(lit ? ORB_LIT : ORB, c.x - rad, c.y - rad, rad * 2, rad * 2);
   }
 
   function draw(now) {
@@ -486,19 +545,21 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     ctx.fillStyle = '#0b0f13';
     ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = Math.max(1, s);
-    for (let yw = -120; yw <= 120; yw += 10) {
-      ctx.strokeStyle = yw % 30 === 0 ? '#25303a' : '#171e25';
-      const pts = []; for (let pt = -60; pt <= 60; pt += 4) pts.push([yw, pt]); polyline(B, pts);
-    }
-    for (let pt = -60; pt <= 60; pt += 10) {
-      ctx.strokeStyle = pt === 0 ? '#3a4855' : '#171e25';
-      const pts = []; for (let yw = -120; yw <= 120; yw += 3) pts.push([yw, pt]); polyline(B, pts);
-    }
+    drawGrid(B);
     let anyLit = false;
     for (const o of visibleOrbs()) {
       const lit = angTo(o.yaw, o.pitch) <= T.r;
       anyLit = anyLit || lit;
       drawOrb(B, o, T.r, lit);
+      if (T.life && phase === 'run') {
+        const c = project(B, dir(o.yaw, o.pitch));
+        if (c) {
+          const rad = focal * Math.tan(T.r * D2R) / c.z, left = Math.max(0, 1 - (now - o.born) / T.life);
+          ctx.strokeStyle = left < .3 ? '#ef6f5e' : '#f0b340';
+          ctx.lineWidth = Math.max(1.5, 2 * s);
+          ctx.beginPath(); ctx.arc(c.x, c.y, rad + 5 * s, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); ctx.stroke();
+        }
+      }
     }
     // crosshair, flashing on a punch or flick result
     const cx = W / 2, cy = H / 2, k = Math.max(1, s * 1.5);
@@ -572,10 +633,10 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const T = tier();
     // keep new orbs at least a few radii from the crosshair so each one is a real flick
     for (let i = 0; i < 20; i++) {
-      const o = { yaw: (Math.random() * 2 - 1) * T.spread, pitch: T.lo + Math.random() * (T.hi - T.lo) };
-      if (angTo(o.yaw, o.pitch) > T.r * 4 && orbs.every(p => Math.hypot(p.yaw - o.yaw, p.pitch - o.pitch) > T.r * 3)) return o;
+      const o = { yaw: (Math.random() * 2 - 1) * T.spread, pitch: T.lo + Math.random() * (T.hi - T.lo), born: performance.now() };
+      if (angTo(o.yaw, o.pitch) > Math.max(T.r * 4, T.min || 0) && orbs.every(p => Math.hypot(p.yaw - o.yaw, p.pitch - o.pitch) > T.r * 3)) return o;
     }
-    return { yaw: -cam.yaw, pitch: T.lo };
+    return { yaw: -cam.yaw, pitch: T.lo, born: performance.now() };
   }
   function respawnPunchTarget() {
     let y;
@@ -603,11 +664,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function idleBody() {
     const T = tier(), d = drill();
     if (d.kind === 'punch') return `Hold any mouse button to charge for at least ${T.charge} s while staying on the orb, then release on it. Land ${T.bench} punches in 30 s.`;
+    if (drillId === 'frenzy') return `One orb at a time, anywhere on screen. Hit it within ${T.life / 1000} s (watch the ring) or it counts as a miss. Score is hits minus half your misses; reach ${T.bench}.`;
     if (d.kind === 'flick') return `Flick to an orb and click it. Most sit below the horizon, like aiming Seismic Slam. Score is hits minus half your misses; reach ${T.bench}.`;
     if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel. Stay on the orb for ${T.bench}% of the run.`;
     return `Keep the crosshair on the orb for ${T.bench}% of the run to clear this tier. The mouse locks to the game; press Esc to leave.`;
   }
   function showIdle(msg) {
+    dirty = true;
     const practice = playTiers[drillId] < prog().tier;
     show(`${drill().label} · tier ${playTiers[drillId]} · 30 s${practice ? ' · warm-up' : ''}`,
       msg || 'Click to start',
@@ -615,6 +678,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       'Click to start');
   }
   function resetScene() {
+    dirty = true;
     cam.yaw = 0; cam.pitch = 0;
     Object.assign(tgt, { yaw: 0, pitch: 0, vy: 0, want: 0, vp: 0, next: 0 });
     orbs = [];
@@ -718,25 +782,40 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const k = degPerCount();
     cam.yaw += e.movementX * k;
     cam.pitch = Math.max(-89, Math.min(89, cam.pitch - e.movementY * k));
+    dirty = true;
   });
   $('fsBtn').addEventListener('click', () => {
     (document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen?.())?.catch?.(() => {});
   });
 
   // ---------- loop ----------
-  let last = performance.now();
+  let last = performance.now(), fpsFrames = 0, fpsStart = last;
+  const fpsEl = $('fps');
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
-    if (phase === 'countdown' && now >= runStart) { phase = 'run'; if (drill().kind !== 'flick') scheduleChange(now); }
+    if (phase === 'countdown' && now >= runStart) { phase = 'run'; if (drill().kind !== 'flick') scheduleChange(now); orbs.forEach(o => { o.born = now; }); }
     if (phase === 'run') {
       if (drill().kind !== 'flick') stepTarget(dt, now);
       if (drill().kind === 'track') { timeTotal += dt; if (onTarget()) timeOn += dt; }
+      const life = tier().life;
+      if (life) orbs.forEach((o, i) => { if (now - o.born > life) { misses++; setFlash('#ef6f5e'); orbs[i] = spawnOrb(); } });
       if (now - runStart >= RUN_MS) finishRun();
     }
-    draw(now);
+    const live = phase === 'run' || phase === 'countdown' || now < flash.until;
+    if (live || dirty) { draw(now); dirty = false; }
+    fpsFrames++;
+    if (now - fpsStart >= 500) {
+      const fps = fpsFrames * 1000 / (now - fpsStart);
+      fpsEl.textContent = live ? `${Math.round(fps)} fps · ${W}×${H}` : `${W}×${H}`;
+      fpsFrames = 0; fpsStart = now;
+    }
     requestAnimationFrame(frame);
   }
+
+  const q = $('quality');
+  q.value = settings.quality;
+  q.addEventListener('change', () => { settings.quality = q.value; store.set('settings', settings); resize(); });
 
   function renderAll() { renderTabs(); renderProgress(); renderSpark(); }
   renderCalib();
