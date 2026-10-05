@@ -213,6 +213,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="xgap">Crosshair gap<input id="xgap" type="number" min="1" max="30" step="1"></label>
         <label for="xthick">Thickness<input id="xthick" type="number" min="0.5" max="10" step="0.5"></label>
         <label for="pad">Pad width cm<input id="pad" type="number" min="20" max="120" step="1"></label>
+        <label for="mousew">Mouse width cm<input id="mousew" type="number" min="3" max="12" step="0.1"></label>
+        <button class="btn" id="fitPad" type="button" style="align-self:end;min-height:40px">Fit sens to pad</button>
       </div>
       <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely. If your mouse polls faster than 1000 Hz, set it to 1000 Hz in its software (HyperX NGENUITY for the Haste 2): Chrome can stutter or drop movement at 4000–8000 Hz.</p>
       <p class="note"><b>Check my 360:</b> in Overwatch, mark where your mouse starts on the pad and turn exactly 360°. Here, press the button and make the same swipe. It should read close to 360°. With raw input off, Windows pointer speed must be on the 6th notch with "Enhance pointer precision" off, or the reading will drift.</p>
@@ -235,7 +237,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <li><b>Train where you fail some of the time.</b><span>The challenge point framework says learning is fastest when a task is hard enough that you miss regularly. That's why the ladder moves you up the moment you pass instead of letting you farm an easy tier.</span></li>
         <li><b>Mix your drills.</b><span>Interleaving different tasks (contextual interference) lowers your score during a session but improves what you keep and how well it carries into real games. Rotate tracking with the Doomfist drills rather than doing 10 runs of one.</span></li>
         <li><b>Watch the target, not your hand.</b><span>Research on attentional focus finds that an external focus (keep the crosshair on the target's chest or head) learns faster than thinking about wrist or arm movement. Check your grip and posture between runs, not during them.</span></li>
-        <li><b>Keep your sensitivity fixed.</b><span>Your brain is learning a mapping from hand distance to turn angle. Every sens change resets part of it. Stay on 2.55 at 1600 DPI for at least a few months unless something is clearly wrong.</span></li>
+        <li><b>Keep your sensitivity fixed.</b><span>Your brain is learning a mapping from hand distance to turn angle. Every sens change resets part of it. Once you've settled on a sens (2.26 fits your pad), stay on it for at least a few months unless something is clearly wrong.</span></li>
         <li><b>Expect a slow first run.</b><span>The first runs of a day are lower (warm-up decrement). Judge yourself on the week's trend in the history chart, not on single runs. Flat stretches of one to two weeks are normal before a jump.</span></li>
         <li><b>Carry it into real games.</b><span>Trainers build raw control; games teach timing and target choice. After your session, play a few minutes of Doomfist in a custom game or deathmatch and use the same focus.</span></li>
       </ul>
@@ -338,7 +340,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, ...store.get('settings', {}) };
+  let settings = { dpi: 1600, sens: 2.26, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, mousew: 6.7, ...store.get('settings', {}) };
+  // one-time switch to the pad-fitted sens (45 cm pad, ~6.7 cm Haste 2: one edge-to-edge swipe = 360°)
+  if (!store.get('migr.padsens', false)) { settings.sens = 2.26; store.set('settings', settings); store.set('migr.padsens', true); }
   const progs = {}, playTiers = {};
   for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
   playTiers.sens = Math.min(progs.track.tier, 8);
@@ -390,8 +394,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function renderCalib() {
     $('calib').innerHTML = `<b>${settings.dpi}</b> DPI · sens <b>${settings.sens}</b> · FOV <b>${settings.fov}</b> · <b>${cm360(settings.sens).toFixed(1)}</b> cm/360`;
   }
-  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10], pad: [20, 120] };
-  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick', 'pad']) {
+  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10], pad: [20, 120], mousew: [3, 12] };
+  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick', 'pad', 'mousew']) {
     const el = $(k);
     el.value = settings[k];
     el.addEventListener('change', () => {
@@ -403,6 +407,15 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       renderCalib(); resize(); layoutCrosshair(); renderProgress();
     });
   }
+
+  // One edge-to-edge swipe across the free pad width (pad minus mouse) turns exactly 360°,
+  // so from the centre you can turn 180° either way without lifting.
+  $('fitPad').addEventListener('click', () => {
+    const travelCm = settings.pad - settings.mousew;
+    const counts = travelCm / 2.54 * settings.dpi;
+    settings.sens = Math.round(360 / (OW_YAW * counts) * 100) / 100;
+    store.set('settings', settings); $('sens').value = settings.sens; renderCalib(); renderProgress();
+  });
 
   // ---------- tabs ----------
   function renderTabs() {
