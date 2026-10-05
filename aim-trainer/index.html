@@ -378,6 +378,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   // smaller targets are first estimates.
   const LOCK_BENCH = { track: [45, 44, 43, 42, 40, 39, 38, 36, 34, 33, 32, 30], close: [40, 38, 36, 34, 32],
     punch: [10, 9, 8, 7, 7], slam: [18, 19, 20, 20, 21], frenzy: [18, 19, 20, 21, 22, 23] };
+  // strafe speed per tier in metres per second; Overwatch heroes walk at about 5.5 m/s
+  const LOCK_SPEED = { track: [2.5, 3, 3.5, 4, 4.5, 5, 5.5, 5.5, 6, 6.5, 7, 7.5], close: [3, 4, 5, 5.5, 6.5], punch: [2.5, 3.5, 4.5, 5.5, 6.5] };
   function lockDeg() {
     const focal1080 = 540 / (Math.tan(settings.fov / 2 * Math.PI / 180) * 9 / 16);
     const radiusPx = settings.sizeX * (settings.xgap + settings.xthick / 2);
@@ -392,6 +394,15 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         // a dummy's r is half its shoulder width; its torso hitbox radius is 0.26 of 0.3 of that
         tt.r = settings.sizeLock ? (d.kind === 'flick' ? L : L * 0.3 / 0.26) : tt.r0;
         tt.bench = settings.sizeLock ? LOCK_BENCH[id][i] : tt.bench0;
+        // the small dummy stands ~33 m away: strafe at realistic hero speeds (m/s) converted to degrees per second
+        if (tt.v !== undefined) {
+          if (tt.v0 === undefined) { tt.v0 = tt.v; tt.a0 = tt.a; }
+          if (settings.sizeLock && LOCK_SPEED[id]) {
+            const dist = 0.3 / Math.tan(tt.r * Math.PI / 180);
+            tt.v = Math.round(LOCK_SPEED[id][i] / dist * 180 / Math.PI * 10) / 10;
+            tt.a = tt.a0 * tt.v / tt.v0;
+          } else { tt.v = tt.v0; tt.a = tt.a0; }
+        }
       });
     }
   }
