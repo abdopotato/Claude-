@@ -106,6 +106,21 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 #spark { width: 100%; height: 120px; display: block; margin-top: 4px; }
 .history-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 20px; }
 .legend { font: 11px/1 var(--font-data); color: var(--muted); text-align: right; }
+.choice { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.choice-btn { min-height: 52px; padding: 10px 16px; background: var(--panel); border: 1px solid var(--target); color: var(--fg); font: 500 14px/1.3 var(--font-body); cursor: pointer; text-align: left; }
+.choice-btn:hover { background: var(--line); }
+.choice-btn small { display: block; font: 12px/1.3 var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
+.finder { display: grid; gap: 12px; font-size: 14px; }
+.finder .big { font: 700 48px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.finder .big small { font: 500 16px var(--font-data); color: var(--muted); }
+.finder p { margin: 0; color: var(--muted); }
+.finder .warn { color: var(--miss); }
+.finder .ok { color: var(--hit); }
+.ftable { width: 100%; border-collapse: collapse; font: 12.5px/1.3 var(--font-data); font-variant-numeric: tabular-nums; }
+.ftable th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+.ftable td { padding: 7px 4px; border-bottom: 1px solid var(--line); }
+.ftable td.pick { color: var(--hit); }
+.ftable tr.now td { color: var(--target); }
 
 .tips { display: grid; gap: 18px; grid-template-columns: 1.3fr 1fr; align-items: start; }
 @media (max-width: 900px) { .tips { grid-template-columns: 1fr; } }
@@ -139,6 +154,10 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
           <div class="ov-title" id="ovTitle">Click to start</div>
           <div class="ov-body" id="ovBody">Keep the crosshair on the dummy while it strafes.</div>
           <div class="ov-cta" id="ovCta">Click to start</div>
+          <div class="choice" id="choice" hidden>
+            <button class="choice-btn" id="pickLo" type="button"></button>
+            <button class="choice-btn" id="pickHi" type="button"></button>
+          </div>
         </div>
       </div>
     </div>
@@ -163,6 +182,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   <div class="grid">
     <section class="panel" aria-labelledby="h-progress">
       <h2 id="h-progress">Overall score</h2>
+      <div id="finderBody" class="finder" hidden></div>
+      <div id="progBody">
       <div class="score"><span class="big" id="score">0.0</span><span class="of" id="scoreMax">/ 60</span></div>
       <div class="meter"><i id="meter"></i></div>
       <div class="ticks" id="ticks"></div>
@@ -174,11 +195,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <dt id="kvPctLabel">Estimated percentile</dt><dd id="kvPct">–</dd>
       </dl>
       <p class="routine"><b>Daily routine:</b> 2 warm-up runs of reactive tracking one tier below your current one, then 6 benchmark runs, then one run each of the Doomfist drills and Flick frenzy. About 17 minutes. A run at your current tier that meets the benchmark promotes you on the spot.</p>
+      </div>
     </section>
 
     <section class="panel" aria-labelledby="h-ladder">
       <h2 id="h-ladder">Benchmarks</h2>
       <ol class="ladder" id="ladder"></ol>
+      <div id="finderRows" hidden></div>
     </section>
 
     <section class="panel" aria-labelledby="h-settings">
@@ -189,8 +212,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="fov">FOV<input id="fov" type="number" min="60" max="103" step="1"></label>
         <label for="xgap">Crosshair gap<input id="xgap" type="number" min="1" max="30" step="1"></label>
         <label for="xthick">Thickness<input id="xthick" type="number" min="0.5" max="10" step="0.5"></label>
+        <label for="pad">Pad width cm<input id="pad" type="number" min="20" max="120" step="1"></label>
       </div>
-      <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely.</p>
+      <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely. If your mouse polls faster than 1000 Hz, set it to 1000 Hz in its software (HyperX NGENUITY for the Haste 2): Chrome can stutter or drop movement at 4000–8000 Hz.</p>
       <p class="note"><b>Check my 360:</b> in Overwatch, mark where your mouse starts on the pad and turn exactly 360°. Here, press the button and make the same swipe. It should read close to 360°. With raw input off, Windows pointer speed must be on the 6th notch with "Enhance pointer precision" off, or the reading will drift.</p>
       <div class="history-head"><h2 style="margin:0" id="histTitle">History</h2><span class="legend">result ÷ benchmark, last 40 runs</span></div>
       <canvas id="spark" aria-label="Chart of recent runs against their benchmarks"></canvas>
@@ -225,6 +249,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <div><b>Hand Cannon range</b><span>Doomfist fights at a few metres, where a strafing enemy crosses your screen far faster than at range. Same tracking skill, much higher angular speed, bigger target and more jumps.</span></div>
         <div><b>Slam &amp; switch flicks</b><span>Seismic Slam is aimed at the ground under enemies, and diving the backline means snapping between targets. Orbs sit mostly below the horizon at wide angles. Score is hits minus half your misses, so clicking blindly costs you.</span></div>
         <div><b>Flick frenzy</b><span>Pure target acquisition: one orb at a time, anywhere on screen, on a timer that shortens each tier. Trains reacting and snapping fast without overshooting, which is what landing a punch on a fleeing enemy needs.</span></div>
+        <div><b>Sens finder</b><span>The PSA method: 7 rounds comparing a lower and a higher sensitivity on the tracking drill, halving the gap toward whichever felt better. Round 1 tries half and one and a half times your current sens, so a bad starting point gets corrected fast. Run it on three different days and use the average.</span></div>
       </div>
     </div>
   </section>
@@ -233,7 +258,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 <script>
 (() => {
   const OW_YAW = 0.0066;       // degrees per mouse count at sens 1
-  const RUN_MS = 30000;
+  const RUN_MS = 30000, FINDER_MS = 20000;
+  const runMs = () => drillId === 'sens' ? FINDER_MS : RUN_MS;
   const COUNTDOWN_MS = 2000;
   const POINTS_PER_TIER = 5;
   // Tracking-style tiers: dummy half shoulder width (deg; sets its distance), top strafe speed (deg/s), direction-change window (ms),
@@ -301,14 +327,22 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     },
   };
 
+  // Sens finder: the PSA method (a binary search). Round 1 compares 0.5x and 1.5x your current sens; each pick
+  // halves the range toward the side you chose, so after 7 rounds it's within about ±1%. Each candidate is
+  // tested with a 20 s run of reactive tracking at your current ladder tier.
+  DRILLS.sens = { label: 'Sens finder', tag: 'Setup', kind: 'track', unit: '%', finder: true, tiers: DRILLS.track.tiers };
+  const PSA_ROUNDS = 7;
+
   const store = {
     get(k, d) { try { const v = localStorage.getItem('tl.' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, ...store.get('settings', {}) };
+  let settings = { dpi: 1600, sens: 2.55, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, ...store.get('settings', {}) };
   const progs = {}, playTiers = {};
   for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
+  playTiers.sens = Math.min(progs.track.tier, 8);
+  let finder = store.get('finder', null), finderResults = store.get('finderResults', []);
   let hist = store.get('hist', []).map(h => ({ drill: 'track', v: h.acc, ...h }));
   let drillId = store.get('drill', 'track');
   if (!DRILLS[drillId]) drillId = 'track';
@@ -324,13 +358,40 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const D2R = Math.PI / 180;
 
   // ---------- settings ----------
-  const degPerCount = () => OW_YAW * settings.sens;
-  function renderCalib() {
-    const cm360 = 360 / degPerCount() / settings.dpi * 2.54;
-    $('calib').innerHTML = `<b>${settings.dpi}</b> DPI · sens <b>${settings.sens}</b> · FOV <b>${settings.fov}</b> · <b>${cm360.toFixed(1)}</b> cm/360`;
+  const finding = () => drillId === 'sens' && finder && !finder.done;
+  const finderSide = () => finder.order[Math.min(finder.step, 1)];
+  const finderSens = () => finder[finderSide()];
+  const degPerCount = () => OW_YAW * (finding() ? finderSens() : settings.sens);
+  const cm360 = sens => 360 / (OW_YAW * sens) / settings.dpi * 2.54;
+  const s2 = v => v.toFixed(2);
+  function finderNew() {
+    const b = settings.sens;
+    finder = { base: b, lo: b * 0.5, hi: b * 1.5, round: 1, step: 0, order: ['lo', 'hi'], acc: {}, rows: [], done: false, final: 0 };
+    store.set('finder', finder);
   }
-  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10] };
-  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick']) {
+  // 1 = lower, 2 = higher. Order alternates each round so warming up doesn't always favour the second run.
+  function finderPick(side) {
+    if (!finder || finder.step !== 2) return;
+    finder.rows.push({ round: finder.round, lo: finder.lo, hi: finder.hi, accLo: finder.acc.lo, accHi: finder.acc.hi, pick: side });
+    const mid = (finder.lo + finder.hi) / 2;
+    if (side === 'lo') finder.hi = mid; else finder.lo = mid;
+    finder.round++; finder.step = 0; finder.acc = {};
+    finder.order = finder.round % 2 ? ['lo', 'hi'] : ['hi', 'lo'];
+    if (finder.round > PSA_ROUNDS) {
+      finder.done = true;
+      finder.final = Math.round((finder.lo + finder.hi) / 2 * 100) / 100;
+      finderResults.push({ ts: Date.now(), sens: finder.final, base: finder.base });
+      store.set('finderResults', finderResults);
+    }
+    store.set('finder', finder);
+    $('choice').hidden = true; $('ovCta').hidden = false;
+    renderAll(); showIdle();
+  }
+  function renderCalib() {
+    $('calib').innerHTML = `<b>${settings.dpi}</b> DPI · sens <b>${settings.sens}</b> · FOV <b>${settings.fov}</b> · <b>${cm360(settings.sens).toFixed(1)}</b> cm/360`;
+  }
+  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10], pad: [20, 120] };
+  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick', 'pad']) {
     const el = $(k);
     el.value = settings[k];
     el.addEventListener('change', () => {
@@ -339,7 +400,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       settings[k] = LIMITS[k] ? Math.min(LIMITS[k][1], Math.max(LIMITS[k][0], v)) : v;
       el.value = settings[k];
       store.set('settings', settings);
-      renderCalib(); resize(); layoutCrosshair();
+      renderCalib(); resize(); layoutCrosshair(); renderProgress();
     });
   }
 
@@ -352,10 +413,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
       b.setAttribute('aria-selected', String(id === drillId));
-      b.innerHTML = `<small>${d.tag} · ${p.goal ? 'cleared' : 'tier ' + p.tier + '/' + d.tiers.length}</small>${d.label}`;
+      const status = d.finder ? (!finder ? 'not started' : finder.done ? 'done · ' + s2(finder.final) : 'round ' + finder.round + '/' + PSA_ROUNDS)
+        : p.goal ? 'cleared' : 'tier ' + p.tier + '/' + d.tiers.length;
+      b.innerHTML = `<small>${d.tag} · ${status}</small>${d.label}`;
       b.addEventListener('click', () => {
         if (phase === 'run' || phase === 'countdown') return;
         drillId = id; store.set('drill', id);
+        if (id === 'sens') { playTiers.sens = Math.min(progs.track.tier, 8); if (!finder) finderNew(); }
         resetScene(); renderAll(); showIdle();
       });
       nav.appendChild(b);
@@ -369,7 +433,51 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     return p.goal ? maxScore(d) : (p.tier - 1) * POINTS_PER_TIER + POINTS_PER_TIER * Math.min(1, p.best / d.tiers[p.tier - 1].bench);
   };
 
+  function renderFinder() {
+    const fb = $('finderBody'), rows = $('finderRows');
+    const padNote = sens => {
+      const half = cm360(sens) / 2;
+      return half > settings.pad * 0.75 ? `<span class="warn">a 180° turn takes ${half.toFixed(0)} cm, most of your ${settings.pad} cm pad</span>` : '';
+    };
+    if (finder.done) {
+      const avg = finderResults.length ? finderResults.reduce((a, r) => a + r.sens, 0) / finderResults.length : finder.final;
+      fb.innerHTML = `<div class="big">${s2(finder.final)} <small>${cm360(finder.final).toFixed(1)} cm/360</small></div>
+        <p>Started from ${s2(finder.base)}. ${finderResults.length > 1 ? `Average of your ${finderResults.length} searches: <b class="ok">${s2(avg)}</b> (${cm360(avg).toFixed(1)} cm/360).` : 'Run the search again on two more days; your sens is the average of the three.'}</p>
+        <p>For reference, tracking players mostly sit between 20 and 35 cm/360. Overwatch tank pros average around 20 cm/360, which helps Doomfist turn quickly after a punch or slam.</p>
+        <div class="btns"><button class="btn" id="applySens" type="button">Use ${s2(finderResults.length > 1 ? avg : finder.final)} in the trainer</button>
+        <button class="btn" id="finderAgain" type="button">Search again</button></div>
+        <p>Set the same number in Overwatch so the two match.</p>`;
+      $('applySens').onclick = () => {
+        settings.sens = Math.round((finderResults.length > 1 ? avg : finder.final) * 100) / 100;
+        store.set('settings', settings); $('sens').value = settings.sens; renderCalib(); renderFinder();
+      };
+      $('finderAgain').onclick = () => { finderNew(); renderAll(); showIdle(); };
+    } else {
+      const now = finderSide();
+      fb.innerHTML = `<div class="big">Round ${finder.round}<small> of ${PSA_ROUNDS}</small></div>
+        <dl class="kv">
+          <dt>Lower</dt><dd>${s2(finder.lo)} · ${cm360(finder.lo).toFixed(1)} cm</dd>
+          <dt>Higher</dt><dd>${s2(finder.hi)} · ${cm360(finder.hi).toFixed(1)} cm</dd>
+          <dt>${finder.step === 2 ? 'Next' : 'This run'}</dt><dd>${finder.step === 2 ? 'pick the one that felt better' : (now === 'lo' ? 'lower' : 'higher') + ' sens'}</dd>
+          <dt>Test</dt><dd>tracking tier ${playTiers.sens}, 20 s each</dd>
+        </dl>
+        ${[padNote(finder.lo), padNote(finder.hi)].filter(Boolean).map(n => `<p>${n}</p>`).join('')}
+        <p>Each round plays both sensitivities, then you pick the one that felt better: smoother, fewer overshoots, easier to stay on the body. Accuracy is shown to help, but trust feel when they're close. Pick by feel, not by which number you're used to.</p>
+        <div class="btns"><button class="btn" id="finderAgain" type="button">Start the search over</button></div>`;
+      $('finderAgain').onclick = () => { finderNew(); renderAll(); showIdle(); };
+    }
+    const cell = (sens, acc) => `${s2(sens)} <span style="color:var(--muted)">${cm360(sens).toFixed(0)}cm</span>${acc != null ? ' · ' + acc.toFixed(0) + '%' : ''}`;
+    rows.innerHTML = `<table class="ftable"><thead><tr><th>#</th><th>Lower</th><th>Higher</th><th>Picked</th></tr></thead><tbody>
+      ${finder.rows.map(r => `<tr><td>${r.round}</td><td>${cell(r.lo, r.accLo)}</td><td>${cell(r.hi, r.accHi)}</td><td class="pick">${r.pick === 'lo' ? 'lower' : 'higher'}</td></tr>`).join('')}
+      ${finder.done ? '' : `<tr class="now"><td>${finder.round}</td><td>${cell(finder.lo, finder.acc.lo)}</td><td>${cell(finder.hi, finder.acc.hi)}</td><td>…</td></tr>`}
+      </tbody></table>`;
+  }
   function renderProgress() {
+    const isF = drillId === 'sens';
+    $('finderBody').hidden = $('finderRows').hidden = !isF;
+    $('progBody').hidden = $('ladder').hidden = isF;
+    $('h-ladder').textContent = isF ? 'Rounds' : 'Benchmarks';
+    if (isF) { $('h-progress').textContent = 'Sens finder'; $('histTitle').textContent = 'History'; if (!finder) finderNew(); renderFinder(); return; }
     const d = drill(), p = prog(), s = overall(), max = maxScore();
     $('h-progress').textContent = drillId === 'track' ? 'Overall score' : d.label + ' score';
     $('score').textContent = s.toFixed(1);
@@ -412,6 +520,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 
   $('resetBtn').addEventListener('click', e => {
     const b = e.currentTarget;
+    if (b.dataset.armed && drillId === 'sens') {
+      finderResults = []; store.set('finderResults', finderResults); finderNew();
+      b.textContent = 'Reset this drill'; delete b.dataset.armed;
+      renderAll(); showIdle(); return;
+    }
     if (b.dataset.armed) {
       progs[drillId] = { tier: 1, best: 0, goal: false }; playTiers[drillId] = 1;
       hist = hist.filter(h => h.drill !== drillId);
@@ -689,15 +802,15 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         ctx.fillText(String(Math.max(1, left)), cx, H * 0.18);
       } else {
         setFont(fontSmall);
-        const frac = Math.min(1, (now - runStart) / RUN_MS);
+        const frac = Math.min(1, (now - runStart) / runMs());
         ctx.fillStyle = '#25303a'; ctx.fillRect(0, 0, W, 6 * s);
         ctx.fillStyle = '#f0b340'; ctx.fillRect(0, 0, W * (1 - frac), 6 * s);
         if (now - hud.at > 100) {
           const v = result();
           hud.at = now; hud.pass = v >= T.bench;
           const extra = d.kind === 'track' ? `  ·  head ${timeTotal ? Math.round(headOn / timeTotal * 100) : 0}%` : `  ·  ${misses} miss${misses === 1 ? '' : 'es'}`;
-          hud.left = `${fmt(v)}  ·  need ${fmt(T.bench)}${extra}`;
-          hud.right = `${Math.max(0, (RUN_MS - (now - runStart)) / 1000).toFixed(1)} s`;
+          hud.left = drillId === 'sens' ? `${fmt(v)}  ·  sens ${s2(finderSens())}` : `${fmt(v)}  ·  need ${fmt(T.bench)}${extra}`;
+          hud.right = `${Math.max(0, (runMs() - (now - runStart)) / 1000).toFixed(1)} s`;
         }
         ctx.textAlign = 'left'; ctx.fillStyle = hud.pass ? '#6fe8b8' : '#e4e9ed';
         ctx.fillText(hud.left, 18 * s, 18 * s);
@@ -794,6 +907,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const t = $('ovTitle'); t.textContent = title; t.className = 'ov-title ' + cls;
     $('ovBody').textContent = body;
     $('ovCta').textContent = cta;
+    $('ovCta').hidden = !cta; $('choice').hidden = true;
     overlay.hidden = false;
   };
   function idleBody() {
@@ -806,6 +920,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   function showIdle(msg) {
     dirty = true;
+    if (drillId === 'sens') {
+      if (!finder) finderNew();
+      if (finder.done) return show('Sens finder · done', `Your sens: ${s2(finder.final)}`, `${cm360(finder.final).toFixed(1)} cm/360. Use it from the panel below, or press Search again there.`, 'Search again below');
+      const side = finderSide();
+      return show(`Sens finder · round ${finder.round} of ${PSA_ROUNDS} · run ${finder.step + 1} of 2 · 20 s`, msg || 'Click to start',
+        `This run uses the ${side === 'lo' ? 'lower' : 'higher'} sens: ${s2(finder[side])} (${cm360(finder[side]).toFixed(1)} cm/360). Track the dummy the way you would in a game.`, 'Click to start');
+    }
     const practice = playTiers[drillId] < prog().tier;
     show(`${drill().label} · tier ${playTiers[drillId]} · 30 s${practice ? ' · warm-up' : ''}`,
       msg || 'Click to start',
@@ -833,6 +954,23 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     chargeStart = 0;
     const d = drill(), p = prog(), T = tier(), pt = playTiers[drillId];
     const v = result();
+    if (d.finder) {
+      const side = finderSide();
+      finder.acc[side] = v;
+      if (finder.step === 0) {
+        finder.step = 1; store.set('finder', finder); renderAll();
+        const next = finderSide();
+        return show(`Sens finder · round ${finder.round} of ${PSA_ROUNDS}`, `${fmt(v)} at ${s2(finder[side])}`,
+          `Now the ${next === 'lo' ? 'lower' : 'higher'} sens: ${s2(finder[next])} (${cm360(finder[next]).toFixed(1)} cm/360). Same drill, 20 s.`, 'Click for the next run');
+      }
+      finder.step = 2; store.set('finder', finder); renderAll();
+      document.exitPointerLock?.();
+      $('pickLo').innerHTML = `1 · Lower felt better<small>${s2(finder.lo)} · ${cm360(finder.lo).toFixed(1)} cm/360 · ${finder.acc.lo.toFixed(1)}%</small>`;
+      $('pickHi').innerHTML = `2 · Higher felt better<small>${s2(finder.hi)} · ${cm360(finder.hi).toFixed(1)} cm/360 · ${finder.acc.hi.toFixed(1)}%</small>`;
+      show(`Sens finder · round ${finder.round} of ${PSA_ROUNDS}`, 'Which felt better?', 'Pick the one you controlled better: smoother tracking, fewer overshoots. Press 1 or 2, or click.', '');
+      $('ovCta').hidden = true; $('choice').hidden = false;
+      return;
+    }
     hist.push({ ts: Date.now(), drill: drillId, tier: pt, v: +v.toFixed(2) });
     if (hist.length > 1000) hist = hist.slice(-1000);
     store.set('hist', hist);
@@ -883,7 +1021,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       : 'Mouse input: lock refused, use a desktop browser';
   }
   // While locked, clicks land on the canvas, not the overlay.
+  const finderBlocked = () => drillId === 'sens' && finder && (finder.step === 2 || finder.done);
   const onClick = () => {
+    if (finderBlocked()) return;
     if (phase === 'calib' && document.pointerLockElement === cv) { calibZero = cam.yaw; dirty = true; return; }
     // a fast click as a run ends shouldn't start the next one
     if (phase === 'result' && performance.now() - resultAt < 700) return;
@@ -891,6 +1031,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     else if (phase === 'idle' || phase === 'result') startRun();
   };
   overlay.addEventListener('click', onClick);
+  $('pickLo').addEventListener('click', e => { e.stopPropagation(); finderPick('lo'); });
+  $('pickHi').addEventListener('click', e => { e.stopPropagation(); finderPick('hi'); });
+  document.addEventListener('keydown', e => {
+    if (drillId !== 'sens' || !finder || finder.step !== 2) return;
+    if (e.key === '1') finderPick('lo');
+    if (e.key === '2') finderPick('hi');
+  });
   cv.addEventListener('click', onClick);
   cv.addEventListener('contextmenu', e => e.preventDefault());
   const setFlash = col => { flash.until = performance.now() + 140; flash.col = col; flash.cls = col === '#6fe8b8' ? 'hit' : 'miss'; };
@@ -916,7 +1063,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   });
   document.addEventListener('pointerlockchange', () => {
     if (document.pointerLockElement === cv) {
-      if (phase !== 'run' && phase !== 'countdown' && phase !== 'calib') startRun();
+      if (phase !== 'run' && phase !== 'countdown' && phase !== 'calib' && !finderBlocked()) startRun();
     } else if (phase === 'run' || phase === 'countdown') {
       phase = 'idle'; chargeStart = 0;
       showIdle('Run cancelled');
@@ -985,7 +1132,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         moveCam(mx / steps, my / steps);
         simulate(STEP, now - (steps - 1 - i) * STEP * 1000);
       }
-      if (phase === 'run' && now - runStart >= RUN_MS) finishRun();
+      if (phase === 'run' && now - runStart >= runMs()) finishRun();
     } else applyMouse();
     const live = phase === 'run' || phase === 'countdown' || now < flash.until;
     if (live || dirty) { draw(now); dirty = false; }
