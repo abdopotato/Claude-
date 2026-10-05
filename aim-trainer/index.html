@@ -215,6 +215,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="pad">Pad width cm<input id="pad" type="number" min="20" max="120" step="1"></label>
         <label for="mousew">Mouse width cm<input id="mousew" type="number" min="3" max="12" step="0.1"></label>
         <button class="btn" id="fitPad" type="button" style="align-self:end;min-height:40px">Fit sens to pad</button>
+        <label for="sizeX">Target × crosshair<input id="sizeX" type="number" min="1" max="10" step="0.1"></label>
+        <label class="inline" for="sizeLock" style="grid-column: span 2; text-transform: none; letter-spacing: 0; font-size: 13px"><input id="sizeLock" type="checkbox"> Size targets from my crosshair</label>
         <label for="hzHp">Hazard target HP<select id="hzHp"><option value="150">150</option><option value="175">175</option><option value="200">200</option></select></label>
         <label class="inline" for="hzPerk" style="grid-column: span 2; text-transform: none; letter-spacing: 0; font-size: 13px"><input id="hzPerk" type="checkbox"> Leap perk: free 2nd shot (+65%)</label>
       </div>
@@ -366,11 +368,34 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = { dpi: 1600, sens: 2.26, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, mousew: 6.7, hzHp: 200, hzPerk: true, ...store.get('settings', {}) };
+  let settings = { dpi: 1600, sens: 2.26, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, mousew: 6.7, hzHp: 200, hzPerk: true, sizeLock: true, sizeX: 1.5, ...store.get('settings', {}) };
   // one-time switch to the pad-fitted sens (45 cm pad, ~6.7 cm Haste 2: one edge-to-edge swipe = 360°)
   if (!store.get('migr.padsens', false)) { settings.sens = 2.26; store.set('settings', settings); store.set('migr.padsens', true); }
   const progs = {}, playTiers = {};
   for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
+  // Target size lock: orbs, and the dummy's torso, are settings.sizeX times the crosshair's outer diameter
+  // (crosshair units are Overwatch 1080p pixels). Hazard keeps its real 3-4 m geometry. Benchmarks for the
+  // smaller targets are first estimates.
+  const LOCK_BENCH = { track: [45, 44, 43, 42, 40, 39, 38, 36, 34, 33, 32, 30], close: [40, 38, 36, 34, 32],
+    punch: [10, 9, 8, 7, 7], slam: [18, 19, 20, 20, 21], frenzy: [18, 19, 20, 21, 22, 23] };
+  function lockDeg() {
+    const focal1080 = 540 / (Math.tan(settings.fov / 2 * Math.PI / 180) * 9 / 16);
+    const radiusPx = settings.sizeX * (settings.xgap + settings.xthick / 2);
+    return Math.atan(radiusPx / focal1080) * 180 / Math.PI;
+  }
+  function applySizes() {
+    const L = lockDeg();
+    for (const id in LOCK_BENCH) {
+      const d = DRILLS[id];
+      d.tiers.forEach((tt, i) => {
+        if (tt.r0 === undefined) { tt.r0 = tt.r; tt.bench0 = tt.bench; }
+        // a dummy's r is half its shoulder width; its torso hitbox radius is 0.26 of 0.3 of that
+        tt.r = settings.sizeLock ? (d.kind === 'flick' ? L : L * 0.3 / 0.26) : tt.r0;
+        tt.bench = settings.sizeLock ? LOCK_BENCH[id][i] : tt.bench0;
+      });
+    }
+  }
+  applySizes();
   playTiers.sens = Math.min(progs.track.tier, 8);
   let finder = store.get('finder', null), finderResults = store.get('finderResults', []);
   let hist = store.get('hist', []).map(h => ({ drill: 'track', v: h.acc, ...h }));
@@ -420,8 +445,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function renderCalib() {
     $('calib').innerHTML = `<b>${settings.dpi}</b> DPI · sens <b>${settings.sens}</b> · FOV <b>${settings.fov}</b> · <b>${cm360(settings.sens).toFixed(1)}</b> cm/360`;
   }
-  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10], pad: [20, 120], mousew: [3, 12] };
-  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick', 'pad', 'mousew']) {
+  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10], pad: [20, 120], mousew: [3, 12], sizeX: [1, 10] };
+  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick', 'pad', 'mousew', 'sizeX']) {
     const el = $(k);
     el.value = settings[k];
     el.addEventListener('change', () => {
@@ -430,7 +455,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       settings[k] = LIMITS[k] ? Math.min(LIMITS[k][1], Math.max(LIMITS[k][0], v)) : v;
       el.value = settings[k];
       store.set('settings', settings);
-      renderCalib(); resize(); layoutCrosshair(); renderProgress();
+      applySizes(); renderCalib(); resize(); layoutCrosshair(); renderAll(); if (phase === 'idle' || phase === 'result') { resetScene(); showIdle(); }
     });
   }
 
@@ -444,6 +469,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   });
 
   if (![150, 175, 200].includes(settings.hzHp)) settings.hzHp = 200;
+  $('sizeLock').checked = settings.sizeLock;
+  $('sizeLock').addEventListener('change', () => {
+    settings.sizeLock = $('sizeLock').checked; store.set('settings', settings);
+    applySizes(); renderAll(); if (phase === 'idle' || phase === 'result') { resetScene(); showIdle(); }
+  });
   $('hzHp').value = String(settings.hzHp);
   $('hzHp').addEventListener('change', () => { settings.hzHp = +$('hzHp').value; store.set('settings', settings); if (drillId === 'hazard') showIdle(); });
   $('hzPerk').checked = settings.hzPerk;
