@@ -58,7 +58,7 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
 .stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
 .stage:fullscreen .stage-bar { display: none; }
-#fps { display: inline-block; width: 52ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
+#fps { display: inline-block; width: 64ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
 .bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-variant-numeric: tabular-nums; }
 label.inline { display: flex; align-items: center; gap: 8px; min-height: 44px; }
 label.inline input[type=checkbox] { width: 18px; min-height: 18px; accent-color: var(--target); }
@@ -924,9 +924,16 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       phase = 'idle'; resetScene(); showIdle();
     }
   });
-  let pendX = 0, pendY = 0, mouseEvents = 0;
+  let pendX = 0, pendY = 0, mouseEvents = 0, lastMoveT = 0, spikes = 0;
   document.addEventListener('mousemove', e => {
     if (document.pointerLockElement !== cv) return;
+    // Chrome on Windows sometimes reports a bogus huge jump while the mouse is locked, which snaps the view
+    // sideways and makes the target look like it teleported. No hand moves a mouse faster than about 5 m/s,
+    // so any single movement beyond that is dropped and counted.
+    const dt = Math.max(1, e.timeStamp - lastMoveT);
+    lastMoveT = e.timeStamp;
+    const maxCounts = settings.dpi / 2.54 * 500 * dt / 1000 + 50;
+    if (Math.hypot(e.movementX, e.movementY) > maxCounts) { spikes++; return; }
     pendX += e.movementX; pendY += e.movementY; mouseEvents++;
   }, { passive: true });
   function moveCam(x, y) {
@@ -986,7 +993,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (now - fpsStart >= 500) {
       const fps = fpsFrames * 1000 / (now - fpsStart);
       const ev = Math.round(mouseEvents * 1000 / (now - fpsStart));
-      fpsEl.textContent = live ? `${Math.round(fps)} fps · game 120 Hz · worst ${Math.round(worst)} ms · mouse ${ev}/s` : `${W}×${H}`;
+      fpsEl.textContent = live ? `${Math.round(fps)} fps · worst ${Math.round(worst)} ms · mouse ${ev}/s · bad jumps blocked ${spikes}` : `${W}×${H}`;
       fpsFrames = 0; fpsStart = now; worst = 0; mouseEvents = 0;
     }
     requestAnimationFrame(frame);
