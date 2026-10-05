@@ -311,23 +311,23 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       label: 'Slam & switch flicks', tag: 'Doomfist', kind: 'flick', unit: ' pts',
       // n targets alive, yaw spread (±deg), pitch range [lo, hi]
       tiers: [
-        { r: 2.6, n: 3, spread: 30, lo: -24, hi: 6,  bench: 30 },
-        { r: 2.3, n: 3, spread: 35, lo: -26, hi: 8,  bench: 32 },
-        { r: 2.0, n: 3, spread: 40, lo: -28, hi: 10, bench: 34 },
-        { r: 1.8, n: 2, spread: 45, lo: -30, hi: 12, bench: 34 },
-        { r: 1.6, n: 2, spread: 50, lo: -32, hi: 14, bench: 35 },
+        { r: 1.0, n: 3, spread: 30, lo: -24, hi: 6,  bench: 24 },
+        { r: 0.9, n: 3, spread: 35, lo: -26, hi: 8,  bench: 26 },
+        { r: 0.8, n: 3, spread: 40, lo: -28, hi: 10, bench: 28 },
+        { r: 0.7, n: 2, spread: 45, lo: -30, hi: 12, bench: 28 },
+        { r: 0.6, n: 2, spread: 50, lo: -32, hi: 14, bench: 30 },
       ],
     },
     frenzy: {
       label: 'Flick frenzy', tag: 'Flicking', kind: 'flick', unit: ' pts',
       // one orb at a time, at least `min` degrees from your crosshair; it expires after `life` ms (counts as a miss)
       tiers: [
-        { r: 2.6, n: 1, spread: 35, lo: -18, hi: 20, min: 10, life: 2000, bench: 30 },
-        { r: 2.3, n: 1, spread: 38, lo: -20, hi: 22, min: 12, life: 1700, bench: 33 },
-        { r: 2.1, n: 1, spread: 41, lo: -22, hi: 24, min: 14, life: 1450, bench: 36 },
-        { r: 1.9, n: 1, spread: 44, lo: -24, hi: 26, min: 16, life: 1250, bench: 38 },
-        { r: 1.7, n: 1, spread: 46, lo: -25, hi: 27, min: 18, life: 1100, bench: 40 },
-        { r: 1.5, n: 1, spread: 48, lo: -26, hi: 28, min: 20, life: 950,  bench: 42 },
+        { r: 0.9,  n: 1, spread: 35, lo: -18, hi: 20, min: 10, life: 2000, bench: 24 },
+        { r: 0.8,  n: 1, spread: 38, lo: -20, hi: 22, min: 12, life: 1700, bench: 26 },
+        { r: 0.7,  n: 1, spread: 41, lo: -22, hi: 24, min: 14, life: 1450, bench: 28 },
+        { r: 0.62, n: 1, spread: 44, lo: -24, hi: 26, min: 16, life: 1250, bench: 30 },
+        { r: 0.55, n: 1, spread: 46, lo: -25, hi: 27, min: 18, life: 1100, bench: 32 },
+        { r: 0.48, n: 1, spread: 48, lo: -26, hi: 28, min: 20, life: 950,  bench: 34 },
       ],
     },
     hazard: {
@@ -1250,7 +1250,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       }
       if (phase === 'run' && now - runStart >= runMs()) finishRun();
     } else applyMouse();
-    const live = phase === 'run' || phase === 'countdown' || now < flash.until;
+    const live = phase === 'run' || phase === 'countdown' || now < flash.until || orbs.some(o => gclock - o.t0 < o.dur);
     if (live || dirty) { draw(now); dirty = false; }
     fpsFrames++;
     if (now - fpsStart >= 500) {
