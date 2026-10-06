@@ -89,14 +89,10 @@ dd{margin:0; text-align:right; font-variant-numeric:tabular-nums; font-weight:50
     <aside class="sheet" aria-label="Roll properties">
       <h2><small>Colourway</small><span id="cwName">Red</span></h2>
       <div class="field">
-        <span class="lbl" id="spLbl">Row spacing <output id="spOut">95 cm</output></span>
+        <span class="lbl" id="spLbl">Row spacing (roll width) <output id="spOut">95 cm</output></span>
         <div class="seg" role="group" aria-labelledby="spLbl" id="spacing">
           <button type="button" data-v="0.90">90 cm</button><button type="button" data-v="0.95" aria-pressed="true">95 cm</button><button type="button" data-v="1.00">100 cm</button>
         </div>
-      </div>
-      <div class="field">
-        <label for="rows">Rows across the roll <output id="rowsOut">4</output></label>
-        <input type="range" id="rows" min="2" max="6" step="1" value="4">
       </div>
       <div class="field">
         <label for="len">Roll length <output id="lenOut">15.0 m</output></label>
@@ -112,7 +108,7 @@ dd{margin:0; text-align:right; font-variant-numeric:tabular-nums; font-weight:50
         <dt>Diameter, fully rolled</dt><dd id="oD">45 cm</dd>
         <dt>Unrolled so far</dt><dd id="oU">6.0 m</dd>
       </dl>
-      <p class="note">Rolled on a 10 cm cardboard core, pile facing in, the way rolls ship. Widths and diameters are worked out from the settings above; thickness and weight still need the mill's spec sheet.</p>
+      <p class="note">One roll is one prayer row, rolled on a 10 cm cardboard core with the pile facing in, the way rolls ship. Widths and diameters are worked out from the settings above; thickness and weight still need the mill's spec sheet.</p>
     </aside>
   </div>
 
@@ -128,7 +124,7 @@ const COLOURWAYS = [
   ['green','Green','Yeşil'],['copper','Copper red','Bakırı'],['lightgreen','Light green','Açık yeşil'],['darkblue','Dark blue','Koyu mavi'],['cream','Cream','Krem']];
 const CORE_R = 0.05, FACE = 0.9; // core radius (m); pile face sits at 90% of thickness so wraps never touch
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const S = {cw:'red', spacing:0.95, rows:4, L:15, t:0.010, a:6};
+const S = {cw:'red', spacing:0.95, L:15, t:0.010, a:6}; // one roll = one prayer row
 const $ = id => document.getElementById(id);
 const stage = $('stage');
 
@@ -153,33 +149,62 @@ const stage = $('stage');
   floor.rotation.x = -Math.PI/2; floor.position.y = -0.0005; floor.receiveShadow = true; scene.add(floor);
 
   const maxAniso = renderer.capabilities.getMaxAnisotropy();
-  const loader = new THREE.TextureLoader();
   const faceTex = {};
-  function tex(name){
-    if (!faceTex[name]) {
-      const t = loader.load(TEX[name].src, () => (dirty = true));
-      t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = maxAniso; t.encoding = THREE.sRGBEncoding;
-      faceTex[name] = t;
+  // Weave the flat artwork into cut pile: every ~3 mm tuft takes the pattern colour at its centre (so edges step
+  // like real knots), is shaded as a small dome, and gets fibre grain plus faint tileable mottling.
+  const PW = 512, PH = 1024, PITCH = 4;
+  function hash(i, j){ let h = (i*374761393 + j*668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+  const pile = (() => { // tuft shading per pixel, shared by all colourways
+    const shade = new Float32Array(PW*PH), knot = new Int32Array(PW*PH), bump = document.createElement('canvas');
+    bump.width = PW; bump.height = PH; const bg = bump.getContext('2d'), bd = bg.createImageData(PW, PH);
+    for (let y = 0; y < PH; y++) {
+      const j = Math.floor(y / PITCH), off = (j % 2) * PITCH/2, cy = j*PITCH + PITCH/2;
+      for (let x = 0; x < PW; x++) {
+        const i = Math.floor((x + off) / PITCH), cx = ((i*PITCH - off + PITCH/2) % PW + PW) % PW;
+        let dx = Math.abs(x + 0.5 - cx); dx = Math.min(dx, PW - dx);
+        const d2 = (dx*dx + (y + 0.5 - cy)**2) / (PITCH*0.62)**2, dome = Math.max(0, 1 - d2);
+        const fibre = Math.random(), tuft = hash(i % (PW/PITCH), j);
+        const mottle = 0.03*Math.sin(6.2832*(2*x/PW + y/PH)) + 0.025*Math.sin(6.2832*(3*x/PW - 2*y/PH) + 1.3);
+        const k = y*PW + x;
+        shade[k] = 0.74 + 0.24*dome + 0.07*(tuft - 0.5) + 0.06*(fibre - 0.5) + mottle;
+        knot[k] = Math.min(PH-1, cy)*PW + Math.floor(cx);
+        const h = Math.round(255*(0.15 + 0.7*dome + 0.15*fibre));
+        bd.data[k*4] = bd.data[k*4+1] = bd.data[k*4+2] = h; bd.data[k*4+3] = 255;
+      }
     }
-    return faceTex[name];
+    bg.putImageData(bd, 0, 0);
+    const t = new THREE.CanvasTexture(bump); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = maxAniso;
+    return {shade, knot, bump:t};
+  })();
+  function tex(name){
+    if (faceTex[name]) return faceTex[name];
+    const c = document.createElement('canvas'); c.width = PW; c.height = PH;
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = maxAniso; t.encoding = THREE.sRGBEncoding;
+    const img = new Image();
+    img.onload = () => {
+      const g = c.getContext('2d'); g.drawImage(img, 0, 0, PW, PH);
+      const src = g.getImageData(0, 0, PW, PH), out = g.createImageData(PW, PH);
+      for (let k = 0; k < PW*PH; k++) {
+        const s = pile.shade[k], q = pile.knot[k]*4, o = k*4;
+        out.data[o] = src.data[q]*s; out.data[o+1] = src.data[q+1]*s; out.data[o+2] = src.data[q+2]*s; out.data[o+3] = 255;
+      }
+      g.putImageData(out, 0, 0); t.needsUpdate = true; dirty = true;
+    };
+    img.src = TEX[name].src;
+    return faceTex[name] = t;
   }
   function canvasTex(w, h, paint, srgb){
     const c = document.createElement('canvas'); c.width = w; c.height = h; paint(c.getContext('2d'), w, h);
     const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = maxAniso;
     if (srgb) t.encoding = THREE.sRGBEncoding; return t;
   }
-  // Pile: per-pixel noise reads as cut pile tufts under raking light.
-  const pileBump = canvasTex(256, 512, (g, w, h) => {
-    const d = g.createImageData(w, h);
-    for (let i = 0; i < d.data.length; i += 4) { const v = 110 + Math.random()*120; d.data[i] = d.data[i+1] = d.data[i+2] = v; d.data[i+3] = 255; }
-    g.putImageData(d, 0, 0);
-  });
   // Backing: woven jute/polypropylene grid.
   const jute = canvasTex(64, 64, (g, w, h) => {
     g.fillStyle = '#b9a47c'; g.fillRect(0, 0, w, h);
     for (let i = 0; i < w; i += 4) { g.fillStyle = i % 8 ? '#a8926a' : '#c7b38c'; g.fillRect(i, 0, 2, h); g.fillStyle = i % 8 ? '#cdb991' : '#9d885f'; g.fillRect(0, i, w, 2); }
   }, true);
-  const faceMat = new THREE.MeshStandardMaterial({roughness:0.93, metalness:0, bumpMap:pileBump, bumpScale:0.6, side:THREE.DoubleSide});
+  const faceMat = new THREE.MeshPhysicalMaterial({roughness:0.95, metalness:0, bumpMap:pile.bump, bumpScale:0.35, side:THREE.DoubleSide});
+  faceMat.sheen = new THREE.Color(0.22, 0.21, 0.19); // soft velvet glow at grazing angles, like cut pile
   const edgeMat = new THREE.MeshStandardMaterial({roughness:1, side:THREE.DoubleSide});
   const backMat = new THREE.MeshStandardMaterial({map:jute, roughness:1, side:THREE.DoubleSide});
   const coreMat = new THREE.MeshStandardMaterial({color:0x9c7a4f, roughness:0.85, side:THREE.DoubleSide});
@@ -202,7 +227,7 @@ const stage = $('stage');
     [faceMesh, backMesh, edgeMesh, coreMesh].forEach(m => { if (m) { group.remove(m); m.geometry.dispose(); } });
     N = Math.max(240, Math.round(S.L * 140));
     fx = new Float32Array(N+1); fy = new Float32Array(N+1); bx = new Float32Array(N+1); by = new Float32Array(N+1);
-    const W = S.rows * S.spacing, archW = S.spacing * TEX[S.cw].aspect, vMax = S.rows;
+    const W = S.spacing, archW = S.spacing * TEX[S.cw].aspect, vMax = 1;
     const fg = strip((N+1)*2), bg = strip((N+1)*2), eg = strip((N+1)*4);
     const fuv = new Float32Array((N+1)*4), buv = new Float32Array((N+1)*4), euv = new Float32Array((N+1)*8);
     for (let i = 0; i <= N; i++) {
@@ -234,7 +259,7 @@ const stage = $('stage');
       const th = (R - Math.sqrt(Math.max(0, R*R - t*(s - a)/Math.PI))) * k, r = R - th/k, rf = r - ft, sn = Math.sin(th), cs = Math.cos(th);
       bx[i] = a + r*sn; by[i] = R - r*cs; fx[i] = a + rf*sn; fy[i] = R - rf*cs;
     }
-    const W = S.rows * S.spacing, fp = faceMesh.geometry.attributes.position.array, bp = backMesh.geometry.attributes.position.array, ep = edgeMesh.geometry.attributes.position.array;
+    const W = S.spacing, fp = faceMesh.geometry.attributes.position.array, bp = backMesh.geometry.attributes.position.array, ep = edgeMesh.geometry.attributes.position.array;
     for (let i = 0; i <= N; i++) {
       fp.set([fx[i], fy[i], 0, fx[i], fy[i], W], i*6);
       bp.set([bx[i], by[i], 0, bx[i], by[i], W], i*6);
@@ -247,7 +272,7 @@ const stage = $('stage');
   }
 
   // Orbit camera
-  function fit(){ const W = S.rows*S.spacing; view.dist = Math.max(S.L*0.62, W*2, 3.5); view.ty = 0.2; dirty = true; }
+  function fit(){ const W = S.spacing; view.dist = Math.max(S.L*0.5, W*3.5, 3.5); view.ty = 0.2; dirty = true; }
   function place(){
     const ce = Math.cos(view.el);
     camera.position.set(view.tx + view.dist*ce*Math.sin(view.az), view.ty + view.dist*Math.sin(view.el), view.tz + view.dist*ce*Math.cos(view.az));
@@ -319,14 +344,13 @@ const stage = $('stage');
     document.querySelectorAll('#spacing button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     S.spacing = +b.dataset.v; build(); fit();
   }));
-  $('rows').addEventListener('input', e => { S.rows = +e.target.value; build(); fit(); });
   $('len').addEventListener('input', e => { const f = S.a / S.L; S.L = +e.target.value; S.a = f*S.L; build(); fit(); });
   $('thk').addEventListener('input', e => { S.t = e.target.value/1000; pose(); });
 
   function readout(){
-    const W = S.rows*S.spacing, Dfull = 2*Math.sqrt(CORE_R*CORE_R + S.L*S.t/Math.PI);
+    const W = S.spacing, Dfull = 2*Math.sqrt(CORE_R*CORE_R + S.L*S.t/Math.PI);
     $('spOut').textContent = Math.round(S.spacing*100) + ' cm';
-    $('rowsOut').textContent = S.rows; $('lenOut').textContent = S.L.toFixed(1) + ' m'; $('thkOut').textContent = Math.round(S.t*1000) + ' mm';
+    $('lenOut').textContent = S.L.toFixed(1) + ' m'; $('thkOut').textContent = Math.round(S.t*1000) + ' mm';
     $('oW').textContent = W.toFixed(2) + ' m';
     $('oA').textContent = (W*S.L).toFixed(1) + ' m²';
     $('oD').textContent = Math.round(Dfull*100) + ' cm';
