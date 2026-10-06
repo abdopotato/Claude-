@@ -165,7 +165,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     </div>
     <div class="stage-bar">
       <span id="inputMode">Mouse input: not locked yet</span>
-      <span class="keyhint">A/D: strafe · Y: restart run</span>
+      <span class="keyhint">A/D: strafe (move yourself) · Y: restart run</span>
       <span class="bar-right">
         <span id="fps" aria-live="off"></span>
         <label class="inline" for="quality">Graphics
@@ -811,12 +811,41 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   // Lines of constant yaw are great circles and project to straight lines, so they need few points.
   const GRID = { '#25303a': [], '#171e25': [], '#3a4855': [] };
   for (let yw = -120; yw <= 120; yw += 10) {
-    const line = []; for (let pt = -60; pt <= 60; pt += 15) line.push(dir(yw, pt));
+    const line = []; for (let pt = 0; pt <= 60; pt += 15) line.push(dir(yw, pt));
     GRID[yw % 30 === 0 ? '#25303a' : '#171e25'].push(line);
   }
-  for (let pt = -60; pt <= 60; pt += 10) {
+  for (let pt = 0; pt <= 60; pt += 10) {
     const line = []; for (let yw = -120; yw <= 120; yw += 6) line.push(dir(yw, pt));
     GRID[pt === 0 ? '#3a4855' : '#171e25'].push(line);
+  }
+  // Floor: a 2 m grid at real distance, 1.6 m below your eyes. It moves past you when you strafe, so
+  // strafing reads as your camera moving, while the sky lines (infinitely far) only react to turning.
+  const player = { x: 0, z: 0 };
+  function floorPt(B, wx, wz) {
+    const x = wx - player.x, y = -EYE, z = wz - player.z;
+    const depth = x * B.f[0] + y * B.f[1] + z * B.f[2];
+    if (depth <= 0.3) return null;
+    return [W / 2 + focal * (x * B.r[0] + z * B.r[2]) / depth, H / 2 - focal * (x * B.u[0] + y * B.u[1] + z * B.u[2]) / depth];
+  }
+  function drawFloor(B) {
+    const R = 40, step = 2, x0 = Math.floor((player.x - R) / step) * step, z0 = Math.floor((player.z - R) / step) * step;
+    for (const major of [false, true]) {
+      ctx.strokeStyle = major ? '#33414f' : '#1e2831';
+      ctx.beginPath();
+      for (let a = 0; a <= 2 * R; a += step) {
+        const isMajorX = Math.round((x0 + a) / step) % 5 === 0, isMajorZ = Math.round((z0 + a) / step) % 5 === 0;
+        for (const [isMajor, along] of [[isMajorX, 'z'], [isMajorZ, 'x']]) {
+          if (isMajor !== major) continue;
+          let pen = false;
+          for (let b = 0; b <= 2 * R; b += 4) {
+            const p = along === 'z' ? floorPt(B, x0 + a, z0 + b) : floorPt(B, x0 + b, z0 + a);
+            if (!p) { pen = false; continue; }
+            pen ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); pen = true;
+          }
+        }
+      }
+      ctx.stroke();
+    }
   }
   function drawGrid(B) {
     const cx = W / 2, cy = H / 2;
@@ -865,6 +894,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     ctx.fillStyle = '#0b0f13';
     ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = Math.max(1, s);
+    drawFloor(B);
     drawGrid(B);
     let anyLit = 0;
     if (phase !== 'calib' && d.kind !== 'flick') {
@@ -1083,7 +1113,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     overlay.hidden = false;
   };
   function idleBody() {
-    return idleText() + (drill().kind === 'track' ? ' Strafe with A and D while you track.' : '') + ' Press Y any time to restart.';
+    return idleText() + (drill().kind === 'track' ? ' Strafe yourself with A and D while you track; the floor slides past as you move.' : '') + ' Press Y any time to restart.';
   }
   function idleText() {
     const T = tier(), d = drill();
@@ -1234,6 +1264,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const dv = want * STRAFE_MS - playerV, max = STRAFE_ACCEL * dt;
     playerV += Math.max(-max, Math.min(max, dv));
     if (!playerV) return;
+    player.x += playerV * Math.cos(cam.yaw * D2R) * dt;        // along your view's right-hand direction
+    player.z -= playerV * Math.sin(cam.yaw * D2R) * dt;
     const dist = 0.3 / Math.tan(tier().r * D2R);
     // moving right makes the dummy drift left in your view (and vice versa)
     tgt.yaw -= playerV * Math.cos((cam.yaw - tgt.yaw) * D2R) / dist / D2R * dt;
