@@ -241,7 +241,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <li><b>Train where you fail some of the time.</b><span>The challenge point framework says learning is fastest when a task is hard enough that you miss regularly. That's why the ladder moves you up the moment you pass instead of letting you farm an easy tier.</span></li>
         <li><b>Mix your drills.</b><span>Interleaving different tasks (contextual interference) lowers your score during a session but improves what you keep and how well it carries into real games. Rotate tracking with the Doomfist drills rather than doing 10 runs of one.</span></li>
         <li><b>Watch the target, not your hand.</b><span>Research on attentional focus finds that an external focus (keep the crosshair on the target's chest or head) learns faster than thinking about wrist or arm movement. Check your grip and posture between runs, not during them.</span></li>
-        <li><b>Keep your sensitivity fixed.</b><span>Your brain is learning a mapping from hand distance to turn angle. Every sens change resets part of it. Once you've settled on a sens (you're on 1.64), stay on it for at least a few months unless something is clearly wrong.</span></li>
+        <li><b>Keep your sensitivity fixed.</b><span>Your brain is learning a mapping from hand distance to turn angle. Every sens change resets part of it. Once you've settled on a sens (you're on 1.22), stay on it for at least a few months unless something is clearly wrong.</span></li>
         <li><b>Expect a slow first run.</b><span>The first runs of a day are lower (warm-up decrement). Judge yourself on the week's trend in the history chart, not on single runs. Flat stretches of one to two weeks are normal before a jump.</span></li>
         <li><b>Carry it into real games.</b><span>Trainers build raw control; games teach timing and target choice. After your session, play a few minutes of Doomfist in a custom game or deathmatch and use the same focus.</span></li>
       </ul>
@@ -368,9 +368,10 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = { dpi: 1600, sens: 1.64, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, mousew: 6.7, hzHp: 200, hzPerk: true, sizeLock: true, sizeX: 1.5, ...store.get('settings', {}) };
+  let settings = { dpi: 1600, sens: 1.22, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, mousew: 6.7, hzHp: 200, hzPerk: true, sizeLock: true, sizeX: 1.5, ...store.get('settings', {}) };
   // one-time switch to the pad-fitted sens (45 cm pad, ~6.7 cm Haste 2: one edge-to-edge swipe = 360°)
-  if (!store.get('migr.sens164', false)) { settings.sens = 1.64; store.set('settings', settings); store.set('migr.sens164', true); store.set('migr.sens264', true); store.set('migr.padsens', true); }
+  // low, arm-driven sens chosen to protect a previously sprained wrist
+  if (!store.get('migr.sens122', false)) { settings.sens = 1.22; store.set('settings', settings); ['sens122', 'sens164', 'sens264', 'padsens'].forEach(k => store.set('migr.' + k, true)); }
   const progs = {}, playTiers = {};
   for (const id in DRILLS) { progs[id] = store.get(progKey(id), { tier: 1, best: 0, goal: false }); playTiers[id] = progs[id].tier; }
   // Target size lock: orbs, and the dummy's torso, are settings.sizeX times the crosshair's outer diameter
