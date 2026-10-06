@@ -257,7 +257,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <div><b>Rocket Punch</b><span>Charge while tracking a moving enemy, then release only when you're on them. Most punches miss because the aim drifts during the charge, not because of the release. Hold any mouse button to charge.</span></div>
         <div><b>Hand Cannon range</b><span>Doomfist fights at a few metres, where a strafing enemy crosses your screen far faster than at range. Same tracking skill, much higher angular speed, bigger target and more jumps.</span></div>
         <div><b>Slam &amp; switch flicks</b><span>Seismic Slam is aimed at the ground under enemies, and diving the backline means snapping between targets. Orbs sit mostly below the horizon at wide angles. Score is hits minus half your misses, so clicking blindly costs you.</span></div>
-        <div><b>Flick frenzy</b><span>Pure target acquisition: one orb at a time, anywhere on screen, on a timer that shortens each tier. Trains reacting and snapping fast without overshooting, which is what landing a punch on a fleeing enemy needs.</span></div>
+        <div><b>Flick frenzy</b><span>Pure target acquisition: dots spawn one at a time in random spots on a fixed 4×4 grid, on a timer that shortens each tier while the grid widens. Trains reacting and snapping fast without overshooting, which is what landing a punch on a fleeing enemy needs.</span></div>
         <div><b>Hazard one-shot</b><span>The slash-into-shot kill (slash 70, then one Bonespur volley; with the Leap perk the shot fires a free extra shot at 65%). The slash knocks the target back; you flick to the head and fire one Bonespur volley before they recover. Pellet impacts show where each of the 10 landed. Up close, the centre pellet and the 1.8° ring fit on a head; the 3.5° corners usually don't, so most kills come from centring the head perfectly.</span></div>
         <div><b>Sens finder</b><span>The PSA method: 7 rounds comparing a lower and a higher sensitivity on the tracking drill, halving the gap toward whichever felt better. Round 1 tries half and one and a half times your current sens, so a bad starting point gets corrected fast. Run it on three different days and use the average.</span></div>
       </div>
@@ -324,15 +324,16 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       ],
     },
     frenzy: {
-      label: 'Flick frenzy', tag: 'Flicking', kind: 'flick', unit: ' pts',
-      // one orb at a time, at least `min` degrees from your crosshair; it expires after `life` ms (counts as a miss)
+      label: 'Flick frenzy', tag: 'Flicking', kind: 'flick', unit: ' pts', grid: true,
+      // one dot at a time on a fixed 4x4 grid (side = width of the square in degrees), never the same spot twice
+      // in a row; it expires after `life` ms (counts as a miss). The square grows and the timer shortens each tier.
       tiers: [
-        { r: 0.9,  n: 1, spread: 35, lo: -18, hi: 20, min: 10, life: 2000, bench: 24 },
-        { r: 0.8,  n: 1, spread: 38, lo: -20, hi: 22, min: 12, life: 1700, bench: 26 },
-        { r: 0.7,  n: 1, spread: 41, lo: -22, hi: 24, min: 14, life: 1450, bench: 28 },
-        { r: 0.62, n: 1, spread: 44, lo: -24, hi: 26, min: 16, life: 1250, bench: 30 },
-        { r: 0.55, n: 1, spread: 46, lo: -25, hi: 27, min: 18, life: 1100, bench: 32 },
-        { r: 0.48, n: 1, spread: 48, lo: -26, hi: 28, min: 20, life: 950,  bench: 34 },
+        { r: 0.9,  n: 1, side: 20, life: 2000, bench: 24 },
+        { r: 0.8,  n: 1, side: 24, life: 1700, bench: 26 },
+        { r: 0.7,  n: 1, side: 28, life: 1450, bench: 28 },
+        { r: 0.62, n: 1, side: 32, life: 1250, bench: 30 },
+        { r: 0.55, n: 1, side: 36, life: 1100, bench: 32 },
+        { r: 0.48, n: 1, side: 40, life: 950,  bench: 34 },
       ],
     },
     hazard: {
@@ -609,7 +610,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       b.setAttribute('aria-pressed', String(n === playTiers[drillId]));
       const spec = d.kind === 'burst' ? `${tt.bench} kills · ${tt.d} m · ${tt.win / 1000}s to shoot${tt.vms ? ' · strafes ' + tt.vms + ' m/s' : ''}${tt.j ? ' · jumps' : ''}`
         : d.kind === 'punch' ? `${tt.bench} hits · ${tt.charge}s charge · ${distM(tt.r)} m`
-        : d.kind === 'flick' ? (tt.life ? `${tt.bench} pts · ${tt.life / 1000}s to hit · r ${tt.r}°` : `${tt.bench} pts · ${tt.n} orbs · ±${tt.spread}° · r ${tt.r}°`)
+        : d.kind === 'flick' ? (tt.side ? `${tt.bench} pts · ${tt.life / 1000}s to hit · ${tt.side}° 4×4 grid` : `${tt.bench} pts · ${tt.n} orbs · ±${tt.spread}° · r ${tt.r}°`)
         : `${tt.bench}% · ${tt.v}°/s · ${distM(tt.r)} m${tt.j ? ' · jumps' : ''}`;
       const right = isCleared ? 'cleared' : tt.pct ? '~' + tt.pct + 'th' : n === p.tier ? 'current' : '';
       b.innerHTML = `<span class="n">${n}</span><span><span class="spec">${spec}</span><br><span class="spec sub">score ${n * POINTS_PER_TIER} unlocks ${n < d.tiers.length ? 'tier ' + (n + 1) : 'the final mark'}</span></span><span class="pct">${right}</span>`;
@@ -870,6 +871,18 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       drawDummy(B, anyLit, tgt.py + (tgt.yaw - tgt.py) * a, tgt.pp + (tgt.pitch - tgt.pp) * a);
     }
     if (d.kind === 'flick') updateOrbs();
+    if (d.grid && phase !== 'calib') {
+      ctx.fillStyle = '#25303a';
+      for (let i = 0; i < 16; i++) {
+        const c = gridCell(T, i);
+        if (projectAngles(B, c.yaw, c.pitch)) { ctx.beginPath(); ctx.arc(P.x, P.y, Math.max(1.5, 2 * s), 0, Math.PI * 2); ctx.fill(); }
+      }
+      const h = T.side / 2, corners = [[-h, -h], [h, -h], [h, h], [-h, h]];
+      ctx.strokeStyle = '#25303a'; ctx.lineWidth = Math.max(1, s);
+      ctx.beginPath();
+      corners.forEach(([y, p], i) => { if (projectAngles(B, y, p)) i ? ctx.lineTo(P.x, P.y) : ctx.moveTo(P.x, P.y); });
+      ctx.closePath(); ctx.stroke();
+    }
     if (phase !== 'calib' && d.kind === 'flick') for (const o of visibleOrbs()) {
       const lit = angTo(o.yaw, o.pitch) <= T.r;
       anyLit = anyLit || (lit ? 1 : 0);
@@ -990,7 +1003,18 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   // New targets glide from where the last one was (or from your crosshair) to their spot instead of
   // appearing there. Their position is a pure function of time, so it's identical for drawing and hit tests.
+  // 4x4 grid cell centres, in degrees, centred on the horizon straight ahead
+  const gridCell = (T, i) => ({ yaw: ((i % 4) - 1.5) * T.side / 4, pitch: (Math.floor(i / 4) - 1.5) * T.side / 4 });
+  let lastCell = -1;
   function spawnOrb(from) {
+    if (drill().grid) {
+      // dots spawn straight into a random cell (not the one just used), no glide
+      const T = tier(), now = performance.now();
+      let i; do { i = Math.floor(Math.random() * 16); } while (i === lastCell);
+      lastCell = i;
+      const c = gridCell(T, i);
+      return { yaw: c.yaw, pitch: c.pitch, fy: c.yaw, fp: c.pitch, ty: c.yaw, tp: c.pitch, t0: gclock, dur: 1, born: now };
+    }
     const o = pickSpot(), now = performance.now();
     const fy = from ? from.yaw : cam.yaw, fp = from ? from.pitch : cam.pitch;
     const speed = 70 + 10 * (playTiers[drillId] - 1);                         // average deg/s, faster at higher tiers
@@ -1048,7 +1072,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (d.kind === 'burst' && hzBest() < settings.hzHp) return `Out of reach: slash + a perfect shot (6 head pellets) is ${hzBest()} damage ${settings.hzPerk ? 'with' : 'without'} the Leap perk, less than ${settings.hzHp} HP. ${settings.hzPerk ? 'Pick a lower target HP' : 'Turn the Leap perk on or pick 150 HP'} under Your settings.`;
     if (d.kind === 'burst') return `Each rep: you leap in, the slash lands (70) and knocks the dummy about ${T.kb} m sideways, ${T.d} m away. Flick to the head and fire one volley within ${T.win / 1000} s (watch the ring). Kills ${settings.hzHp} HP when slash + shot reach it: the shot must add ${Math.ceil(hzNeed())} damage${settings.hzPerk ? ' before the +65% perk' : ''} (head pellets 15, body 7.5). Get ${T.bench} kills in 30 s.`;
     if (d.kind === 'punch') return `Hold any mouse button to charge for at least ${T.charge} s while staying on the dummy, then release on it. A landed punch knocks it back. Land ${T.bench} punches in 30 s.`;
-    if (drillId === 'frenzy') return `One orb at a time, anywhere on screen. Hit it within ${T.life / 1000} s (watch the ring) or it counts as a miss. Score is hits minus half your misses; reach ${T.bench}.`;
+    if (drillId === 'frenzy') return `Dots spawn one at a time in a random spot on a fixed 4×4 grid (${T.side}° wide). Hit each within ${T.life / 1000} s (watch the ring) or it counts as a miss. Score is hits minus half your misses; reach ${T.bench}.`;
     if (d.kind === 'flick') return `Flick to an orb and click it. Most sit below the horizon, like aiming Seismic Slam. Score is hits minus half your misses; reach ${T.bench}.`;
     if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel, about ${distM(T.r)} m away. Stay on the dummy for ${T.bench}% of the run.`;
     return `Keep the crosshair on the dummy (about ${distM(T.r)} m away) for ${T.bench}% of the run to clear this tier. Head and body both count. The mouse locks to the game; press Esc to leave.`;
