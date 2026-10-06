@@ -59,6 +59,7 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .ov-cta { font: 500 13px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--target); padding: 12px 18px; }
 .stage-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--panel); font: 13px/1.4 var(--font-data); color: var(--muted); }
 .stage:fullscreen .stage-bar { display: none; }
+.keyhint { font: 12px/1 var(--font-data); color: var(--muted); }
 #fps { display: inline-block; width: 64ch; white-space: nowrap; overflow: hidden; text-align: right; contain: layout paint; }
 .bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-variant-numeric: tabular-nums; }
 label.inline { display: flex; align-items: center; gap: 8px; min-height: 44px; }
@@ -164,6 +165,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     </div>
     <div class="stage-bar">
       <span id="inputMode">Mouse input: not locked yet</span>
+      <span class="keyhint">Y: restart run</span>
       <span class="bar-right">
         <span id="fps" aria-live="off"></span>
         <label class="inline" for="quality">Graphics
@@ -957,7 +959,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
           hud.at = now; hud.pass = v >= T.bench;
           const extra = d.kind === 'track' ? `  ·  head ${timeTotal ? Math.round(headOn / timeTotal * 100) : 0}%` : d.kind === 'burst' ? `  ·  head ${volleys ? (headPellets / volleys).toFixed(1) : '0'}/10 per shot` : `  ·  ${misses} miss${misses === 1 ? '' : 'es'}`;
           hud.left = drillId === 'sens' ? `${fmt(v)}  ·  sens ${s2(finderSens())}` : `${fmt(v)}  ·  need ${fmt(T.bench)}${extra}`;
-          hud.right = `${Math.max(0, (runMs() - (now - runStart)) / 1000).toFixed(1)} s`;
+          hud.right = `Y restart  ·  ${Math.max(0, (runMs() - (now - runStart)) / 1000).toFixed(1)} s`;
         }
         ctx.textAlign = 'left'; ctx.fillStyle = hud.pass ? '#6fe8b8' : '#e4e9ed';
         ctx.fillText(hud.left, 18 * s, 18 * s);
@@ -1068,6 +1070,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     overlay.hidden = false;
   };
   function idleBody() {
+    return idleText() + ' Press Y any time to restart.';
+  }
+  function idleText() {
     const T = tier(), d = drill();
     if (d.kind === 'burst' && hzBest() < settings.hzHp) return `Out of reach: slash + a perfect shot (6 head pellets) is ${hzBest()} damage ${settings.hzPerk ? 'with' : 'without'} the Leap perk, less than ${settings.hzHp} HP. ${settings.hzPerk ? 'Pick a lower target HP' : 'Turn the Leap perk on or pick 150 HP'} under Your settings.`;
     if (d.kind === 'burst') return `Each rep: you leap in, the slash lands (70) and knocks the dummy about ${T.kb} m sideways, ${T.d} m away. Flick to the head and fire one volley within ${T.win / 1000} s (watch the ring). Kills ${settings.hzHp} HP when slash + shot reach it: the shot must add ${Math.ceil(hzNeed())} damage${settings.hzPerk ? ' before the +65% perk' : ''} (head pellets 15, body 7.5). Get ${T.bench} kills in 30 s.`;
@@ -1098,13 +1103,13 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     orbs = [];
     if (drill().kind === 'flick') for (let i = 0; i < tier().n; i++) orbs.push(spawnOrb());
   }
-  function startRun() {
+  function startRun(quick) {
     resetScene();
     timeOn = 0; timeTotal = 0; headOn = 0; hits = 0; misses = 0; chargeStart = 0;
     rep = { phase: 'gap', until: 0 }; reps = 0; volleys = 0; headPellets = 0; lastVolley = null;
     phase = 'countdown';
     simAcc = 0;
-    runStart = performance.now() + COUNTDOWN_MS;
+    runStart = performance.now() + (quick ? 700 : COUNTDOWN_MS);
     overlay.hidden = true;
   }
   let resultAt = 0, calibZero = 0;
@@ -1194,6 +1199,15 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   overlay.addEventListener('click', onClick);
   $('pickLo').addEventListener('click', e => { e.stopPropagation(); finderPick('lo'); });
   $('pickHi').addEventListener('click', e => { e.stopPropagation(); finderPick('hi'); });
+  // Y: quick restart in any drill. The run in progress is dropped without being logged or scored.
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'y' && e.key !== 'Y') return;
+    if (e.target.closest && e.target.closest('input, select, textarea')) return;
+    if (phase === 'calib' || finderBlocked()) return;
+    e.preventDefault();
+    if (document.pointerLockElement === cv) startRun(true);
+    else lock();                       // locking starts a fresh run
+  });
   document.addEventListener('keydown', e => {
     if (drillId !== 'sens' || !finder || finder.step !== 2) return;
     if (e.key === '1') finderPick('lo');
