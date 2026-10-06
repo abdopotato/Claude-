@@ -220,8 +220,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="pad">Pad width cm<input id="pad" type="number" min="20" max="120" step="1"></label>
         <label for="mousew">Mouse width cm<input id="mousew" type="number" min="3" max="12" step="0.1"></label>
         <button class="btn" id="fitPad" type="button" style="align-self:end;min-height:40px">Fit sens to pad</button>
-        <label for="sizeX">Target × crosshair<input id="sizeX" type="number" min="1" max="10" step="0.1"></label>
-        <label class="inline" for="sizeLock" style="grid-column: span 2; text-transform: none; letter-spacing: 0; font-size: 13px"><input id="sizeLock" type="checkbox"> Size targets from my crosshair</label>
+        <label for="sizeX">Orb × crosshair<input id="sizeX" type="number" min="1" max="10" step="0.1"></label>
+        <label class="inline" for="sizeLock" style="grid-column: span 2; text-transform: none; letter-spacing: 0; font-size: 13px"><input id="sizeLock" type="checkbox"> Size orbs from my crosshair</label>
         <label for="hzHp">Hazard target HP<select id="hzHp"><option value="150">150</option><option value="175">175</option><option value="200">200</option></select></label>
         <label class="inline" for="hzPerk" style="grid-column: span 2; text-transform: none; letter-spacing: 0; font-size: 13px"><input id="hzPerk" type="checkbox"> Leap perk: free 2nd shot (+65%)</label>
       </div>
@@ -400,17 +400,17 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       const d = DRILLS[id];
       d.tiers.forEach((tt, i) => {
         if (tt.r0 === undefined) { tt.r0 = tt.r; tt.bench0 = tt.bench; }
-        // a dummy's r is half its shoulder width; its torso hitbox radius is 0.26 of 0.3 of that
-        tt.r = settings.sizeLock ? (d.kind === 'flick' ? L : L * 0.3 / 0.26) : tt.r0;
-        tt.bench = settings.sizeLock ? LOCK_BENCH[id][i] : tt.bench0;
-        // the small dummy stands ~33 m away: strafe at realistic hero speeds (m/s) converted to degrees per second
+        // Dummies are real hero size at each tier's real distance (6.6-15.6 m; ~4 m for Hand Cannon range).
+        // Only the flick orbs are sized from the crosshair.
+        const lockThis = settings.sizeLock && d.kind === 'flick';
+        tt.r = lockThis ? L : tt.r0;
+        tt.bench = lockThis ? LOCK_BENCH[id][i] : tt.bench0;
+        // dummies strafe at realistic hero speeds (m/s), converted to degrees per second at their distance
         if (tt.v !== undefined) {
           if (tt.v0 === undefined) { tt.v0 = tt.v; tt.a0 = tt.a; }
-          if (settings.sizeLock && LOCK_SPEED[id]) {
-            const dist = 0.3 / Math.tan(tt.r * Math.PI / 180);
-            tt.v = Math.round(LOCK_SPEED[id][i] / dist * 180 / Math.PI * 10) / 10;
-            tt.a = tt.a0 * tt.v / tt.v0;
-          } else { tt.v = tt.v0; tt.a = tt.a0; }
+          const dist = 0.3 / Math.tan(tt.r * Math.PI / 180);
+          tt.v = Math.round(LOCK_SPEED[id][i] / dist * 180 / Math.PI * 10) / 10;
+          tt.a = tt.a0 * tt.v / tt.v0;
         }
       });
     }
@@ -903,6 +903,19 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     const cx = W / 2, cy = H / 2, k = Math.max(1, s * 1.5);
     setCrosshair(now < flash.until ? flash.cls : anyLit === 2 ? 'head' : anyLit ? 'lit' : '');
     // Rocket Punch charge ring
+    if (d.kind === 'track' && phase === 'run') {
+      if (now - lastHitMark < 90) {
+        ctx.strokeStyle = lastHitHead ? '#ffe066' : '#ffffff'; ctx.lineWidth = 2 * k;
+        const a = 7 * k, b = 13 * k;
+        ctx.beginPath();
+        for (const [sx, sy] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) { ctx.moveTo(cx + sx * a, cy + sy * a); ctx.lineTo(cx + sx * b, cy + sy * b); }
+        ctx.stroke();
+      }
+      if (!firing && now - notFiringSince > 400) {
+        setFont(fontSmall); ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillStyle = '#ef6f5e';
+        ctx.fillText('Hold left mouse to shoot', cx, cy + 40 * s);
+      }
+    }
     if (d.kind === 'burst' && phase === 'run') {
       if (now - slashAt < 260 && projectAngles(B, tgt.yaw, tgt.pitch + (1.2 - EYE) * dpm())) {
         ctx.strokeStyle = '#e4e9ed'; ctx.lineWidth = 4 * k; ctx.globalAlpha = 1 - (now - slashAt) / 260;
@@ -1079,8 +1092,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (d.kind === 'punch') return `Hold any mouse button to charge for at least ${T.charge} s while staying on the dummy, then release on it. A landed punch knocks it back. Land ${T.bench} punches in 30 s.`;
     if (drillId === 'frenzy') return `Four dots at a time in random spots on a fixed 4×4 grid (${T.side}° wide); each one you hit respawns somewhere free. Hit each within ${T.life / 1000} s of it appearing (watch its ring) or it counts as a miss. Score is hits minus half your misses; reach ${T.bench}.`;
     if (d.kind === 'flick') return `Flick to an orb and click it. Most sit below the horizon, like aiming Seismic Slam. Score is hits minus half your misses; reach ${T.bench}.`;
-    if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel, about ${distM(T.r)} m away. Stay on the dummy for ${T.bench}% of the run.`;
-    return `Keep the crosshair on the dummy (about ${distM(T.r)} m away) for ${T.bench}% of the run to clear this tier. Head and body both count. The mouse locks to the game; press Esc to leave.`;
+    if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel, about ${distM(T.r)} m away. Hold left mouse to shoot; only time firing on the dummy counts. Reach ${T.bench}% of the run.`;
+    return `Hold left mouse to shoot and keep the dummy (about ${distM(T.r)} m away) under your crosshair. Only time firing on target counts; reach ${T.bench}% of the run to clear this tier. Head and body both count. The mouse locks to the game; press Esc to leave.`;
   }
   function showIdle(msg) {
     dirty = true;
@@ -1089,7 +1102,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
       if (finder.done) return show('Sens finder · done', `Your sens: ${s2(finder.final)}`, `${cm360(finder.final).toFixed(1)} cm/360. Use it from the panel below, or press Search again there.`, 'Search again below');
       const side = finderSide();
       return show(`Sens finder · round ${finder.round} of ${PSA_ROUNDS} · run ${finder.step + 1} of 2 · 20 s`, msg || 'Click to start',
-        `This run uses the ${side === 'lo' ? 'lower' : 'higher'} sens: ${s2(finder[side])} (${cm360(finder[side]).toFixed(1)} cm/360). Track the dummy the way you would in a game.`, 'Click to start');
+        `This run uses the ${side === 'lo' ? 'lower' : 'higher'} sens: ${s2(finder[side])} (${cm360(finder[side]).toFixed(1)} cm/360). Hold left mouse to shoot and track the dummy the way you would in a game.`, 'Click to start');
     }
     const practice = playTiers[drillId] < prog().tier;
     show(`${drill().label} · tier ${playTiers[drillId]} · 30 s${practice ? ' · warm-up' : ''}`,
@@ -1107,6 +1120,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     resetScene();
     timeOn = 0; timeTotal = 0; headOn = 0; hits = 0; misses = 0; chargeStart = 0;
     rep = { phase: 'gap', until: 0 }; reps = 0; volleys = 0; headPellets = 0; lastVolley = null;
+    notFiringSince = 0; lastHitMark = -1e9;
     phase = 'countdown';
     simAcc = 0;
     runStart = performance.now() + (quick ? 700 : COUNTDOWN_MS);
@@ -1216,6 +1230,12 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   cv.addEventListener('click', onClick);
   cv.addEventListener('contextmenu', e => e.preventDefault());
   const setFlash = col => { flash.until = performance.now() + 140; flash.col = col; flash.cls = col === '#6fe8b8' ? 'hit' : 'miss'; };
+  // Tracking drills: hold the left button to shoot. Only time spent firing on the dummy scores.
+  let firing = false, lastHitMark = -1e9, lastHitHead = false, notFiringSince = 0;
+  cv.addEventListener('mousedown', e => {
+    if (document.pointerLockElement === cv && e.button === 0 && drill().kind === 'track') firing = true;
+  });
+  document.addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
   cv.addEventListener('mousedown', () => {
     if (phase !== 'run' || document.pointerLockElement !== cv) return;
     applyMouse();
@@ -1241,7 +1261,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (document.pointerLockElement === cv) {
       if (phase !== 'run' && phase !== 'countdown' && phase !== 'calib' && !finderBlocked()) startRun();
     } else if (phase === 'run' || phase === 'countdown') {
-      phase = 'idle'; chargeStart = 0;
+      phase = 'idle'; chargeStart = 0; firing = false;
       showIdle('Run cancelled');
     } else if (phase === 'calib') {
       phase = 'idle'; resetScene(); showIdle();
@@ -1320,9 +1340,10 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (phase !== 'run') return;          // countdown: the dummy moves, nothing is scored yet
     if (k === 'track') {
       timeTotal += dt;
-      const h = dummyHit();
-      if (h) timeOn += dt;
+      const h = firing ? dummyHit() : 0;
+      if (h) { timeOn += dt; if (t - lastHitMark > 100) { lastHitMark = t; lastHitHead = h === 2; } }   // ~10 hit markers a second
       if (h === 2) headOn += dt;
+      if (firing) notFiringSince = t; else if (!notFiringSince) notFiringSince = t;
     }
     const life = tier().life;
     if (life) orbs.forEach((o, i) => { if (t - o.born > life) { misses++; setFlash('#ef6f5e'); orbs[i] = spawnOrb(o); } });
