@@ -165,7 +165,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     </div>
     <div class="stage-bar">
       <span id="inputMode">Mouse input: not locked yet</span>
-      <span class="keyhint">Y: restart run</span>
+      <span class="keyhint">A/D: strafe · Y: restart run</span>
       <span class="bar-right">
         <span id="fps" aria-live="off"></span>
         <label class="inline" for="quality">Graphics
@@ -1083,7 +1083,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     overlay.hidden = false;
   };
   function idleBody() {
-    return idleText() + ' Press Y any time to restart.';
+    return idleText() + (drill().kind === 'track' ? ' Strafe with A and D while you track.' : '') + ' Press Y any time to restart.';
   }
   function idleText() {
     const T = tier(), d = drill();
@@ -1213,6 +1213,32 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   overlay.addEventListener('click', onClick);
   $('pickLo').addEventListener('click', e => { e.stopPropagation(); finderPick('lo'); });
   $('pickHi').addEventListener('click', e => { e.stopPropagation(); finderPick('hi'); });
+  // A/D (or arrow keys): strafe yourself, Overwatch-style. You move sideways at hero walk speed relative to
+  // where you're looking, which shifts the dummy's angle by your sideways speed over its distance.
+  const keys = { left: false, right: false };
+  const STRAFE_MS = 5.5, STRAFE_ACCEL = 60;          // m/s, m/s^2 (Overwatch movement starts almost instantly)
+  let playerV = 0;
+  function onMoveKey(e, down) {
+    if (e.target.closest && e.target.closest('input, select, textarea')) return;
+    const k = e.key.toLowerCase();
+    if (k === 'a' || k === 'arrowleft') keys.left = down;
+    else if (k === 'd' || k === 'arrowright') keys.right = down;
+    else return;
+    if (document.pointerLockElement === cv) e.preventDefault();
+  }
+  document.addEventListener('keydown', e => onMoveKey(e, true));
+  document.addEventListener('keyup', e => onMoveKey(e, false));
+  window.addEventListener('blur', () => { keys.left = keys.right = false; });
+  function stepPlayer(dt) {
+    const want = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+    const dv = want * STRAFE_MS - playerV, max = STRAFE_ACCEL * dt;
+    playerV += Math.max(-max, Math.min(max, dv));
+    if (!playerV) return;
+    const dist = 0.3 / Math.tan(tier().r * D2R);
+    // moving right makes the dummy drift left in your view (and vice versa)
+    tgt.yaw -= playerV * Math.cos((cam.yaw - tgt.yaw) * D2R) / dist / D2R * dt;
+  }
+
   // Y: quick restart in any drill. The run in progress is dropped without being logged or scored.
   document.addEventListener('keydown', e => {
     if (e.key !== 'y' && e.key !== 'Y') return;
@@ -1337,6 +1363,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     tgt.py = tgt.yaw; tgt.pp = tgt.pitch;
     if (k === 'burst' && phase === 'run') stepBurst(dt, t);
     else if (k !== 'flick') stepTarget(dt, t);
+    if (k === 'track') stepPlayer(dt);
     if (phase !== 'run') return;          // countdown: the dummy moves, nothing is scored yet
     if (k === 'track') {
       // accuracy = time on the dummy / time spent firing; pauses don't count against you
