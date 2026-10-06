@@ -43,12 +43,13 @@ h3 { font: 700 20px/1.1 var(--font-display); letter-spacing: .02em; text-transfo
 .stage:fullscreen { display: grid; place-items: center; border: 0; }
 .stage:fullscreen .screen { width: min(100vw, 177.78vh); }
 canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
-.xhair { position: absolute; left: 50%; top: 50%; overflow: visible; width: 1px; height: 1px; pointer-events: none; }
-.xhair circle { fill: none; stroke: #ffffff; shape-rendering: geometricPrecision; }
-.xhair.lit circle { stroke: #6fe8b8; }
-.xhair.head circle { stroke: #ffe066; }
-.xhair.hit circle { stroke: #6fe8b8; }
-.xhair.miss circle { stroke: #ef6f5e; }
+.xhair { position: absolute; left: 50%; top: 50%; overflow: visible; width: 1px; height: 1px; pointer-events: none; filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 0.5px #000); }
+.xhair circle, .xhair line { fill: none; stroke: #ffffff; shape-rendering: crispEdges; }
+.xhair circle { shape-rendering: geometricPrecision; }
+.xhair.lit circle, .xhair.lit line { stroke: #6fe8b8; }
+.xhair.head circle, .xhair.head line { stroke: #ffe066; }
+.xhair.hit circle, .xhair.hit line { stroke: #6fe8b8; }
+.xhair.miss circle, .xhair.miss line { stroke: #ef6f5e; }
 .overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(8, 11, 14, .72); text-align: center; cursor: pointer; }
 .overlay-card { max-width: 540px; display: grid; gap: 10px; justify-items: center; }
 .ov-eyebrow { font: 500 12px/1 var(--font-data); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
@@ -147,7 +148,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   <section class="stage" id="stage">
     <div class="screen">
       <canvas id="cv" aria-label="Aim trainer. Click to lock the mouse and start a 30 second run."></canvas>
-      <svg id="xhair" class="xhair" aria-hidden="true"><circle id="xcirc" cx="0" cy="0" r="3"></circle></svg>
+      <svg id="xhair" class="xhair" aria-hidden="true"><circle id="xcirc" cx="0" cy="0" r="3"></circle><g id="xcross"><line></line><line></line><line></line><line></line></g></svg>
       <div class="overlay" id="overlay">
         <div class="overlay-card">
           <div class="ov-eyebrow" id="ovEyebrow">Tier 1 · 30 s run</div>
@@ -210,7 +211,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <label for="dpi">DPI<input id="dpi" type="number" min="100" max="32000" step="50"></label>
         <label for="sens">OW sens<input id="sens" type="number" min="0.01" max="100" step="0.01"></label>
         <label for="fov">FOV<input id="fov" type="number" min="60" max="103" step="1"></label>
-        <label for="xgap">Crosshair gap<input id="xgap" type="number" min="1" max="30" step="1"></label>
+        <label for="xtype">Crosshair<select id="xtype"><option value="cross">Cross</option><option value="circle">Circle</option></select></label>
+        <label for="xgap">Centre gap<input id="xgap" type="number" min="1" max="30" step="1"></label>
+        <label for="xlen">Length<input id="xlen" type="number" min="1" max="30" step="1"></label>
         <label for="xthick">Thickness<input id="xthick" type="number" min="0.5" max="10" step="0.5"></label>
         <label for="pad">Pad width cm<input id="pad" type="number" min="20" max="120" step="1"></label>
         <label for="mousew">Mouse width cm<input id="mousew" type="number" min="3" max="12" step="0.1"></label>
@@ -368,8 +371,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     set(k, v) { try { localStorage.setItem('tl.' + k, JSON.stringify(v)); } catch {} },
   };
   const progKey = id => id === 'track' ? 'prog' : 'prog.' + id;
-  let settings = { dpi: 1600, sens: 1.22, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, mousew: 6.7, hzHp: 200, hzPerk: true, sizeLock: true, sizeX: 1.5, ...store.get('settings', {}) };
+  let settings = { dpi: 1600, sens: 1.22, fov: 103, quality: 'fast', raw: true, lowLatency: false, xgap: 3, xthick: 2, pad: 45, mousew: 6.7, hzHp: 200, hzPerk: true, sizeLock: true, sizeX: 1.5, xtype: 'cross', xlen: 6, ...store.get('settings', {}) };
   // one-time switch to the pad-fitted sens (45 cm pad, ~6.7 cm Haste 2: one edge-to-edge swipe = 360°)
+  if (!store.get('migr.cross', false)) { Object.assign(settings, { xtype: 'cross', xlen: 6, xgap: 4 }); store.set('settings', settings); store.set('migr.cross', true); }
   // low, arm-driven sens chosen to protect a previously sprained wrist
   if (!store.get('migr.sens122', false)) { settings.sens = 1.22; store.set('settings', settings); ['sens122', 'sens164', 'sens264', 'padsens'].forEach(k => store.set('migr.' + k, true)); }
   const progs = {}, playTiers = {};
@@ -383,7 +387,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   const LOCK_SPEED = { track: [2.5, 3, 3.5, 4, 4.5, 5, 5.5, 5.5, 6, 6.5, 7, 7.5], close: [3, 4, 5, 5.5, 6.5], punch: [2.5, 3.5, 4.5, 5.5, 6.5] };
   function lockDeg() {
     const focal1080 = 540 / (Math.tan(settings.fov / 2 * Math.PI / 180) * 9 / 16);
-    const radiusPx = settings.sizeX * (settings.xgap + settings.xthick / 2);
+    const radiusPx = settings.sizeX * (settings.xtype === 'cross' ? settings.xgap + settings.xlen : settings.xgap + settings.xthick / 2);
     return Math.atan(radiusPx / focal1080) * 180 / Math.PI;
   }
   function applySizes() {
@@ -457,8 +461,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   function renderCalib() {
     $('calib').innerHTML = `<b>${settings.dpi}</b> DPI · sens <b>${settings.sens}</b> · FOV <b>${settings.fov}</b> · <b>${cm360(settings.sens).toFixed(1)}</b> cm/360`;
   }
-  const LIMITS = { fov: [60, 103], xgap: [1, 30], xthick: [0.5, 10], pad: [20, 120], mousew: [3, 12], sizeX: [1, 10] };
-  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xthick', 'pad', 'mousew', 'sizeX']) {
+  const LIMITS = { fov: [60, 103], xgap: [1, 30], xlen: [1, 30], xthick: [0.5, 10], pad: [20, 120], mousew: [3, 12], sizeX: [1, 10] };
+  for (const k of ['dpi', 'sens', 'fov', 'xgap', 'xlen', 'xthick', 'pad', 'mousew', 'sizeX']) {
     const el = $(k);
     el.value = settings[k];
     el.addEventListener('change', () => {
@@ -481,6 +485,11 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   });
 
   if (![150, 175, 200].includes(settings.hzHp)) settings.hzHp = 200;
+  $('xtype').value = settings.xtype;
+  $('xtype').addEventListener('change', () => {
+    settings.xtype = $('xtype').value; store.set('settings', settings);
+    applySizes(); layoutCrosshair(); renderAll(); if (phase === 'idle' || phase === 'result') { resetScene(); showIdle(); }
+  });
   $('sizeLock').checked = settings.sizeLock;
   $('sizeLock').addEventListener('change', () => {
     settings.sizeLock = $('sizeLock').checked; store.set('settings', settings);
@@ -694,12 +703,22 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
   }
   new ResizeObserver(() => { resize(); renderSpark(); layoutCrosshair(); }).observe(cv);
   // Sizes follow Overwatch's 1080p pixel units, scaled to the game view's height.
-  const xhair = $('xhair'), xcirc = $('xcirc');
+  const xhair = $('xhair'), xcirc = $('xcirc'), xlines = [...$('xcross').children];
   let xState = '';
   function layoutCrosshair() {
     const k = cv.clientHeight / 1080;
+    const cross = settings.xtype === 'cross', sw = String(Math.max(0.75, settings.xthick * k));
+    xcirc.style.display = cross ? 'none' : '';
+    $('xcross').style.display = cross ? '' : 'none';
     xcirc.setAttribute('r', String(Math.max(0.5, settings.xgap * k)));
-    xcirc.setAttribute('stroke-width', String(Math.max(0.75, settings.xthick * k)));
+    xcirc.setAttribute('stroke-width', sw);
+    // Overwatch "Cross": four lines that start centre-gap from the middle and run crosshair-length outward
+    const a = settings.xgap * k, b = (settings.xgap + settings.xlen) * k;
+    [[a, 0, b, 0], [-a, 0, -b, 0], [0, a, 0, b], [0, -a, 0, -b]].forEach(([x1, y1, x2, y2], i) => {
+      const l = xlines[i];
+      l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+      l.setAttribute('stroke-width', sw);
+    });
   }
   function setCrosshair(state) {
     if (state !== xState) { xhair.setAttribute('class', 'xhair ' + state); xState = state; }
