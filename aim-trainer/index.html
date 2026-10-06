@@ -1092,8 +1092,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     if (d.kind === 'punch') return `Hold any mouse button to charge for at least ${T.charge} s while staying on the dummy, then release on it. A landed punch knocks it back. Land ${T.bench} punches in 30 s.`;
     if (drillId === 'frenzy') return `Four dots at a time in random spots on a fixed 4×4 grid (${T.side}° wide); each one you hit respawns somewhere free. Hit each within ${T.life / 1000} s of it appearing (watch its ring) or it counts as a miss. Score is hits minus half your misses; reach ${T.bench}.`;
     if (d.kind === 'flick') return `Flick to an orb and click it. Most sit below the horizon, like aiming Seismic Slam. Score is hits minus half your misses; reach ${T.bench}.`;
-    if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel, about ${distM(T.r)} m away. Hold left mouse to shoot; only time firing on the dummy counts. Reach ${T.bench}% of the run.`;
-    return `Hold left mouse to shoot and keep the dummy (about ${distM(T.r)} m away) under your crosshair. Only time firing on target counts; reach ${T.bench}% of the run to clear this tier. Head and body both count. The mouse locks to the game; press Esc to leave.`;
+    if (drillId === 'close') return `Close-range strafes, as in a Hand Cannon duel, about ${distM(T.r)} m away. Hold left mouse to shoot. Accuracy is the share of your firing time spent on the dummy; pausing doesn't lower it. Reach ${T.bench}%.`;
+    return `Hold left mouse to shoot and keep the dummy (about ${distM(T.r)} m away) under your crosshair. Accuracy is the share of your firing time spent on the dummy, so pausing doesn't lower it; reach ${T.bench}% to clear this tier. Head and body both count. The mouse locks to the game; press Esc to leave.`;
   }
   function showIdle(msg) {
     dirty = true;
@@ -1181,7 +1181,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     }
     if (d.kind === 'burst') body += ` ${reps} slashes, ${volleys} shots fired, ${misses} too slow. Head pellets ${volleys ? (headPellets / volleys).toFixed(1) : 0}/10 per shot; a kill on ${settings.hzHp} HP needed ${Math.ceil(hzNeed())} damage from the shot${settings.hzPerk ? ' before the perk' : ''}.`;
     else if (d.kind !== 'track') body += ` ${hits} hit${hits === 1 ? '' : 's'}, ${misses} miss${misses === 1 ? '' : 'es'}.`;
-    else body += ` On the head ${timeTotal ? Math.round(headOn / timeTotal * 100) : 0}% of the run.`;
+    else body += ` On the head ${timeTotal ? Math.round(headOn / timeTotal * 100) : 0}% of your firing time.`;
     renderAll();
     show(`${d.label} · tier ${pt} · needed ${fmt(T.bench)}`, title, body, 'Click for next run', passed ? 'pass' : '');
   }
@@ -1339,7 +1339,8 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     else if (k !== 'flick') stepTarget(dt, t);
     if (phase !== 'run') return;          // countdown: the dummy moves, nothing is scored yet
     if (k === 'track') {
-      timeTotal += dt;
+      // accuracy = time on the dummy / time spent firing; pauses don't count against you
+      if (firing) timeTotal += dt;
       const h = firing ? dummyHit() : 0;
       if (h) { timeOn += dt; if (t - lastHitMark > 100) { lastHitMark = t; lastHitHead = h === 2; } }   // ~10 hit markers a second
       if (h === 2) headOn += dt;
