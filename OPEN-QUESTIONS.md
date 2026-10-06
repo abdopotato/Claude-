@@ -50,6 +50,15 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | 26 | Typical lead time in weeks, and do you offer a warranty? (FAQ) | Delivery FAQ gives no number; no warranty FAQ yet |
 | 27 | Connect the mosquecarpetscanada.ca domain as the primary domain, and a business email | Not changed (Shopify settings) |
 
+## From the 3D roll viewer (2026-10-06, `previews/3d/`)
+
+| # | Question | What the preview says for now |
+|---|----------|-------------------------------|
+| 28 | Is **CM 101** a design you'll sell, and in all ten colourways? Do the names (Red, Pink, Brick, Blue, Natural, Green, Copper red, Light green, Dark blue, Cream) replace the product page's current colourway names? | All ten shown, catalogue names in English and Turkish |
+| 29 | Mill spec sheet for CM 101: total thickness, pile height, weight per m², width of one prayer space (arch), widths and maximum length per roll | Thickness slider defaults to 10 mm, marked "To confirm"; no weight or prayer-space count shown |
+| 30 | May we use the mill's catalogue artwork on the site, and can the mill send high-resolution pattern files? | Patterns cut from the catalogue page (soft detail) |
+| 31 | Do you want the 3D roll on product pages? It would load only when a buyer taps "View in 3D", so page speed stays the same | Standalone preview only; theme unchanged |
+
 ## Answered
 
 _(none yet)_
