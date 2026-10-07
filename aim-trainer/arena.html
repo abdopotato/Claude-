@@ -81,6 +81,21 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 a { color: var(--amber); }
 .group + .group { margin-top: 16px; }
 .msg { font: 500 13px var(--font-data); color: var(--red); }
+.ladder-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; margin-top: 18px; }
+.ladder-head .score { font: 500 13px var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
+.ladder-head .score b { color: var(--fg); font-weight: 500; }
+.tiers { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; max-height: 330px; overflow-y: auto; }
+.tiers button { width: 100%; display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; min-height: 40px; padding: 5px 10px; background: transparent; border: 1px solid transparent; color: var(--muted); font: 12.5px/1.3 var(--font-data); text-align: left; cursor: pointer; font-variant-numeric: tabular-nums; }
+.tiers button:disabled { cursor: not-allowed; opacity: .45; }
+.tiers button:not(:disabled):hover { border-color: var(--line); color: var(--fg); }
+.tiers button[aria-pressed="true"] { border-color: var(--amber); color: var(--fg); }
+.tiers .n { font: 700 18px/1 var(--font-display); color: var(--fg); }
+.tiers .cleared .n { color: var(--teal); }
+.tiers .st { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; }
+.tiers .current .st { color: var(--amber); }
+.tiers .cleared .st { color: var(--teal); }
+.notes { margin: 12px 0 0; padding: 10px 0 0; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+.notes b { color: var(--fg); font-weight: 500; }
 
 /* results */
 .res { max-width: 620px; }
@@ -123,6 +138,11 @@ a { color: var(--amber); }
           <span class="keys"><kbd>Y</kbd> quick restart · <kbd>Esc</kbd> leave</span>
         </div>
         <p class="msg" id="menuMsg" hidden></p>
+        <div id="ladderBox" hidden>
+          <div class="ladder-head"><h2 style="margin:0" id="ladderTitle">Tier ladder</h2><span class="score" id="ladderScore"></span></div>
+          <ol class="tiers" id="tiers"></ol>
+          <p class="notes"><b>How to train:</b> track smoothly, react fast to each direction change, then commit to the target's new direction. React rather than predict. Accuracy matters more than raw score: move up only when you clear the required % consistently.</p>
+        </div>
         <p class="note" style="margin-top:12px">Progression ladder, Doomfist drills and the sens finder live in <a href="https://claude.ai/artifact/2XBNrj2WAhtqdhbu8xFoMQ" target="_blank" rel="noopener">Tracking Ladder</a>.</p>
       </section>
       <section aria-labelledby="h-set">
@@ -203,7 +223,7 @@ a { color: var(--amber); }
   const S = Object.assign({ sens: 1.64, dpi: 1600, fov: 103, raw: true, fireGate: true, seeded: false, seed: 1234,
     quality: 'balanced', xgap: 4, xlen: 6, xthick: 2 }, store.get('settings', {}));
   let PB = store.get('pb', {});
-  let modeId = store.get('mode', 'air');
+  let modeId = store.get('mode', 'ground');
 
   // ---------- seeded randomness ----------
   function mulberry32(a) {
@@ -255,20 +275,27 @@ a { color: var(--amber); }
   };
   const ent3d = []; // everything a run adds to the scene
   function addMesh(obj) { scene.add(obj); ent3d.push(obj); return obj; }
-  function clearScene() { for (const o of ent3d) scene.remove(o); ent3d.length = 0; }
+  function clearScene() { for (const o of ent3d) { scene.remove(o); if (o.userData.dispose) o.geometry.dispose(); } ent3d.length = 0; }
 
   // ---------- movement: reactive strafing with a soft repel near the bounds ----------
   // Picks a new random direction, speed and acceleration every 0.15-0.6 s. Near an edge the target is pushed
   // back by a force that grows smoothly with depth, and its own steering into the edge fades out, so it
   // curves away instead of stopping dead on an invisible wall.
   function makeMover(rng, pos, o) {
-    return { rng, o, pos: pos.clone(), prev: pos.clone(), vel: new V3(), want: new V3(), accel: 30, next: 0, phase: rng() * 6.283 };
+    return { rng, o, pos: pos.clone(), prev: pos.clone(), vel: new V3(), want: new V3(), accel: 30, next: 0, changes: 0, phase: rng() * 6.283 };
   }
   const tmpW = new V3(), tmpR = new V3();
+  // tier cap: never faster than the tier's angular speed at the target's current distance, and never over 6.5 m/s
+  function capSpeed(m) {
+    if (!m.o || !m.o.maxAng) return;
+    const d = Math.hypot(m.pos.x, m.pos.y - 1.6, m.pos.z), vmax = Math.min(6.5, m.o.maxAng * d), v = m.vel.length();
+    if (v > vmax) m.vel.multiplyScalar(vmax / v);
+  }
   function stepMover(m, dt, t) {
     const o = m.o, r = m.rng;
     if (t >= m.next) {
       m.next = t + lerp(o.interval[0], o.interval[1], r());
+      m.changes++;
       const d = new V3(o.axes.includes('x') ? r() * 2 - 1 : 0, o.axes.includes('y') ? r() * 2 - 1 : 0, o.axes.includes('z') ? r() * 2 - 1 : 0);
       if (d.lengthSq() < 1e-4) d.x = 1;
       m.want.copy(d.normalize()).multiplyScalar(lerp(o.speed[0], o.speed[1], r()));
@@ -278,7 +305,7 @@ a { color: var(--amber); }
     if (o.pulse) { m.phase += dt * o.pulse; tmpW.multiplyScalar(0.3 + 0.7 * Math.abs(Math.sin(m.phase))); }  // constant speed-up / slow-down
     tmpR.set(0, 0, 0);
     for (const k of o.axes) {
-      const lo = o.min[k], hi = o.max[k], M = o.margin, p = m.pos[k];
+      const lo = o.min[k], hi = o.max[k], M = typeof o.margin === 'number' ? o.margin : o.margin[k], p = m.pos[k];
       const dl = p - lo, dh = hi - p;
       if (dl < M) { const u = Math.min(1.5, 1 - dl / M); tmpR[k] += o.repel * u * u; if (tmpW[k] < 0) tmpW[k] *= Math.max(0, 1 - u); }
       if (dh < M) { const u = Math.min(1.5, 1 - dh / M); tmpR[k] -= o.repel * u * u; if (tmpW[k] > 0) tmpW[k] *= Math.max(0, 1 - u); }
@@ -286,6 +313,7 @@ a { color: var(--amber); }
     const dv = tmpW.sub(m.vel), max = m.accel * dt, len = dv.length();
     if (len > max) dv.multiplyScalar(max / len);
     m.vel.add(dv).addScaledVector(tmpR, dt);
+    capSpeed(m);
     m.pos.addScaledVector(m.vel, dt);
   }
   const INTERVAL = [0.15, 0.6];
@@ -305,36 +333,92 @@ a { color: var(--amber); }
     return hit.length ? hit[0].object : null;
   }
 
+  // ---------- tier ladder for the reactive tracking modes ----------
+  // Distance stays short because Bonespur is close range; difficulty comes from angular speed, how often the
+  // target changes direction, acceleration and jumps. Linear speed = angular speed (rad) x distance, which lands
+  // at 4.2-5.3 m/s (real Overwatch strafe speed) and is capped at 6.5 m/s.
+  const ACCEL = { low: [12, 25], medium: [25, 50], high: [50, 90] };   // m/s^2
+  const TIERS = [
+    [65, 30, 8.0, 0.60, 0.90, 'low', false],
+    [65, 32, 8.0, 0.55, 0.85, 'low', false],
+    [64, 34, 7.5, 0.50, 0.80, 'low', false],
+    [64, 36, 7.5, 0.45, 0.75, 'medium', false],
+    [63, 38, 7.0, 0.40, 0.70, 'medium', true],
+    [62, 40, 7.0, 0.35, 0.65, 'medium', true],
+    [61, 42, 6.5, 0.30, 0.60, 'medium', true],
+    [60, 44, 6.5, 0.28, 0.55, 'high', true],
+    [59, 47, 6.0, 0.25, 0.50, 'high', true],
+    [58, 50, 6.0, 0.22, 0.45, 'high', true],
+    [56, 52, 5.5, 0.20, 0.40, 'high', true],
+    [55, 55, 5.5, 0.18, 0.35, 'high', true],
+  ].map(([req, ang, dist, c0, c1, acc, jump], i) => ({ n: i + 1, req, ang, dist, c: [c0, c1], acc, jump, vlin: Math.min(6.5, ang * D2R * dist) }));
+  const POINTS = 5, TRACK_IDS = ['ground', 'air'];
+  const progs = store.get('prog', {}), playTier = store.get('playTier', {});
+  for (const id of TRACK_IDS) {
+    if (!progs[id]) progs[id] = { tier: 1, best: 0, goal: false };
+    if (!playTier[id] || playTier[id] > progs[id].tier) playTier[id] = progs[id].tier;
+  }
+  // score 5 unlocks tier 2 ... score 60 is the final mark
+  const ladderScore = id => { const p = progs[id]; return p.goal ? 60 : (p.tier - 1) * POINTS + POINTS * Math.min(1, p.best / TIERS[p.tier - 1].req); };
+  const tierLabel = T => `${T.req}% · ${T.ang}°/s · ${T.dist.toFixed(1)} m · every ${T.c[0].toFixed(2)}–${T.c[1].toFixed(2)} s · ${T.acc} accel${T.jump ? ' · jumps' : ''}`;
+
+  // Parallel side walls along your line of sight bound sideways travel without ever standing between you and the target.
+  const SIDE_MAT = new THREE.MeshLambertMaterial({ color: 0x3a4855, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false });
+  function sideWalls(X, D, h) {
+    for (const sx of [-1, 1]) {
+      const len = D + 5, w = addMesh(new THREE.Mesh(new THREE.PlaneGeometry(len, h), SIDE_MAT));
+      w.userData.dispose = true;
+      w.position.set(sx * X, h / 2, -len / 2 + 0.5); w.rotation.y = Math.PI / 2;
+    }
+  }
+  const JUMP_V = 6.67, JUMP_G = 22.2;   // ~1 m hop, ~0.6 s in the air (Overwatch jump)
+  function trackStep(run, dt, t, air) {
+    const e = run.ents[0], m = e.mv, before = m.changes;
+    stepMover(m, dt, t);
+    const changed = m.changes !== before;
+    if (air) {
+      if (changed && run.T.jump && m.rng() < 0.3) { m.vel.y += 5; capSpeed(m); }   // sudden vertical pop, still within the cap
+    } else {
+      if (changed && run.T.jump && e.jy === 0 && m.rng() < 0.3) e.jv = JUMP_V;   // hop on a direction change
+      if (e.jv || e.jy > 0) { e.jy += e.jv * dt; e.jv -= JUMP_G * dt; if (e.jy <= 0) { e.jy = 0; e.jv = 0; } }
+      m.pos.y = 0.9 + e.jy;
+    }
+  }
+
   // ---------- modes ----------
   const EYE = 1.6;
   const MODES = {
-    air: {
-      name: 'Reactive Air', kind: 'track', tag: 'Tracking',
-      blurb: 'A sphere strafes up, down and sideways about 12 m away, changing direction every 0.15–0.6 s with varied speed and acceleration.',
-      init(run) {
-        const mesh = addMesh(new THREE.Mesh(GEO.air, makeMat(COL.idle)));
-        const mv = makeMover(rngFor(1), new V3(0, 3.2, -12), { axes: ['x', 'y'], min: { x: -7, y: 0.8 }, max: { x: 7, y: 7.5 }, margin: 2, repel: 70,
-          speed: [2.5, 9], accel: [15, 80], interval: INTERVAL });
-        run.ents = [{ mesh, mv }];
-      },
-      step(run, dt, t) { stepMover(run.ents[0].mv, dt, t); },
-      targets: run => [run.ents[0].mesh],
-    },
     ground: {
       name: 'Reactive Ground', kind: 'track', tag: 'Tracking',
-      blurb: 'A hero-sized cylinder strafes across the floor in every direction, 8–18 m away, with the same 0.15–0.6 s direction changes.',
+      blurb: 'A hero-sized cylinder strafes across the floor in every direction at close range, with fast, random direction changes. Score: time on target.',
       init(run) {
+        const T = run.T, D = T.dist, X = 0.6 * D;
+        sideWalls(X + 1.2, D, 3);
         const mesh = addMesh(new THREE.Mesh(GEO.ground, makeMat(COL.idle)));
-        const mv = makeMover(rngFor(2), new V3(0, 0.9, -12), { axes: ['x', 'z'], min: { x: -8, z: -18 }, max: { x: 8, z: -8 }, margin: 2.5, repel: 60,
-          speed: [2, 7.5], accel: [20, 90], interval: INTERVAL });
+        const mv = makeMover(rngFor(2 + 1000 * T.n), new V3(0, 0.9, -D), { axes: ['x', 'z'], min: { x: -X, z: -(D + 1.2) }, max: { x: X, z: -(D - 1.2) },
+          margin: { x: 1.5, z: 0.6 }, repel: 60, speed: [0.75 * T.vlin, T.vlin], accel: ACCEL[T.acc], interval: T.c, maxAng: T.ang * D2R });
+        run.ents = [{ mesh, mv, jy: 0, jv: 0 }];
+      },
+      step(run, dt, t) { trackStep(run, dt, t, false); },
+      targets: run => [run.ents[0].mesh],
+    },
+    air: {
+      name: 'Reactive Air', kind: 'track', tag: 'Tracking',
+      blurb: 'A sphere strafes up, down and sideways in the air at close range, with the same fast, random direction changes. Score: time on target.',
+      init(run) {
+        const T = run.T, D = T.dist, X = 0.6 * D, top = 1.6 + 0.45 * D;
+        sideWalls(X + 1.2, D, top + 1.5);
+        const mesh = addMesh(new THREE.Mesh(GEO.air, makeMat(COL.idle)));
+        const mv = makeMover(rngFor(1 + 1000 * T.n), new V3(0, (1 + top) / 2, -D), { axes: ['x', 'y'], min: { x: -X, y: 1.0 }, max: { x: X, y: top },
+          margin: { x: 1.5, y: 1.0 }, repel: 60, speed: [0.75 * T.vlin, T.vlin], accel: ACCEL[T.acc], interval: T.c, maxAng: T.ang * D2R });
         run.ents = [{ mesh, mv }];
       },
-      step(run, dt, t) { stepMover(run.ents[0].mv, dt, t); },
+      step(run, dt, t) { trackStep(run, dt, t, true); },
       targets: run => [run.ents[0].mesh],
     },
     switch: {
       name: 'Hazard Close Switch', kind: 'click', tag: 'Clicking',
-      blurb: 'Three bots strafe 5–10 m away, speeding up and slowing down nonstop. 150 HP: two body volleys or one headshot. Fire rate 1.75/s like Bonespur.',
+      blurb: 'Three bots strafe 5–10 m away, always speeding up or slowing down, and pass through each other. 150 HP: two body volleys or one headshot. Fire rate 1.75/s like Bonespur. Score: kills and accuracy.',
       init(run) {
         run.ents = [-3.5, 0, 3.5].map((x, i) => {
           const g = addMesh(new THREE.Group());
@@ -362,16 +446,6 @@ a { color: var(--amber); }
             }
             b.mv.pos.copy(p); b.mv.prev.copy(p); b.mv.vel.set(0, 0, 0); b.mv.next = 0;
             b.hp = 150; b.alive = true; b.spawnT = t;
-          }
-        }
-        // soft separation so bots never overlap
-        for (let i = 0; i < bots.length; i++) for (let j = i + 1; j < bots.length; j++) {
-          const a = bots[i], c = bots[j];
-          if (!a.alive || !c.alive) continue;
-          const dx = c.mv.pos.x - a.mv.pos.x, dz = c.mv.pos.z - a.mv.pos.z, d = Math.hypot(dx, dz);
-          if (d < 1.4 && d > 1e-4) {
-            const push = (1.4 - d) * 18 * dt, nx = dx / d, nz = dz / d;
-            a.mv.vel.x -= nx * push; a.mv.vel.z -= nz * push; c.mv.vel.x += nx * push; c.mv.vel.z += nz * push;
           }
         }
       },
@@ -450,7 +524,7 @@ a { color: var(--amber); }
     },
   };
   const MODE_IDS = Object.keys(MODES);
-  if (!MODES[modeId]) modeId = 'air';
+  if (!MODES[modeId]) modeId = 'ground';
 
   // ---------- run lifecycle ----------
   let run = null;
@@ -459,6 +533,7 @@ a { color: var(--amber); }
   function startRun(quick) {
     clearScene();
     run = { mode: modeId, M: MODES[modeId], t: -(quick ? QUICK_S : COUNTDOWN_S), phase: 'countdown', st: newStats(), ents: [], lastShot: -9, lastHit: -9, lastHitHead: false, acc: 0 };
+    if (TRACK_IDS.includes(modeId)) { run.tier = playTier[modeId]; run.T = TIERS[run.tier - 1]; }
     cam.pos.set(0, EYE, 0); cam.prev.copy(cam.pos);
     run.M.init(run);
     for (const e of run.ents) if (e.mv) e.mv.prev.copy(e.mv.pos);
@@ -468,11 +543,25 @@ a { color: var(--amber); }
   function endRun() {
     run.phase = 'done';
     const r = summary(run);
-    const key = `${run.mode}|${S.seeded ? 'seed ' + S.seed : 'random'}`;
+    const key = pbKey(run.mode, run.tier);
+    if (run.T) {
+      // tier ladder: a run at your current tier that meets the required % unlocks the next one
+      const T = run.T, p = progs[run.mode], passed = r.score >= T.req;
+      let status = passed ? 'cleared' : `${(T.req - r.score).toFixed(1)} short`;
+      if (run.tier === p.tier && !p.goal) {
+        p.best = Math.max(p.best, r.score);
+        if (passed) {
+          if (p.tier < TIERS.length) { p.tier++; p.best = 0; playTier[run.mode] = p.tier; status = `cleared · tier ${p.tier} unlocked`; }
+          else { p.goal = true; status = 'cleared · final tier done'; }
+        }
+        store.set('prog', progs); store.set('playTier', playTier);
+      } else if (run.tier < p.tier || p.goal) status += ' (practice tier)';
+      r.rows.unshift(['Tier', `${T.n} · needs ${T.req}%`], ['Result', status], ['Ladder score', `${ladderScore(run.mode).toFixed(1)} / 60`]);
+    }
     const prev = PB[key];
     const isPB = !prev || r.score > prev.score || (r.score === prev.score && (r.acc || 0) > (prev.acc || 0));
     if (isPB) { PB[key] = { score: r.score, acc: r.acc, at: Date.now() }; store.set('pb', PB); }
-    $('resMode').textContent = `${run.M.name} · ${S.seeded ? 'seed ' + S.seed : 'random targets'}`;
+    $('resMode').textContent = `${run.M.name}${run.T ? ' · tier ' + run.tier : ''} · ${S.seeded ? 'seed ' + S.seed : 'random targets'}`;
     $('resBig').innerHTML = r.big;
     $('resPB').hidden = !isPB;
     const rows = [...r.rows, ['Personal best', isPB ? 'this run' : r.fmt(PB[key])]];
@@ -481,6 +570,7 @@ a { color: var(--amber); }
     document.exitPointerLock?.();
     renderModes();
   }
+  const pbKey = (mode, tier) => `${mode}${tier ? '|t' + tier : ''}|${S.seeded ? 'seed ' + S.seed : 'random'}`;
   function summary(r) {
     const s = r.st, acc = s.shots ? s.hits / s.shots * 100 : 0;
     if (r.M.kind === 'track') {
@@ -494,7 +584,9 @@ a { color: var(--amber); }
     const rows = [['Hits', s.hits], ['Shots', s.shots], ['Accuracy', acc.toFixed(1) + '%']];
     if (r.mode === 'switch') {
       const ttk = s.ttk.length ? s.ttk.reduce((a, b) => a + b, 0) / s.ttk.length : 0;
-      rows.push(['Kills', s.kills], ['Headshots', s.heads], ['Average time to kill', s.ttk.length ? ttk.toFixed(2) + ' s' : '–']);
+      rows.unshift(['Kills', s.kills]);
+      rows.push(['Headshots', s.heads], ['Average time to kill', s.ttk.length ? ttk.toFixed(2) + ' s' : '–']);
+      return { score: s.kills, acc: +acc.toFixed(1), fmt: p => `${p.score} kills · ${(p.acc || 0).toFixed(1)}%`, big: `${s.kills} <small>kills · ${acc.toFixed(1)}% accuracy</small>`, rows };
     } else rows.push(['Targets spawned', s.spawned], ['Targets missed', s.expired]);
     return { score: s.hits, acc: +acc.toFixed(1), fmt: p => `${p.score} hits · ${(p.acc || 0).toFixed(1)}%`, big: `${s.hits} <small>hits · ${acc.toFixed(1)}% accuracy</small>`, rows };
   }
@@ -618,15 +710,33 @@ a { color: var(--amber); }
   }
   function renderModes() {
     const box = $('modes'); box.innerHTML = '';
-    const scope = S.seeded ? 'seed ' + S.seed : 'random';
     for (const id of MODE_IDS) {
-      const M = MODES[id], p = PB[`${id}|${scope}`];
+      const M = MODES[id], tr = TRACK_IDS.includes(id), p = PB[pbKey(id, tr ? playTier[id] : 0)];
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'mode'; b.setAttribute('aria-pressed', String(id === modeId));
-      const pbText = p ? (M.kind === 'track' ? `PB ${p.score.toFixed(1)}% time on target` : `PB ${p.score} hits · ${(p.acc || 0).toFixed(1)}%`) : 'No personal best yet';
+      const pbText = (tr ? `Tier ${playTier[id]} · ` : '') + (p ? (tr ? `PB ${p.score.toFixed(1)}%` : id === 'switch' ? `PB ${p.score} kills · ${(p.acc || 0).toFixed(1)}%` : `PB ${p.score} hits · ${(p.acc || 0).toFixed(1)}%`) : 'no personal best yet');
       b.innerHTML = `<div class="top"><b>${M.name}</b><span class="tag">${M.tag}</span></div><p>${M.blurb}</p><span class="pb">${pbText}${S.seeded ? ' · seed ' + S.seed : ''}</span>`;
       b.addEventListener('click', () => { modeId = id; store.set('mode', id); renderModes(); });
       box.appendChild(b);
+    }
+    renderLadder();
+  }
+  function renderLadder() {
+    const tr = TRACK_IDS.includes(modeId);
+    $('ladderBox').hidden = !tr;
+    if (!tr) return;
+    const p = progs[modeId];
+    $('ladderTitle').textContent = `Tier ladder · ${MODES[modeId].name}`;
+    $('ladderScore').innerHTML = `Score <b>${ladderScore(modeId).toFixed(1)}</b> / 60 · next unlock at ${p.goal ? '–' : p.tier * POINTS}`;
+    const ol = $('tiers'); ol.innerHTML = '';
+    for (const T of TIERS) {
+      const cleared = T.n < p.tier || p.goal, current = T.n === p.tier && !p.goal;
+      const li = document.createElement('li'); li.className = cleared ? 'cleared' : current ? 'current' : '';
+      const b = document.createElement('button');
+      b.type = 'button'; b.disabled = T.n > p.tier; b.setAttribute('aria-pressed', String(T.n === playTier[modeId]));
+      b.innerHTML = `<span class="n">${T.n}</span><span>${tierLabel(T)}</span><span class="st">${cleared ? 'cleared' : current ? 'current' : 'score ' + (T.n - 1) * POINTS}</span>`;
+      b.addEventListener('click', () => { playTier[modeId] = T.n; store.set('playTier', playTier); renderModes(); });
+      li.appendChild(b); ol.appendChild(li);
     }
   }
 
@@ -718,8 +828,8 @@ a { color: var(--amber); }
         hudAt = now;
         const s = run.st;
         $('hudL').textContent = M.kind === 'track'
-          ? `${M.name} · ${(s.fireT ? s.onT / s.fireT * 100 : 0).toFixed(1)}% on target`
-          : `${M.name} · ${s.hits} hits · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc${run.mode === 'switch' ? ` · ${s.kills} kills` : ` · ${s.expired} missed`}`;
+          ? `${M.name} · tier ${run.tier} · ${(s.fireT ? s.onT / s.fireT * 100 : 0).toFixed(1)}% on target · need ${run.T.req}%`
+          : run.mode === 'switch' ? `${M.name} · ${s.kills} kills · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc` : `${M.name} · ${s.hits} hits · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc · ${s.expired} missed`;
         $('hudR').textContent = `${S.seeded ? 'seed ' + S.seed + ' · ' : ''}Y restart · ${Math.max(0, RUN_S - Math.max(0, t)).toFixed(1)} s`;
       }
     } else poseCamera(cam.pos);
