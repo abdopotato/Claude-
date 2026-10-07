@@ -1,0 +1,735 @@
+<title>Reactive Arena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-window 3D arena; a menu panel (modes left, settings right) and a results panel float over it; a thin HUD on top during runs. Same dark range look as Tracking Ladder. */
+:root {
+  --bg: #0c1014;
+  --panel: #141a20;
+  --panel-2: #1a2128;
+  --line: #25303a;
+  --fg: #e4e9ed;
+  --muted: #9aa6b1;
+  --amber: #f0b340;
+  --teal: #6fe8b8;
+  --red: #ef6f5e;
+  --font-display: "Saira Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; background: var(--bg); color: var(--fg); margin: 0; overflow: hidden; }
+body { font: 15px/1.5 var(--font-body); }
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* HUD */
+.hud { position: fixed; inset: 0; pointer-events: none; }
+.hud-bar { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: space-between; gap: 16px; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px; font: 500 15px/1.3 var(--font-data); font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px #000; }
+.hud-bar .dim { color: var(--muted); }
+.timebar { position: absolute; left: 0; top: 0; height: 4px; background: var(--amber); }
+.countdown { position: absolute; left: 50%; top: 22%; transform: translateX(-50%); font: 700 88px/1 var(--font-display); text-shadow: 0 2px 8px #000; }
+.prompt { position: absolute; left: 50%; top: calc(50% + 34px); transform: translateX(-50%); font: 500 14px var(--font-data); color: var(--red); text-shadow: 0 1px 2px #000; white-space: nowrap; }
+.xh { position: absolute; left: 50%; top: 50%; width: 1px; height: 1px; overflow: visible; filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 0.5px #000); }
+.xh line { stroke: #fff; shape-rendering: crispEdges; }
+.xh.on line.c { stroke: var(--teal); }
+.xh .hm line { stroke: #fff; opacity: 0; }
+.xh .hm.show line { opacity: 1; }
+.xh .hm.head line { stroke: #ffe066; }
+.xh circle { fill: none; stroke: var(--amber); stroke-linecap: round; }
+
+/* overlays */
+.overlay { position: fixed; inset: 0; display: grid; place-items: center; padding-inline: 16px; padding-block: calc(16px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)); background: rgba(8, 11, 14, .78); overflow-y: auto; }
+.panel { width: 100%; max-width: 1040px; background: var(--panel); border: 1px solid var(--line); padding: 20px; display: grid; gap: 18px; }
+.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 20px; }
+h1 { font: 700 34px/1 var(--font-display); letter-spacing: .02em; text-transform: uppercase; margin: 0; }
+h1 span { color: var(--amber); }
+h2 { font: 700 13px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.calib { font: 13px/1.4 var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
+.calib b { color: var(--fg); font-weight: 500; }
+.cols { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 520px) { .modes { grid-template-columns: 1fr; } }
+.mode { text-align: left; background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); padding: 12px 14px; display: grid; gap: 6px; cursor: pointer; font: inherit; min-width: 0; }
+.mode:hover { border-color: var(--muted); }
+.mode[aria-pressed="true"] { border-color: var(--amber); }
+.mode .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.mode b { font: 700 20px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .02em; }
+.tag { font: 500 11px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.mode[aria-pressed="true"] .tag { color: var(--amber); }
+.mode p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+.mode .pb { font: 500 12.5px var(--font-data); color: var(--teal); font-variant-numeric: tabular-nums; }
+.start-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 12px; }
+.btn { min-height: 44px; padding: 10px 18px; border: 1px solid var(--line); background: transparent; color: var(--fg); font: 500 13px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--amber); border-color: var(--amber); color: #14100a; }
+.btn.primary:hover { filter: brightness(1.06); }
+.keys { font: 12.5px var(--font-data); color: var(--muted); }
+.keys kbd { font: inherit; color: var(--fg); border: 1px solid var(--line); padding: 1px 6px; }
+.note { margin: 0; font-size: 13px; color: var(--muted); }
+.note.warn { color: var(--red); }
+.fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+label { display: grid; gap: 4px; font: 12px/1.2 var(--font-data); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); min-width: 0; }
+input[type=number], select { width: 100%; min-height: 40px; background: var(--bg); border: 1px solid var(--line); color: var(--fg); font: 15px var(--font-data); padding: 6px 8px; }
+.checks { display: grid; gap: 4px; margin-top: 10px; }
+label.check { display: flex; align-items: center; gap: 10px; min-height: 36px; text-transform: none; letter-spacing: 0; font: 14px var(--font-body); color: var(--fg); }
+label.check input { width: 18px; height: 18px; accent-color: var(--amber); }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+a { color: var(--amber); }
+.group + .group { margin-top: 16px; }
+.msg { font: 500 13px var(--font-data); color: var(--red); }
+
+/* results */
+.res { max-width: 620px; }
+.res .big { font: 700 72px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.res .big small { font: 500 18px var(--font-data); color: var(--muted); }
+.badge { display: inline-block; font: 500 12px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase; padding: 6px 8px; border: 1px solid var(--teal); color: var(--teal); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 0; font-size: 14.5px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.loaderr { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--red); background: var(--bg); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<canvas id="gl" aria-label="3D aim training arena"></canvas>
+
+<div class="hud" id="hud" hidden>
+  <div class="timebar" id="timebar"></div>
+  <div class="hud-bar"><span id="hudL"></span><span id="hudR" class="dim"></span></div>
+  <div class="countdown" id="count" hidden></div>
+  <div class="prompt" id="prompt" hidden>Hold left mouse to fire</div>
+  <svg class="xh" id="xh" aria-hidden="true">
+    <g id="xlines"><line class="c"></line><line class="c"></line><line class="c"></line><line class="c"></line></g>
+    <g class="hm" id="hm"><line></line><line></line><line></line><line></line></g>
+    <circle id="cool" r="22"></circle>
+  </svg>
+</div>
+
+<div class="overlay" id="menu">
+  <div class="panel">
+    <div class="head">
+      <h1>Reactive <span>Arena</span></h1>
+      <div class="calib" id="calib"></div>
+    </div>
+    <div class="cols">
+      <section aria-labelledby="h-modes">
+        <h2 id="h-modes">Modes · 60 s runs</h2>
+        <div class="modes" id="modes"></div>
+        <div class="start-row">
+          <button class="btn primary" id="startBtn" type="button">Start run</button>
+          <span class="keys"><kbd>Y</kbd> quick restart · <kbd>Esc</kbd> leave</span>
+        </div>
+        <p class="msg" id="menuMsg" hidden></p>
+        <p class="note" style="margin-top:12px">Progression ladder, Doomfist drills and the sens finder live in <a href="https://claude.ai/artifact/2XBNrj2WAhtqdhbu8xFoMQ" target="_blank" rel="noopener">Tracking Ladder</a>.</p>
+      </section>
+      <section aria-labelledby="h-set">
+        <div class="group">
+          <h2 id="h-set">Mouse and view</h2>
+          <div class="fields">
+            <label for="sens">OW sens<input id="sens" type="number" step="0.01" min="0.01" max="100"></label>
+            <label for="dpi">DPI<input id="dpi" type="number" step="50" min="100" max="32000"></label>
+            <label for="fov">FOV<input id="fov" type="number" step="1" min="60" max="103"></label>
+          </div>
+          <div class="checks">
+            <label class="check" for="raw"><input id="raw" type="checkbox"> Raw input (no Windows acceleration)</label>
+            <label class="check" for="fireGate"><input id="fireGate" type="checkbox"> Tracking: only count time while firing</label>
+          </div>
+        </div>
+        <div class="group">
+          <h2>Consistent runs</h2>
+          <div class="fields">
+            <label class="check" for="seeded" style="grid-column: span 2"><input id="seeded" type="checkbox"> Seeded targets</label>
+            <label for="seed">Seed<input id="seed" type="number" step="1" min="0" max="999999999"></label>
+          </div>
+          <p class="note">With a seed, targets move and spawn the same way every run, so scores compare fairly. Personal bests are kept separately per seed.</p>
+        </div>
+        <div class="group">
+          <h2>Crosshair and graphics</h2>
+          <div class="fields">
+            <label for="xgap">Centre gap<input id="xgap" type="number" step="1" min="0" max="30"></label>
+            <label for="xlen">Length<input id="xlen" type="number" step="1" min="0" max="30"></label>
+            <label for="xthick">Thickness<input id="xthick" type="number" step="0.5" min="0.5" max="10"></label>
+            <label for="quality" style="grid-column: span 3">Graphics<select id="quality"><option value="fast">Fast (laptops)</option><option value="balanced">Balanced</option><option value="sharp">Sharp (full resolution)</option></select></label>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="results" hidden>
+  <div class="panel res">
+    <div class="head"><h2 id="resMode" style="margin:0"></h2><span class="badge" id="resPB" hidden>New personal best</span></div>
+    <div class="big" id="resBig"></div>
+    <dl class="kv" id="resKV"></dl>
+    <div class="start-row">
+      <button class="btn primary" id="retryBtn" type="button">Retry (Y)</button>
+      <button class="btn" id="menuBtn" type="button">Modes and settings</button>
+    </div>
+  </div>
+</div>
+
+<div class="loaderr" id="loadErr" hidden>Three.js could not load, so the 3D arena can't start. Check your connection and reload.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  // Load Three.js from cdnjs; fall back to jsDelivr if that fails.
+  function boot() {
+    if (window.THREE) return main();
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js';
+    s.onload = main;
+    s.onerror = () => { document.getElementById('loadErr').hidden = false; };
+    document.head.appendChild(s);
+  }
+
+  function main() {
+  const THREE = window.THREE, V3 = THREE.Vector3;
+  const $ = id => document.getElementById(id);
+  const D2R = Math.PI / 180, OW_YAW = 0.0066;          // Overwatch: degrees per mouse count at sens 1
+  const RUN_S = 60, COUNTDOWN_S = 2, QUICK_S = 0.7, HZ = 120, STEP = 1 / HZ;
+  const HAZARD_ROF = 1.75;                              // Bonespur volleys per second
+  const lerp = (a, b, u) => a + (b - a) * u;
+
+  // ---------- storage + settings ----------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('arena.' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('arena.' + k, JSON.stringify(v)); } catch {} },
+  };
+  const S = Object.assign({ sens: 1.64, dpi: 1600, fov: 103, raw: true, fireGate: true, seeded: false, seed: 1234,
+    quality: 'balanced', xgap: 4, xlen: 6, xthick: 2 }, store.get('settings', {}));
+  let PB = store.get('pb', {});
+  let modeId = store.get('mode', 'air');
+
+  // ---------- seeded randomness ----------
+  function mulberry32(a) {
+    return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+  // one independent stream per target, so a target's behaviour doesn't depend on what the others did
+  const rngFor = stream => S.seeded ? mulberry32((S.seed | 0) ^ Math.imul(stream + 1, 0x9E3779B1)) : Math.random;
+
+  // ---------- renderer, camera, arena ----------
+  const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: S.quality !== 'fast', powerPreference: 'high-performance' });
+  renderer.setClearColor(0x0c1014, 1);
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0c1014, 45, 120);
+  const camera = new THREE.PerspectiveCamera(70, 1, 0.05, 400);
+  camera.rotation.order = 'YXZ';
+  scene.add(new THREE.HemisphereLight(0xe6edf2, 0x20282f, 0.95));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(12, 25, 10); scene.add(sun);
+
+  const A = { minX: -30, maxX: 30, minZ: -55, maxZ: 15, h: 18 };   // arena walls (metres)
+  function gridTexture(bg, line, mid) {
+    const c = document.createElement('canvas'); c.width = c.height = 256;
+    const g = c.getContext('2d');
+    g.fillStyle = bg; g.fillRect(0, 0, 256, 256);
+    g.strokeStyle = mid; g.lineWidth = 2; g.beginPath(); g.moveTo(128, 0); g.lineTo(128, 256); g.moveTo(0, 128); g.lineTo(256, 128); g.stroke();
+    g.strokeStyle = line; g.lineWidth = 3; g.strokeRect(1.5, 1.5, 253, 253);
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4;
+    return t;
+  }
+  function texRepeat(base, rx, ry) { const t = base.clone(); t.needsUpdate = true; t.repeat.set(rx, ry); return t; }
+  const floorBase = gridTexture('#141a20', '#33414f', '#20292f'), wallBase = gridTexture('#10151a', '#26313b', '#182027');
+  const W = A.maxX - A.minX, Dz = A.maxZ - A.minZ;
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, Dz), new THREE.MeshLambertMaterial({ map: texRepeat(floorBase, W / 4, Dz / 4) }));
+  floor.rotation.x = -Math.PI / 2; floor.position.set((A.minX + A.maxX) / 2, 0, (A.minZ + A.maxZ) / 2); scene.add(floor);
+  for (const [len, x, z, ry] of [[W, 0, A.minZ, 0], [W, 0, A.maxZ, Math.PI], [Dz, A.minX, (A.minZ + A.maxZ) / 2, Math.PI / 2], [Dz, A.maxX, (A.minZ + A.maxZ) / 2, -Math.PI / 2]]) {
+    const wall = new THREE.Mesh(new THREE.PlaneGeometry(len, A.h), new THREE.MeshLambertMaterial({ map: texRepeat(wallBase, len / 4, A.h / 4) }));
+    wall.position.set(x, A.h / 2, z); wall.rotation.y = ry; scene.add(wall);
+  }
+
+  // ---------- target meshes ----------
+  const COL = { idle: 0xf0b340, hit: 0x6fe8b8, flash: 0xffffff };
+  const makeMat = c => new THREE.MeshLambertMaterial({ color: c, emissive: c, emissiveIntensity: 0.2 });
+  const setCol = (mesh, c) => { mesh.material.color.setHex(c); mesh.material.emissive.setHex(c); };
+  const GEO = {
+    air: new THREE.SphereGeometry(0.4, 28, 18),
+    ground: new THREE.CylinderGeometry(0.35, 0.35, 1.8, 24),
+    body: new THREE.CylinderGeometry(0.3, 0.3, 1.3, 20),
+    head: new THREE.SphereGeometry(0.16, 20, 14),
+    orb: new THREE.SphereGeometry(0.35, 24, 16),
+  };
+  const ent3d = []; // everything a run adds to the scene
+  function addMesh(obj) { scene.add(obj); ent3d.push(obj); return obj; }
+  function clearScene() { for (const o of ent3d) scene.remove(o); ent3d.length = 0; }
+
+  // ---------- movement: reactive strafing with a soft repel near the bounds ----------
+  // Picks a new random direction, speed and acceleration every 0.15-0.6 s. Near an edge the target is pushed
+  // back by a force that grows smoothly with depth, and its own steering into the edge fades out, so it
+  // curves away instead of stopping dead on an invisible wall.
+  function makeMover(rng, pos, o) {
+    return { rng, o, pos: pos.clone(), prev: pos.clone(), vel: new V3(), want: new V3(), accel: 30, next: 0, phase: rng() * 6.283 };
+  }
+  const tmpW = new V3(), tmpR = new V3();
+  function stepMover(m, dt, t) {
+    const o = m.o, r = m.rng;
+    if (t >= m.next) {
+      m.next = t + lerp(o.interval[0], o.interval[1], r());
+      const d = new V3(o.axes.includes('x') ? r() * 2 - 1 : 0, o.axes.includes('y') ? r() * 2 - 1 : 0, o.axes.includes('z') ? r() * 2 - 1 : 0);
+      if (d.lengthSq() < 1e-4) d.x = 1;
+      m.want.copy(d.normalize()).multiplyScalar(lerp(o.speed[0], o.speed[1], r()));
+      m.accel = lerp(o.accel[0], o.accel[1], r());
+    }
+    tmpW.copy(m.want);
+    if (o.pulse) { m.phase += dt * o.pulse; tmpW.multiplyScalar(0.3 + 0.7 * Math.abs(Math.sin(m.phase))); }  // constant speed-up / slow-down
+    tmpR.set(0, 0, 0);
+    for (const k of o.axes) {
+      const lo = o.min[k], hi = o.max[k], M = o.margin, p = m.pos[k];
+      const dl = p - lo, dh = hi - p;
+      if (dl < M) { const u = Math.min(1.5, 1 - dl / M); tmpR[k] += o.repel * u * u; if (tmpW[k] < 0) tmpW[k] *= Math.max(0, 1 - u); }
+      if (dh < M) { const u = Math.min(1.5, 1 - dh / M); tmpR[k] -= o.repel * u * u; if (tmpW[k] > 0) tmpW[k] *= Math.max(0, 1 - u); }
+    }
+    const dv = tmpW.sub(m.vel), max = m.accel * dt, len = dv.length();
+    if (len > max) dv.multiplyScalar(max / len);
+    m.vel.add(dv).addScaledVector(tmpR, dt);
+    m.pos.addScaledVector(m.vel, dt);
+  }
+  const INTERVAL = [0.15, 0.6];
+
+  // ---------- aiming ----------
+  const ray = new THREE.Raycaster(), NDC = new THREE.Vector2(0, 0);
+  const cam = { yaw: 0, pitch: 0, pos: new V3(0, 1.6, 0), prev: new V3(0, 1.6, 0) };
+  function poseCamera(pos) {
+    camera.position.copy(pos);
+    camera.rotation.set(cam.pitch * D2R, -cam.yaw * D2R, 0);
+    camera.updateMatrixWorld();
+  }
+  function aimAt(meshes) {
+    if (!meshes.length) return null;
+    ray.setFromCamera(NDC, camera);
+    const hit = ray.intersectObjects(meshes, false);
+    return hit.length ? hit[0].object : null;
+  }
+
+  // ---------- modes ----------
+  const EYE = 1.6;
+  const MODES = {
+    air: {
+      name: 'Reactive Air', kind: 'track', tag: 'Tracking',
+      blurb: 'A sphere strafes up, down and sideways about 12 m away, changing direction every 0.15–0.6 s with varied speed and acceleration.',
+      init(run) {
+        const mesh = addMesh(new THREE.Mesh(GEO.air, makeMat(COL.idle)));
+        const mv = makeMover(rngFor(1), new V3(0, 3.2, -12), { axes: ['x', 'y'], min: { x: -7, y: 0.8 }, max: { x: 7, y: 7.5 }, margin: 2, repel: 70,
+          speed: [2.5, 9], accel: [15, 80], interval: INTERVAL });
+        run.ents = [{ mesh, mv }];
+      },
+      step(run, dt, t) { stepMover(run.ents[0].mv, dt, t); },
+      targets: run => [run.ents[0].mesh],
+    },
+    ground: {
+      name: 'Reactive Ground', kind: 'track', tag: 'Tracking',
+      blurb: 'A hero-sized cylinder strafes across the floor in every direction, 8–18 m away, with the same 0.15–0.6 s direction changes.',
+      init(run) {
+        const mesh = addMesh(new THREE.Mesh(GEO.ground, makeMat(COL.idle)));
+        const mv = makeMover(rngFor(2), new V3(0, 0.9, -12), { axes: ['x', 'z'], min: { x: -8, z: -18 }, max: { x: 8, z: -8 }, margin: 2.5, repel: 60,
+          speed: [2, 7.5], accel: [20, 90], interval: INTERVAL });
+        run.ents = [{ mesh, mv }];
+      },
+      step(run, dt, t) { stepMover(run.ents[0].mv, dt, t); },
+      targets: run => [run.ents[0].mesh],
+    },
+    switch: {
+      name: 'Hazard Close Switch', kind: 'click', tag: 'Clicking',
+      blurb: 'Three bots strafe 5–10 m away, speeding up and slowing down nonstop. 150 HP: two body volleys or one headshot. Fire rate 1.75/s like Bonespur.',
+      init(run) {
+        run.ents = [-3.5, 0, 3.5].map((x, i) => {
+          const g = addMesh(new THREE.Group());
+          const body = new THREE.Mesh(GEO.body, makeMat(COL.idle)); body.position.y = 0.7; body.userData.part = 'body';
+          const head = new THREE.Mesh(GEO.head, makeMat(COL.idle)); head.position.y = 1.55; head.userData.part = 'head';
+          g.add(body, head);
+          const rng = rngFor(10 + i);
+          const mv = makeMover(rng, new V3(x, 0, -7), { axes: ['x', 'z'], min: { x: -5, z: -9.5 }, max: { x: 5, z: -5 }, margin: 1.5, repel: 70,
+            speed: [2, 6.5], accel: [25, 100], interval: INTERVAL, pulse: 2.6 + rng() * 1.4 });
+          const bot = { g, body, head, mv, rng, hp: 150, alive: true, spawnT: 0, deathT: -9, respawnAt: 0, flashT: -9 };
+          body.userData.bot = head.userData.bot = bot;
+          return bot;
+        });
+      },
+      step(run, dt, t) {
+        const bots = run.ents;
+        for (const b of bots) {
+          if (b.alive) stepMover(b.mv, dt, t);
+          else if (t >= b.respawnAt) {
+            // respawn somewhere free inside the 5-10 m band
+            let p;
+            for (let k = 0; k < 20; k++) {
+              p = new V3(lerp(-4.5, 4.5, b.rng()), 0, lerp(-9, -5.5, b.rng()));
+              if (bots.every(o => o === b || !o.alive || o.mv.pos.distanceTo(p) > 2)) break;
+            }
+            b.mv.pos.copy(p); b.mv.prev.copy(p); b.mv.vel.set(0, 0, 0); b.mv.next = 0;
+            b.hp = 150; b.alive = true; b.spawnT = t;
+          }
+        }
+        // soft separation so bots never overlap
+        for (let i = 0; i < bots.length; i++) for (let j = i + 1; j < bots.length; j++) {
+          const a = bots[i], c = bots[j];
+          if (!a.alive || !c.alive) continue;
+          const dx = c.mv.pos.x - a.mv.pos.x, dz = c.mv.pos.z - a.mv.pos.z, d = Math.hypot(dx, dz);
+          if (d < 1.4 && d > 1e-4) {
+            const push = (1.4 - d) * 18 * dt, nx = dx / d, nz = dz / d;
+            a.mv.vel.x -= nx * push; a.mv.vel.z -= nz * push; c.mv.vel.x += nx * push; c.mv.vel.z += nz * push;
+          }
+        }
+      },
+      targets: run => run.ents.filter(b => b.alive).flatMap(b => [b.head, b.body]),
+      shoot(run, t) {
+        const m = aimAt(this.targets(run));
+        if (!m) return null;
+        const b = m.userData.bot, head = m.userData.part === 'head';
+        b.hp -= head ? 150 : 75; b.flashT = t;
+        run.st.hits++; if (head) run.st.heads++;
+        if (b.hp <= 0) { b.alive = false; b.deathT = t; b.respawnAt = t + 0.35; run.st.kills++; run.st.ttk.push(t - b.spawnT); }
+        return head ? 'head' : 'body';
+      },
+    },
+    leap: {
+      name: 'Hazard Leap', kind: 'click', tag: 'Clicking',
+      blurb: 'You Violent Leap across the arena on a jump arc. Mid-air, static and strafing targets appear ahead of your landing. Turn, find them, click. Fire rate 1.75/s.',
+      init(run) {
+        run.feet = new V3(0, 0, -6);
+        cam.pos.set(0, EYE, -6); cam.prev.copy(cam.pos);
+        run.leap = { phase: 'ground', next: 0.4, from: new V3(), to: new V3(), t0: 0, n: 0 };
+        run.rng = rngFor(40);
+        run.ents = [];
+        run.st.spawned = 0; run.st.expired = 0;
+      },
+      step(run, dt, t) {
+        const L = run.leap, LEAP_T = 0.85, APEX = 3.2;
+        if (run.phase === 'run' && L.phase === 'ground' && t >= L.next) {
+          // choose a landing point ~9 m away, biased toward the middle of the arena, never near a wall
+          const r = run.rng, from = run.feet.clone();
+          let to = null, dir = null;
+          for (let k = 0; k < 30 && !to; k++) {
+            const toMid = Math.atan2(-15 - from.z, 0 - from.x);
+            const ang = toMid + (r() * 2 - 1) * 70 * D2R;
+            dir = new V3(Math.cos(ang), 0, Math.sin(ang));
+            const c = from.clone().addScaledVector(dir, 9);
+            if (c.x > A.minX + 8 && c.x < A.maxX - 8 && c.z > A.minZ + 10 && c.z < A.maxZ - 8) to = c;
+          }
+          if (!to) { dir = new V3(0, 0, -1); to = new V3(0, 0, -15); }
+          Object.assign(L, { phase: 'air', from, to, t0: t, n: L.n + 1 });
+          // spawn three targets beyond the landing point: some static, some strafing
+          for (let k = 0; k < 3; k++) {
+            const ang = Math.atan2(dir.z, dir.x) + (r() * 2 - 1) * 50 * D2R, dist = lerp(5, 11, r());
+            const p = to.clone().add(new V3(Math.cos(ang) * dist, lerp(1.0, 2.4, r()), Math.sin(ang) * dist));
+            p.x = Math.max(A.minX + 3, Math.min(A.maxX - 3, p.x)); p.z = Math.max(A.minZ + 3, Math.min(A.maxZ - 3, p.z));
+            const strafe = r() < 0.5;
+            const mesh = addMesh(new THREE.Mesh(GEO.orb, makeMat(strafe ? 0xe9a944 : COL.idle)));
+            const mv = makeMover(rngFor(100 + run.st.spawned), p, strafe
+              ? { axes: ['x', 'z'], min: { x: p.x - 2.5, z: p.z - 2.5 }, max: { x: p.x + 2.5, z: p.z + 2.5 }, margin: 1, repel: 50, speed: [2, 6], accel: [20, 80], interval: INTERVAL }
+              : null);
+            const ent = { mesh, mv, strafe, born: t, alive: true, popT: -9 };
+            mesh.userData.ent = ent;
+            mesh.position.copy(p); mesh.scale.setScalar(0.001);
+            run.ents.push(ent); run.st.spawned++;
+          }
+        }
+        if (L.phase === 'air') {
+          const u = Math.min(1, (t - L.t0) / LEAP_T);
+          run.feet.lerpVectors(L.from, L.to, u); run.feet.y = 4 * APEX * u * (1 - u);
+          if (u >= 1) { run.feet.copy(L.to); L.phase = 'ground'; L.next = t + 1.6; }
+        }
+        cam.pos.set(run.feet.x, run.feet.y + EYE, run.feet.z);
+        for (const e of run.ents) {
+          if (!e.alive) continue;
+          if (e.mv && e.strafe) stepMover(e.mv, dt, t);
+          if (t - e.born > 2.6) { e.alive = false; e.popT = t; run.st.expired++; }
+        }
+      },
+      targets: run => run.ents.filter(e => e.alive).map(e => e.mesh),
+      shoot(run, t) {
+        const m = aimAt(this.targets(run));
+        if (!m) return null;
+        const e = m.userData.ent; e.alive = false; e.popT = t; run.st.hits++;
+        return 'body';
+      },
+    },
+  };
+  const MODE_IDS = Object.keys(MODES);
+  if (!MODES[modeId]) modeId = 'air';
+
+  // ---------- run lifecycle ----------
+  let run = null;
+  const posOf = e => e.mv ? e.mv.pos : null;
+  function newStats() { return { onT: 0, fireT: 0, hits: 0, shots: 0, heads: 0, kills: 0, ttk: [], spawned: 0, expired: 0 }; }
+  function startRun(quick) {
+    clearScene();
+    run = { mode: modeId, M: MODES[modeId], t: -(quick ? QUICK_S : COUNTDOWN_S), phase: 'countdown', st: newStats(), ents: [], lastShot: -9, lastHit: -9, lastHitHead: false, acc: 0 };
+    cam.pos.set(0, EYE, 0); cam.prev.copy(cam.pos);
+    run.M.init(run);
+    for (const e of run.ents) if (e.mv) e.mv.prev.copy(e.mv.pos);
+    $('menu').hidden = true; $('results').hidden = true; $('hud').hidden = false;
+    lastFrame = performance.now();
+  }
+  function endRun() {
+    run.phase = 'done';
+    const r = summary(run);
+    const key = `${run.mode}|${S.seeded ? 'seed ' + S.seed : 'random'}`;
+    const prev = PB[key];
+    const isPB = !prev || r.score > prev.score || (r.score === prev.score && (r.acc || 0) > (prev.acc || 0));
+    if (isPB) { PB[key] = { score: r.score, acc: r.acc, at: Date.now() }; store.set('pb', PB); }
+    $('resMode').textContent = `${run.M.name} · ${S.seeded ? 'seed ' + S.seed : 'random targets'}`;
+    $('resBig').innerHTML = r.big;
+    $('resPB').hidden = !isPB;
+    const rows = [...r.rows, ['Personal best', isPB ? 'this run' : r.fmt(PB[key])]];
+    $('resKV').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    $('hud').hidden = true; $('results').hidden = false;
+    document.exitPointerLock?.();
+    renderModes();
+  }
+  function summary(r) {
+    const s = r.st, acc = s.shots ? s.hits / s.shots * 100 : 0;
+    if (r.M.kind === 'track') {
+      const tot = s.fireT ? s.onT / s.fireT * 100 : 0;
+      return {
+        score: +tot.toFixed(1), acc: null, fmt: p => p.score.toFixed(1) + '%',
+        big: `${tot.toFixed(1)}% <small>time on target</small>`,
+        rows: [['On target', s.onT.toFixed(1) + ' s'], [S.fireGate ? 'Firing' : 'Run time', s.fireT.toFixed(1) + ' s']],
+      };
+    }
+    const rows = [['Hits', s.hits], ['Shots', s.shots], ['Accuracy', acc.toFixed(1) + '%']];
+    if (r.mode === 'switch') {
+      const ttk = s.ttk.length ? s.ttk.reduce((a, b) => a + b, 0) / s.ttk.length : 0;
+      rows.push(['Kills', s.kills], ['Headshots', s.heads], ['Average time to kill', s.ttk.length ? ttk.toFixed(2) + ' s' : '–']);
+    } else rows.push(['Targets spawned', s.spawned], ['Targets missed', s.expired]);
+    return { score: s.hits, acc: +acc.toFixed(1), fmt: p => `${p.score} hits · ${(p.acc || 0).toFixed(1)}%`, big: `${s.hits} <small>hits · ${acc.toFixed(1)}% accuracy</small>`, rows };
+  }
+  function cancelRun(msg) {
+    run = null; clearScene();
+    $('hud').hidden = true; $('results').hidden = true; $('menu').hidden = false;
+    $('menuMsg').textContent = msg || ''; $('menuMsg').hidden = !msg;
+  }
+
+  // ---------- simulation ----------
+  function snapshot() {
+    cam.prev.copy(cam.pos);
+    for (const e of run.ents) if (e.mv) e.mv.prev.copy(e.mv.pos);
+  }
+  function syncSim() {
+    poseCamera(cam.pos);
+    for (const e of run.ents) {
+      const obj = e.g || e.mesh;
+      if (e.mv) obj.position.copy(e.mv.pos);
+      obj.updateMatrixWorld(true);
+    }
+  }
+  function simStep(dt) {
+    run.t += dt;
+    if (run.phase === 'countdown' && run.t >= 0) run.phase = 'run';
+    run.M.step(run, dt, run.t);
+    if (run.phase !== 'run') return;
+    if (run.M.kind === 'track') {
+      syncSim();
+      if (!S.fireGate || firing) {
+        run.st.fireT += dt;
+        if (aimAt(run.M.targets(run))) {
+          run.st.onT += dt;
+          if (firing && run.t - run.lastHit > 0.1) { run.lastHit = run.t; run.lastHitHead = false; }
+        }
+      }
+    }
+    if (run.t >= RUN_S) endRun();
+  }
+  function shoot() {
+    if (!run || run.phase !== 'run' || run.M.kind !== 'click') return;
+    if (run.t - run.lastShot < 1 / HAZARD_ROF) return;   // still cycling
+    applyMouse();
+    syncSim();
+    run.lastShot = run.t; run.st.shots++;
+    const part = run.M.shoot(run, run.t);
+    if (part) { run.lastHit = run.t; run.lastHitHead = part === 'head'; }
+  }
+
+  // ---------- input ----------
+  let pendX = 0, pendY = 0, lastMoveT = 0, firing = false, rawOK = null;
+  document.addEventListener('mousemove', e => {
+    if (document.pointerLockElement !== $('gl')) return;
+    // drop bogus pointer-lock jumps (faster than any hand, about 5 m/s)
+    const dt = Math.max(1, e.timeStamp - lastMoveT); lastMoveT = e.timeStamp;
+    if (Math.hypot(e.movementX, e.movementY) > S.dpi / 2.54 * 500 * dt / 1000 + 50) return;
+    pendX += e.movementX; pendY += e.movementY;
+  }, { passive: true });
+  function turn(x, y) {
+    const k = OW_YAW * S.sens;
+    cam.yaw += x * k;
+    cam.pitch = Math.max(-89, Math.min(89, cam.pitch - y * k));
+  }
+  function applyMouse() { if (pendX || pendY) { turn(pendX, pendY); pendX = pendY = 0; } }
+  async function lock() {
+    const el = $('gl');
+    try {
+      if (!S.raw) throw 0;
+      await el.requestPointerLock({ unadjustedMovement: true }); rawOK = true;
+    } catch {
+      try { await el.requestPointerLock(); rawOK = false; } catch { rawOK = null; $('menuMsg').textContent = 'Mouse lock was refused. Use a desktop browser and click Start again.'; $('menuMsg').hidden = false; }
+    }
+  }
+  let pendingQuick = false;
+  document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement === $('gl')) {
+      if (!run || run.phase === 'done') startRun(pendingQuick);
+      pendingQuick = false;
+    } else {
+      firing = false;
+      if (run && run.phase !== 'done') cancelRun('Run cancelled. The mouse was released before the 60 s were up.');
+    }
+  });
+  $('gl').addEventListener('mousedown', e => {
+    if (document.pointerLockElement !== $('gl') || e.button !== 0) return;
+    firing = true;
+    shoot();
+  });
+  document.addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
+  $('startBtn').addEventListener('click', () => { $('menuMsg').hidden = true; lock(); });
+  $('retryBtn').addEventListener('click', () => lock());
+  $('menuBtn').addEventListener('click', () => { $('results').hidden = true; $('menu').hidden = false; });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'y' && e.key !== 'Y') return;
+    if (e.target.closest && e.target.closest('input, select, textarea')) return;
+    e.preventDefault();
+    if (document.pointerLockElement === $('gl')) startRun(true);
+    else { pendingQuick = true; lock(); }
+  });
+
+  // ---------- settings UI ----------
+  const FIELDS = { sens: [0.01, 100], dpi: [100, 32000], fov: [60, 103], seed: [0, 999999999], xgap: [0, 30], xlen: [0, 30], xthick: [0.5, 10] };
+  for (const k in FIELDS) {
+    const el = $(k); el.value = S[k];
+    el.addEventListener('change', () => {
+      let v = parseFloat(el.value);
+      if (!isFinite(v)) { el.value = S[k]; return; }
+      v = Math.min(FIELDS[k][1], Math.max(FIELDS[k][0], v));
+      if (k === 'seed') v = Math.round(v);
+      S[k] = v; el.value = v; save();
+    });
+  }
+  for (const k of ['raw', 'fireGate', 'seeded']) { const el = $(k); el.checked = S[k]; el.addEventListener('change', () => { S[k] = el.checked; save(); }); }
+  $('quality').value = S.quality;
+  $('quality').addEventListener('change', () => { S.quality = $('quality').value; save(); });
+  function save() { store.set('settings', S); applySettings(); }
+  function applySettings() {
+    const cm = 360 / (OW_YAW * S.sens) / S.dpi * 2.54;
+    $('calib').innerHTML = `<b>${S.dpi}</b> DPI · sens <b>${S.sens}</b> · FOV <b>${S.fov}</b> · <b>${cm.toFixed(1)}</b> cm/360`;
+    resize(); layoutCrosshair(); renderModes();
+  }
+  function renderModes() {
+    const box = $('modes'); box.innerHTML = '';
+    const scope = S.seeded ? 'seed ' + S.seed : 'random';
+    for (const id of MODE_IDS) {
+      const M = MODES[id], p = PB[`${id}|${scope}`];
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'mode'; b.setAttribute('aria-pressed', String(id === modeId));
+      const pbText = p ? (M.kind === 'track' ? `PB ${p.score.toFixed(1)}% time on target` : `PB ${p.score} hits · ${(p.acc || 0).toFixed(1)}%`) : 'No personal best yet';
+      b.innerHTML = `<div class="top"><b>${M.name}</b><span class="tag">${M.tag}</span></div><p>${M.blurb}</p><span class="pb">${pbText}${S.seeded ? ' · seed ' + S.seed : ''}</span>`;
+      b.addEventListener('click', () => { modeId = id; store.set('mode', id); renderModes(); });
+      box.appendChild(b);
+    }
+  }
+
+  // ---------- crosshair (Overwatch cross, sized in 1080p units) ----------
+  const xl = [...$('xlines').children], hm = [...$('hm').children], cool = $('cool');
+  function layoutCrosshair() {
+    const k = innerHeight / 1080, a = S.xgap * k, b = (S.xgap + S.xlen) * k, sw = Math.max(0.75, S.xthick * k);
+    [[a, 0, b, 0], [-a, 0, -b, 0], [0, a, 0, b], [0, -a, 0, -b]].forEach(([x1, y1, x2, y2], i) => {
+      xl[i].setAttribute('x1', x1); xl[i].setAttribute('y1', y1); xl[i].setAttribute('x2', x2); xl[i].setAttribute('y2', y2); xl[i].setAttribute('stroke-width', sw);
+    });
+    const h1 = (S.xgap + S.xlen + 3) * k, h2 = h1 + 6 * k;
+    [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([sx, sy], i) => {
+      hm[i].setAttribute('x1', sx * h1); hm[i].setAttribute('y1', sy * h1); hm[i].setAttribute('x2', sx * h2); hm[i].setAttribute('y2', sy * h2); hm[i].setAttribute('stroke-width', Math.max(1, 2 * k));
+    });
+    const R = (S.xgap + S.xlen + 14) * k; cool.setAttribute('r', R); cool.setAttribute('stroke-width', Math.max(1.5, 2.5 * k));
+    cool.dataset.c = 2 * Math.PI * R;
+  }
+
+  // ---------- resize + quality ----------
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    renderer.setPixelRatio(S.quality === 'fast' ? Math.min(dpr, 1) * 0.7 : S.quality === 'balanced' ? Math.min(dpr, 1) : dpr);
+    renderer.setSize(innerWidth, innerHeight, false);
+    camera.aspect = innerWidth / innerHeight;
+    // Overwatch's FOV is horizontal at 16:9 (Hor+): keep that vertical FOV at any window shape
+    camera.fov = 2 * Math.atan(Math.tan(S.fov / 2 * D2R) * 9 / 16) / D2R;
+    camera.updateProjectionMatrix();
+  }
+  addEventListener('resize', () => { resize(); layoutCrosshair(); });
+
+  // ---------- frame loop ----------
+  let lastFrame = performance.now(), hudAt = 0;
+  function frame(now) {
+    const dt = Math.min(0.05, (now - lastFrame) / 1000);   // a stalled frame slows time instead of jumping it
+    lastFrame = now;
+    if (run && (run.phase === 'countdown' || run.phase === 'run')) {
+      run.acc += dt;
+      const steps = Math.floor(run.acc / STEP);
+      run.acc -= steps * STEP;
+      // spread this frame's mouse movement across the 120 Hz steps so aim is judged where it actually was
+      const mx = pendX, my = pendY; pendX = pendY = 0;
+      if (!steps) turn(mx, my);
+      for (let i = 0; i < steps && run && run.phase !== 'done'; i++) { snapshot(); turn(mx / steps, my / steps); simStep(STEP); }
+    } else applyMouse();
+    draw(run ? Math.min(1, run.acc / STEP) : 1, now);
+    requestAnimationFrame(frame);
+  }
+  function draw(alpha, now) {
+    if (run) {
+      const t = run.t, M = run.M;
+      // interpolate between the last two 120 Hz states so motion is even at any refresh rate
+      const p = new V3().lerpVectors(cam.prev, cam.pos, run.phase === 'done' ? 1 : alpha);
+      poseCamera(p);
+      for (const e of run.ents) {
+        const obj = e.g || e.mesh;
+        if (e.mv) obj.position.lerpVectors(e.mv.prev, e.mv.pos, run.phase === 'done' ? 1 : alpha);
+      }
+      // visual states
+      if (M.kind === 'track') {
+        const on = run.phase === 'run' && (!S.fireGate || firing) && aimAt(M.targets(run));
+        setCol(run.ents[0].mesh, on ? COL.hit : COL.idle);
+        $('xh').classList.toggle('on', !!on);
+      } else $('xh').classList.remove('on');
+      if (run.mode === 'switch') for (const b of run.ents) {
+        const flash = t - b.flashT < 0.07;
+        setCol(b.body, flash ? COL.flash : COL.idle); setCol(b.head, flash ? COL.flash : 0xffd27a);
+        const s = b.alive ? Math.min(1, (t - b.spawnT) / 0.15) : Math.max(0, 1 - (t - b.deathT) / 0.15);
+        b.g.scale.setScalar(Math.max(0.001, s));
+      }
+      if (run.mode === 'leap') for (const e of run.ents) {
+        const s = e.alive ? Math.min(1, (t - e.born) / 0.12) : Math.max(0, 1 - (t - e.popT) / 0.12);
+        e.mesh.scale.setScalar(Math.max(0.001, s));
+        e.mesh.visible = s > 0.002;
+      }
+      // HUD
+      const hmOn = t - run.lastHit < 0.09 && run.phase === 'run';
+      $('hm').setAttribute('class', 'hm' + (hmOn ? ' show' : '') + (hmOn && run.lastHitHead ? ' head' : ''));
+      if (M.kind === 'click') {
+        const u = Math.min(1, (t - run.lastShot) * HAZARD_ROF), C = +cool.dataset.c;
+        cool.style.display = u < 1 && run.phase === 'run' ? '' : 'none';
+        cool.setAttribute('stroke-dasharray', `${C * u} ${C}`);
+        cool.setAttribute('transform', 'rotate(-90)');
+      } else cool.style.display = 'none';
+      $('count').hidden = run.phase !== 'countdown';
+      if (run.phase === 'countdown') $('count').textContent = Math.max(1, Math.ceil(-t));
+      $('prompt').hidden = !(M.kind === 'track' && S.fireGate && run.phase === 'run' && !firing);
+      $('timebar').style.width = (run.phase === 'run' ? Math.max(0, 1 - t / RUN_S) * 100 : 100) + '%';
+      if (now - hudAt > 100) {
+        hudAt = now;
+        const s = run.st;
+        $('hudL').textContent = M.kind === 'track'
+          ? `${M.name} · ${(s.fireT ? s.onT / s.fireT * 100 : 0).toFixed(1)}% on target`
+          : `${M.name} · ${s.hits} hits · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc${run.mode === 'switch' ? ` · ${s.kills} kills` : ` · ${s.expired} missed`}`;
+        $('hudR').textContent = `${S.seeded ? 'seed ' + S.seed + ' · ' : ''}Y restart · ${Math.max(0, RUN_S - Math.max(0, t)).toFixed(1)} s`;
+      }
+    } else poseCamera(cam.pos);
+    renderer.render(scene, camera);
+  }
+
+  applySettings();
+  requestAnimationFrame(frame);
+  }
+
+  boot();
+})();
+</script>

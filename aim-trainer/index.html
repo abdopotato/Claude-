@@ -141,6 +141,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
 <div class="wrap">
   <header>
     <h1>Tracking <span>Ladder</span></h1>
+    <a class="calib" href="https://claude.ai/artifact/R6M57M1pUDPCePLpyTxTLu" target="_blank" rel="noopener" style="color:var(--target)">Open Reactive Arena (3D) →</a>
     <div class="calib" id="calib"></div>
   </header>
 
@@ -222,8 +223,6 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <button class="btn" id="fitPad" type="button" style="align-self:end;min-height:40px">Fit sens to pad</button>
         <label for="sizeX">Orb × crosshair<input id="sizeX" type="number" min="1" max="10" step="0.1"></label>
         <label class="inline" for="sizeLock" style="grid-column: span 2; text-transform: none; letter-spacing: 0; font-size: 13px"><input id="sizeLock" type="checkbox"> Size orbs from my crosshair</label>
-        <label for="hzHp">Hazard target HP<select id="hzHp"><option value="150">150</option><option value="175">175</option><option value="200">200</option></select></label>
-        <label class="inline" for="hzPerk" style="grid-column: span 2; text-transform: none; letter-spacing: 0; font-size: 13px"><input id="hzPerk" type="checkbox"> Leap perk: free 2nd shot (+65%)</label>
       </div>
       <p class="note">Turning uses Overwatch's yaw of 0.0066° per mouse count, so one swipe here turns you as far as it does in game. Turn off "Enhance pointer precision" in Windows. Fullscreen on a 16:9 monitor matches the in-game view most closely. If your mouse polls faster than 1000 Hz, set it to 1000 Hz in its software (HyperX NGENUITY for the Haste 2): Chrome can stutter or drop movement at 4000–8000 Hz.</p>
       <p class="note"><b>Check my 360:</b> in Overwatch, mark where your mouse starts on the pad and turn exactly 360°. Here, press the button and make the same swipe. It should read close to 360°. With raw input off, Windows pointer speed must be on the 6th notch with "Enhance pointer precision" off, or the reading will drift.</p>
@@ -260,7 +259,7 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         <div><b>Hand Cannon range</b><span>Doomfist fights at a few metres, where a strafing enemy crosses your screen far faster than at range. Same tracking skill, much higher angular speed, bigger target and more jumps.</span></div>
         <div><b>Slam &amp; switch flicks</b><span>Seismic Slam is aimed at the ground under enemies, and diving the backline means snapping between targets. Orbs sit mostly below the horizon at wide angles. Score is hits minus half your misses, so clicking blindly costs you.</span></div>
         <div><b>Flick frenzy</b><span>Pure target acquisition: four dots at a time in random spots on a fixed 4×4 grid, on a timer that shortens each tier while the grid widens. Trains reacting and snapping fast without overshooting, which is what landing a punch on a fleeing enemy needs.</span></div>
-        <div><b>Hazard one-shot</b><span>The slash-into-shot kill (slash 70, then one Bonespur volley; with the Leap perk the shot fires a free extra shot at 65%). The slash knocks the target back; you flick to the head and fire one Bonespur volley before they recover. Pellet impacts show where each of the 10 landed. Up close, the centre pellet and the 1.8° ring fit on a head; the 3.5° corners usually don't, so most kills come from centring the head perfectly.</span></div>
+        <div><b>Hazard modes</b><span>Hazard practice moved to <a href="https://claude.ai/artifact/R6M57M1pUDPCePLpyTxTLu" target="_blank" rel="noopener">Reactive Arena</a>, a 3D trainer with Hazard Close Switch (three bots, short time to kill) and Hazard Leap (targets appear while you're mid-leap), plus Reactive Air and Reactive Ground tracking.</span></div>
         <div><b>Sens finder</b><span>The PSA method: 7 rounds comparing a lower and a higher sensitivity on the tracking drill, halving the gap toward whichever felt better. Round 1 tries half and one and a half times your current sens, so a bad starting point gets corrected fast. Run it on three different days and use the average.</span></div>
       </div>
     </div>
@@ -338,22 +337,6 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
         { r: 0.55, n: 4, side: 36, life: 4400, bench: 32 },
         { r: 0.48, n: 4, side: 40, life: 3800, bench: 34 },
       ],
-    },
-    hazard: {
-      label: 'Hazard one-shot', tag: 'Hazard', kind: 'burst', unit: ' kills',
-      // Leap in, the slash lands (70) and knocks the dummy back, then one Bonespur volley inside the window.
-      // d = distance after the knockback (m), kb = sideways knockback (m), vms = strafe speed after (m/s),
-      // win = time to fire (ms). A tier's r (half shoulder width in degrees) follows from d.
-      tiers: [
-        [3.0, 0.6, 0,   0,    1200, 7],
-        [3.2, 1.0, 2.0, 0,    1000, 7],
-        [3.5, 1.4, 3.5, 0.15, 850,  8],
-        [3.8, 1.8, 4.5, 0.25, 700,  8],
-        [4.0, 2.2, 5.5, 0.35, 600,  9],
-      ].map(([d, kb, vms, j, win, bench]) => {
-        const v = vms / d * 180 / Math.PI;
-        return { d, kb, vms, j, win, bench, r: Math.atan(0.3 / d) * 180 / Math.PI, v, a: Math.max(200, v * 8), c: [350, 900] };
-      }),
     },
   };
   // Hazard numbers (Overwatch wiki via search, current patch at time of writing; update here if Blizzard changes them):
@@ -499,10 +482,6 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--target); ou
     settings.sizeLock = $('sizeLock').checked; store.set('settings', settings);
     applySizes(); renderAll(); if (phase === 'idle' || phase === 'result') { resetScene(); showIdle(); }
   });
-  $('hzHp').value = String(settings.hzHp);
-  $('hzHp').addEventListener('change', () => { settings.hzHp = +$('hzHp').value; store.set('settings', settings); if (drillId === 'hazard') showIdle(); });
-  $('hzPerk').checked = settings.hzPerk;
-  $('hzPerk').addEventListener('change', () => { settings.hzPerk = $('hzPerk').checked; store.set('settings', settings); if (drillId === 'hazard') showIdle(); });
   // damage one volley has to add on top of the slash
   const hzNeed = () => Math.max(0, settings.hzHp - HZ.slash) / (settings.hzPerk ? HZ.perkMult : 1);
   // On this dummy at 3-4 m a perfectly centred shot lands 6 head pellets (centre + 1.8° ring); the 3.5° corners miss.
