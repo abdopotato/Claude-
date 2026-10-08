@@ -1,0 +1,391 @@
+<title>CM 101 Roll Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one working stage (3D roll) beside a spec sheet; colourway strip under the stage. Store tokens from theme/assets. */
+:root{
+  --plaster:#F3EEE2; --surface:#FFFDF8; --ink:#1B211E; --text-dim:#5B6560; --line:#DCD3BC;
+  --brass:#B8892F; --brass-text:#7F5B1C; --green-800:#16352E; --sage-text:#4F6B5A;
+  --stage:#E9E2D0; --floor:#D9D0B9; --confirm-bg:#FFF3C4; --confirm-fg:#6B4E00;
+  --display:'Amiri', Georgia, 'Times New Roman', serif; --body:'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --radius-sm:10px; --radius-md:14px; --gap:24px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --plaster:#0F2822; --surface:#16352E; --ink:#F1ECDF; --text-dim:#A9B5AE; --line:#2C5147;
+  --brass:#D7AE5C; --brass-text:#E2C07A; --green-800:#0B1F1A; --sage-text:#A9C4B2;
+  --stage:#123029; --floor:#1C3C34; --confirm-bg:#4A3B0E; --confirm-fg:#FFE59A; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --plaster:#0F2822; --surface:#16352E; --ink:#F1ECDF; --text-dim:#A9B5AE; --line:#2C5147;
+  --brass:#D7AE5C; --brass-text:#E2C07A; --green-800:#0B1F1A; --sage-text:#A9C4B2;
+  --stage:#123029; --floor:#1C3C34; --confirm-bg:#4A3B0E; --confirm-fg:#FFE59A; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--plaster); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.55; margin:0}
+.wrap{max-width:1240px; margin:0 auto; padding-inline:16px; padding-block:28px 48px; display:grid; gap:var(--gap)}
+header{display:grid; gap:4px}
+.kicker{font-family:var(--display); font-style:italic; color:var(--brass-text); font-size:17px; margin:0}
+h1{font-family:var(--display); font-weight:700; font-size:clamp(30px,4.4vw,44px); line-height:1.1; margin:0; text-wrap:balance}
+.lede{color:var(--text-dim); max-width:62ch; margin:4px 0 0}
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:var(--gap); align-items:start}
+@media (max-width:900px){ .main{grid-template-columns:minmax(0,1fr)} }
+.stage{position:relative; background:var(--stage); border-radius:var(--radius-md); overflow:hidden; aspect-ratio:16/10; max-width:100%; touch-action:none; outline:none}
+.stage:focus-visible{box-shadow:0 0 0 3px var(--brass)}
+.stage canvas{display:block; width:100%; height:100%}
+@media (max-width:600px){ .stage{aspect-ratio:4/5} }
+.hint{position:absolute; left:12px; bottom:12px; right:12px; display:flex; flex-wrap:wrap; gap:8px; pointer-events:none}
+.hint span{background:color-mix(in srgb, var(--surface) 88%, transparent); color:var(--ink); font-size:14px; padding:6px 10px; border-radius:999px}
+.fallback{position:absolute; inset:0; display:grid; place-items:center; padding:24px; text-align:center; color:var(--text-dim)}
+.unroll{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:14px; align-items:center; margin-top:14px}
+.btn{font:600 15px/1 var(--body); min-height:44px; padding:0 18px; border-radius:999px; border:1.5px solid var(--brass); background:var(--brass); color:#1B211E; cursor:pointer}
+.btn:hover{filter:brightness(1.05)}
+.btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{outline:3px solid var(--brass); outline-offset:2px}
+.btn-secondary{background:transparent; color:var(--ink); border-color:var(--line)}
+input[type=range]{width:100%; accent-color:var(--brass); min-height:44px}
+.pct{font-variant-numeric:tabular-nums; min-width:5.5ch; text-align:right; color:var(--text-dim); font-size:15px}
+.swatches{display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); gap:12px; margin:0; padding:0; border:0}
+@media (max-width:1100px){ .swatches{grid-template-columns:repeat(5,minmax(0,1fr))} }
+@media (max-width:560px){ .swatches{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.swatches legend{font-family:var(--display); font-weight:700; font-size:22px; margin-bottom:10px}
+.sw{display:grid; gap:6px; background:none; border:0; padding:0; cursor:pointer; color:var(--ink); font:500 14px/1.3 var(--body); text-align:left}
+.sw i{display:block; aspect-ratio:16/9; border-radius:var(--radius-sm); background-size:auto 180%; background-position:center 18%; border:2px solid transparent; box-shadow:0 0 0 1px var(--line)}
+.sw[aria-pressed="true"] i{border-color:var(--brass); box-shadow:0 0 0 2px var(--brass)}
+.sw small{display:block; color:var(--text-dim); font-size:12px; letter-spacing:.3px}
+.sheet{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:20px; display:grid; gap:18px; min-width:0}
+.sheet h2{font-family:var(--display); font-size:26px; margin:0; line-height:1.15}
+.sheet h2 small{display:block; font-family:var(--body); font-size:12px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--sage-text)}
+.field{display:grid; gap:6px}
+.field label, .field .lbl{font-weight:600; font-size:15px; display:flex; justify-content:space-between; gap:8px}
+.field output{font-variant-numeric:tabular-nums; font-weight:500; color:var(--text-dim)}
+.seg{display:flex; gap:8px; flex-wrap:wrap}
+.seg button{flex:1 1 0; min-height:44px; border-radius:var(--radius-sm); border:1.5px solid var(--line); background:transparent; color:var(--ink); font:500 15px var(--body); cursor:pointer; font-variant-numeric:tabular-nums}
+.seg button[aria-pressed="true"]{border-color:var(--brass); background:color-mix(in srgb, var(--brass) 16%, transparent)}
+dl{display:grid; grid-template-columns:auto 1fr; gap:8px 16px; margin:0; border-top:1px solid var(--line); padding-top:16px}
+dt{color:var(--text-dim); font-size:15px}
+dd{margin:0; text-align:right; font-variant-numeric:tabular-nums; font-weight:500}
+.confirm{display:inline-block; background:var(--confirm-bg); color:var(--confirm-fg); font-size:12px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; padding:2px 7px; border-radius:6px; vertical-align:1px}
+.note{font-size:14px; color:var(--text-dim); margin:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="kicker">Cami CM series · Mosque carpet rolls</p>
+    <h1>CM 101 in ten colourways</h1>
+    <p class="lede">Turn the roll, unroll it across the floor and change the size. The roll's diameter follows its length and thickness, just as a real roll does on delivery day.</p>
+  </header>
+
+  <div class="main">
+    <div>
+      <div class="stage" id="stage" tabindex="0" aria-label="3D carpet roll. Drag the roll to unroll it, drag elsewhere to turn the view, scroll or pinch to zoom. Arrow keys also turn the view.">
+        <div class="fallback" id="fallback">Loading the 3D roll…</div>
+        <div class="hint" aria-hidden="true"><span>Drag the roll to unroll</span><span>Drag the floor to turn</span><span>Scroll or pinch to zoom</span></div>
+      </div>
+      <div class="unroll">
+        <button class="btn" id="unrollBtn" type="button">Unroll</button>
+        <input type="range" id="frac" min="0" max="1000" value="400" aria-label="How far the roll is unrolled">
+        <span class="pct" id="fracOut">40%</span>
+      </div>
+    </div>
+
+    <aside class="sheet" aria-label="Roll properties">
+      <h2><small>Colourway</small><span id="cwName">Red</span></h2>
+      <div class="field">
+        <span class="lbl" id="spLbl">Row spacing (roll width) <output id="spOut">95 cm</output></span>
+        <div class="seg" role="group" aria-labelledby="spLbl" id="spacing">
+          <button type="button" data-v="0.90">90 cm</button><button type="button" data-v="0.95" aria-pressed="true">95 cm</button><button type="button" data-v="1.00">100 cm</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="len">Roll length <output id="lenOut">15.0 m</output></label>
+        <input type="range" id="len" min="3" max="30" step="0.5" value="15">
+      </div>
+      <div class="field">
+        <label for="thk">Total thickness <span class="confirm">To confirm</span> <output id="thkOut">10 mm</output></label>
+        <input type="range" id="thk" min="6" max="16" step="1" value="10">
+      </div>
+      <dl>
+        <dt>Roll width</dt><dd id="oW">3.80 m</dd>
+        <dt>Floor area</dt><dd id="oA">57.0 m²</dd>
+        <dt>Diameter, fully rolled</dt><dd id="oD">45 cm</dd>
+        <dt>Unrolled so far</dt><dd id="oU">6.0 m</dd>
+      </dl>
+      <p class="note">One roll is one prayer row, rolled on a 10 cm cardboard core with the pile facing in, the way rolls ship. Widths and diameters are worked out from the settings above; thickness and weight still need the mill's spec sheet.</p>
+    </aside>
+  </div>
+
+  <fieldset class="swatches" id="swatches"><legend>Colourway</legend></fieldset>
+  <p class="note">Pattern artwork is cut from the CM 101 catalogue page, so fine detail is soft. Colours on screen are a guide; the mill's sample is final.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const TEX = /*TEXTURES*/{};
+const COLOURWAYS = [
+  ['red','Red','Kırmızı'],['pink','Pink','Pembe'],['brick','Brick','Kiremit'],['blue','Blue','Mavi'],['natural','Natural','Natürel'],
+  ['green','Green','Yeşil'],['copper','Copper red','Bakırı'],['lightgreen','Light green','Açık yeşil'],['darkblue','Dark blue','Koyu mavi'],['cream','Cream','Krem']];
+const CORE_R = 0.05, FACE = 0.9; // core radius (m); pile face sits at 90% of thickness so wraps never touch
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const S = {cw:'red', spacing:0.95, L:15, t:0.010, a:6}; // one roll = one prayer row
+const $ = id => document.getElementById(id);
+const stage = $('stage');
+
+(function main(){
+  if (!window.THREE) { $('fallback').textContent = 'The 3D viewer could not load. Check your connection and refresh. The colourway swatches below still show each pattern.'; buildSwatches(()=>{}); return; }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({antialias:true}); } catch(e) { $('fallback').textContent = 'This browser cannot show 3D. The colourway swatches below still show each pattern.'; buildSwatches(()=>{}); return; }
+  let dirty = true;
+  $('fallback').remove();
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  stage.prepend(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.02, 400);
+  scene.add(new THREE.HemisphereLight(0xfff8ec, 0x6b5f48, 0.75));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.85);
+  sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004;
+  scene.add(sun, sun.target);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({roughness:1}));
+  floor.rotation.x = -Math.PI/2; floor.position.y = -0.0005; floor.receiveShadow = true; scene.add(floor);
+
+  const maxAniso = renderer.capabilities.getMaxAnisotropy();
+  const faceTex = {};
+  // Weave the flat artwork into cut pile: every ~3 mm tuft takes the pattern colour at its centre (so edges step
+  // like real knots), is shaded as a small dome, and gets fibre grain plus faint tileable mottling.
+  const PW = 512, PH = 1024, PITCH = 4;
+  function hash(i, j){ let h = (i*374761393 + j*668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+  const pile = (() => { // tuft shading per pixel, shared by all colourways
+    const shade = new Float32Array(PW*PH), knot = new Int32Array(PW*PH), bump = document.createElement('canvas');
+    bump.width = PW; bump.height = PH; const bg = bump.getContext('2d'), bd = bg.createImageData(PW, PH);
+    for (let y = 0; y < PH; y++) {
+      const j = Math.floor(y / PITCH), off = (j % 2) * PITCH/2, cy = j*PITCH + PITCH/2;
+      for (let x = 0; x < PW; x++) {
+        const i = Math.floor((x + off) / PITCH), cx = ((i*PITCH - off + PITCH/2) % PW + PW) % PW;
+        let dx = Math.abs(x + 0.5 - cx); dx = Math.min(dx, PW - dx);
+        const d2 = (dx*dx + (y + 0.5 - cy)**2) / (PITCH*0.62)**2, dome = Math.max(0, 1 - d2);
+        const fibre = Math.random(), tuft = hash(i % (PW/PITCH), j);
+        const mottle = 0.03*Math.sin(6.2832*(2*x/PW + y/PH)) + 0.025*Math.sin(6.2832*(3*x/PW - 2*y/PH) + 1.3);
+        const k = y*PW + x;
+        shade[k] = 0.74 + 0.24*dome + 0.07*(tuft - 0.5) + 0.06*(fibre - 0.5) + mottle;
+        knot[k] = Math.min(PH-1, cy)*PW + Math.floor(cx);
+        const h = Math.round(255*(0.15 + 0.7*dome + 0.15*fibre));
+        bd.data[k*4] = bd.data[k*4+1] = bd.data[k*4+2] = h; bd.data[k*4+3] = 255;
+      }
+    }
+    bg.putImageData(bd, 0, 0);
+    const t = new THREE.CanvasTexture(bump); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = maxAniso;
+    return {shade, knot, bump:t};
+  })();
+  function tex(name){
+    if (faceTex[name]) return faceTex[name];
+    const c = document.createElement('canvas'); c.width = PW; c.height = PH;
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = maxAniso; t.encoding = THREE.sRGBEncoding;
+    const img = new Image();
+    img.onload = () => {
+      const g = c.getContext('2d'); g.drawImage(img, 0, 0, PW, PH);
+      const src = g.getImageData(0, 0, PW, PH), out = g.createImageData(PW, PH);
+      for (let k = 0; k < PW*PH; k++) {
+        const s = pile.shade[k], q = pile.knot[k]*4, o = k*4;
+        out.data[o] = src.data[q]*s; out.data[o+1] = src.data[q+1]*s; out.data[o+2] = src.data[q+2]*s; out.data[o+3] = 255;
+      }
+      g.putImageData(out, 0, 0); t.needsUpdate = true; dirty = true;
+    };
+    img.src = TEX[name].src;
+    return faceTex[name] = t;
+  }
+  function canvasTex(w, h, paint, srgb){
+    const c = document.createElement('canvas'); c.width = w; c.height = h; paint(c.getContext('2d'), w, h);
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = maxAniso;
+    if (srgb) t.encoding = THREE.sRGBEncoding; return t;
+  }
+  // Backing: woven jute/polypropylene grid.
+  const jute = canvasTex(64, 64, (g, w, h) => {
+    g.fillStyle = '#b9a47c'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < w; i += 4) { g.fillStyle = i % 8 ? '#a8926a' : '#c7b38c'; g.fillRect(i, 0, 2, h); g.fillStyle = i % 8 ? '#cdb991' : '#9d885f'; g.fillRect(0, i, w, 2); }
+  }, true);
+  const faceMat = new THREE.MeshPhysicalMaterial({roughness:0.95, metalness:0, bumpMap:pile.bump, bumpScale:0.35, side:THREE.DoubleSide});
+  faceMat.sheen = new THREE.Color(0.22, 0.21, 0.19); // soft velvet glow at grazing angles, like cut pile
+  const edgeMat = new THREE.MeshStandardMaterial({roughness:1, side:THREE.DoubleSide});
+  const backMat = new THREE.MeshStandardMaterial({map:jute, roughness:1, side:THREE.DoubleSide});
+  const coreMat = new THREE.MeshStandardMaterial({color:0x9c7a4f, roughness:0.85, side:THREE.DoubleSide});
+
+  const view = {az:0.62, el:0.36, dist:20, tx:0, ty:0.2, tz:0};
+  const group = new THREE.Group(); scene.add(group);
+  let faceMesh, backMesh, edgeMesh, coreMesh, N;
+  let fx, fy, bx, by; // per-sample section points (face / back), reused every pose
+
+  function strip(nVerts){ const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nVerts*3), 3)); return g; }
+  function stripIndex(g, rowsPerSample, pairs){
+    const idx = [];
+    for (let i = 0; i < N; i++) for (const [p, q] of pairs) {
+      const a = i*rowsPerSample + p, b = i*rowsPerSample + q, c = a + rowsPerSample, d = b + rowsPerSample;
+      idx.push(a, c, b, b, c, d);
+    }
+    g.setIndex(idx);
+  }
+  function build(){
+    [faceMesh, backMesh, edgeMesh, coreMesh].forEach(m => { if (m) { group.remove(m); m.geometry.dispose(); } });
+    N = Math.max(240, Math.round(S.L * 140));
+    fx = new Float32Array(N+1); fy = new Float32Array(N+1); bx = new Float32Array(N+1); by = new Float32Array(N+1);
+    const W = S.spacing, archW = S.spacing * TEX[S.cw].aspect, vMax = 1;
+    const fg = strip((N+1)*2), bg = strip((N+1)*2), eg = strip((N+1)*4);
+    const fuv = new Float32Array((N+1)*4), buv = new Float32Array((N+1)*4), euv = new Float32Array((N+1)*8);
+    for (let i = 0; i <= N; i++) {
+      const u = (i/N*S.L) / archW, ju = (i/N*S.L) * 18;
+      fuv.set([u, 0, u, vMax], i*4);
+      buv.set([ju, 0, ju, W*18], i*4);
+      euv.set([u, 0.012, u, 0.012, u, vMax-0.012, u, vMax-0.012], i*8); // edge shows the outer border band
+    }
+    fg.setAttribute('uv', new THREE.BufferAttribute(fuv, 2)); bg.setAttribute('uv', new THREE.BufferAttribute(buv, 2)); eg.setAttribute('uv', new THREE.BufferAttribute(euv, 2));
+    stripIndex(fg, 2, [[0,1]]); stripIndex(bg, 2, [[1,0]]); stripIndex(eg, 4, [[0,1],[3,2]]);
+    faceMesh = new THREE.Mesh(fg, faceMat); backMesh = new THREE.Mesh(bg, backMat); edgeMesh = new THREE.Mesh(eg, edgeMat);
+    coreMesh = new THREE.Mesh(new THREE.CylinderGeometry(CORE_R, CORE_R, W + 0.08, 40, 1, true), coreMat);
+    coreMesh.rotation.x = Math.PI/2; coreMesh.position.z = W/2;
+    for (const m of [faceMesh, backMesh, edgeMesh, coreMesh]) { m.castShadow = true; m.receiveShadow = true; group.add(m); }
+    group.position.set(-S.L/2, 0, -W/2);
+    const t = tex(S.cw); faceMat.map = t; edgeMat.map = t; faceMat.needsUpdate = edgeMat.needsUpdate = true;
+    const k = Math.max(S.L, W) * 0.75;
+    Object.assign(sun.shadow.camera, {left:-k, right:k, top:k, bottom:-k, near:0.5, far:k*6}); sun.shadow.camera.updateProjectionMatrix();
+    sun.position.set(-S.L*0.3, k*2.2, k*1.4);
+    pose();
+  }
+  // Lay the roll out: flat on the floor up to `a`, then an Archimedean spiral (one thickness per turn) down to the core.
+  function pose(){
+    const L = S.L, t = S.t, a = Math.min(Math.max(S.a, 0), L), ft = t*FACE;
+    const R = Math.sqrt(CORE_R*CORE_R + (L - a)*t/Math.PI), k = Math.PI*2/t;
+    for (let i = 0; i <= N; i++) {
+      const s = i/N*L;
+      if (s <= a) { bx[i] = s; by[i] = 0; fx[i] = s; fy[i] = ft; continue; }
+      const th = (R - Math.sqrt(Math.max(0, R*R - t*(s - a)/Math.PI))) * k, r = R - th/k, rf = r - ft, sn = Math.sin(th), cs = Math.cos(th);
+      bx[i] = a + r*sn; by[i] = R - r*cs; fx[i] = a + rf*sn; fy[i] = R - rf*cs;
+    }
+    const W = S.spacing, fp = faceMesh.geometry.attributes.position.array, bp = backMesh.geometry.attributes.position.array, ep = edgeMesh.geometry.attributes.position.array;
+    for (let i = 0; i <= N; i++) {
+      fp.set([fx[i], fy[i], 0, fx[i], fy[i], W], i*6);
+      bp.set([bx[i], by[i], 0, bx[i], by[i], W], i*6);
+      ep.set([bx[i], by[i], 0, fx[i], fy[i], 0, bx[i], by[i], W, fx[i], fy[i], W], i*12);
+    }
+    for (const m of [faceMesh, backMesh, edgeMesh]) { m.geometry.attributes.position.needsUpdate = true; m.geometry.computeVertexNormals(); m.geometry.computeBoundingSphere(); }
+    coreMesh.position.x = a; coreMesh.position.y = R; coreMesh.visible = a < L - 0.01;
+    view.tx = group.position.x + (a + 2*R)/2; // keep what is on the floor centred
+    S.R = R; dirty = true; readout();
+  }
+
+  // Orbit camera
+  function fit(){ const W = S.spacing; view.dist = Math.max(S.L*0.5, W*3.5, 3.5); view.ty = 0.2; dirty = true; }
+  function place(){
+    const ce = Math.cos(view.el);
+    camera.position.set(view.tx + view.dist*ce*Math.sin(view.az), view.ty + view.dist*Math.sin(view.el), view.tz + view.dist*ce*Math.cos(view.az));
+    camera.lookAt(view.tx, view.ty, view.tz);
+  }
+  function resize(){ const r = stage.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix(); dirty = true; }
+  new ResizeObserver(resize).observe(stage);
+
+  function applyTheme(){
+    const cs = getComputedStyle(document.documentElement);
+    // CSS colours are sRGB; the renderer works in linear light.
+    scene.background = new THREE.Color(cs.getPropertyValue('--stage').trim() || '#E9E2D0').convertSRGBToLinear();
+    floor.material.color.set(cs.getPropertyValue('--floor').trim() || '#D9D0B9').convertSRGBToLinear().multiplyScalar(0.62); dirty = true; // floor is lit, so start darker than the token
+  }
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+  new MutationObserver(applyTheme).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+  // Pointer: drag on the roll unrolls it, drag elsewhere orbits, wheel / pinch zooms.
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), floorPlane = new THREE.Plane(new THREE.Vector3(0,1,0), 0), hitP = new THREE.Vector3();
+  const pts = new Map(); let mode = null, grabOffset = 0, pinch0 = 0, dist0 = 0;
+  function toNdc(e){ const r = stage.getBoundingClientRect(); ndc.set((e.clientX - r.left)/r.width*2 - 1, -(e.clientY - r.top)/r.height*2 + 1); ray.setFromCamera(ndc, camera); }
+  function floorX(e){ toNdc(e); return ray.ray.intersectPlane(floorPlane, hitP) ? hitP.x - group.position.x : null; }
+  function onRoll(e){
+    toNdc(e); const h = ray.intersectObjects([faceMesh, backMesh, edgeMesh, coreMesh])[0];
+    return h && (h.point.x - group.position.x) > S.a - 0.15;
+  }
+  stage.addEventListener('pointerdown', e => {
+    stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    stopAnim();
+    if (pts.size === 2) { const [p, q] = [...pts.values()]; pinch0 = Math.hypot(p.x-q.x, p.y-q.y); dist0 = view.dist; mode = 'pinch'; return; }
+    if (onRoll(e)) { const x = floorX(e); grabOffset = x == null ? 0 : S.a - x; mode = 'unroll'; stage.style.cursor = 'grabbing'; }
+    else mode = 'orbit';
+  });
+  stage.addEventListener('pointermove', e => {
+    const prev = pts.get(e.pointerId);
+    if (!prev) { stage.style.cursor = onRoll(e) ? 'grab' : 'move'; return; }
+    pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if (mode === 'pinch' && pts.size === 2) { const [p, q] = [...pts.values()]; view.dist = clampDist(dist0 * pinch0 / Math.max(1, Math.hypot(p.x-q.x, p.y-q.y))); dirty = true; }
+    else if (mode === 'orbit') { orbit((e.clientX - prev.x) * -0.006, (e.clientY - prev.y) * 0.005); }
+    else if (mode === 'unroll') { const x = floorX(e); if (x != null) setA(x + grabOffset); }
+  });
+  const end = e => { pts.delete(e.pointerId); if (!pts.size) { mode = null; stage.style.cursor = ''; } else if (mode === 'pinch') mode = null; };
+  stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+  stage.addEventListener('wheel', e => { e.preventDefault(); view.dist = clampDist(view.dist * Math.exp(e.deltaY * 0.0012)); dirty = true; }, {passive:false});
+  stage.addEventListener('dblclick', () => { view.az = 0.62; view.el = 0.36; fit(); });
+  stage.addEventListener('keydown', e => {
+    const k = {ArrowLeft:[0.12,0], ArrowRight:[-0.12,0], ArrowUp:[0,0.08], ArrowDown:[0,-0.08]}[e.key];
+    if (k) { e.preventDefault(); orbit(k[0], k[1]); }
+    if (e.key === '+' || e.key === '=') { view.dist = clampDist(view.dist*0.9); dirty = true; }
+    if (e.key === '-') { view.dist = clampDist(view.dist*1.1); dirty = true; }
+  });
+  function orbit(dAz, dEl){ view.az += dAz; view.el = Math.min(1.45, Math.max(0.06, view.el + dEl)); dirty = true; }
+  function clampDist(d){ return Math.min(Math.max(d, 1.2), 90); }
+
+  // Unroll control
+  const frac = $('frac'), btn = $('unrollBtn');
+  function setA(a){ S.a = Math.min(Math.max(a, 0), S.L); frac.value = Math.round(S.a/S.L*1000); pose(); }
+  frac.addEventListener('input', () => { stopAnim(); setA(frac.value/1000*S.L); });
+  let anim = null;
+  function stopAnim(){ anim = null; }
+  btn.addEventListener('click', () => {
+    const target = S.a < S.L*0.98 ? S.L : 0;
+    if (reduceMotion) return setA(target);
+    anim = {from:S.a, to:target, t0:performance.now(), dur:600};
+  });
+
+  // Property controls
+  document.querySelectorAll('#spacing button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#spacing button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    S.spacing = +b.dataset.v; build(); fit();
+  }));
+  $('len').addEventListener('input', e => { const f = S.a / S.L; S.L = +e.target.value; S.a = f*S.L; build(); fit(); });
+  $('thk').addEventListener('input', e => { S.t = e.target.value/1000; pose(); });
+
+  function readout(){
+    const W = S.spacing, Dfull = 2*Math.sqrt(CORE_R*CORE_R + S.L*S.t/Math.PI);
+    $('spOut').textContent = Math.round(S.spacing*100) + ' cm';
+    $('lenOut').textContent = S.L.toFixed(1) + ' m'; $('thkOut').textContent = Math.round(S.t*1000) + ' mm';
+    $('oW').textContent = W.toFixed(2) + ' m';
+    $('oA').textContent = (W*S.L).toFixed(1) + ' m²';
+    $('oD').textContent = Math.round(Dfull*100) + ' cm';
+    $('oU').textContent = S.a.toFixed(1) + ' of ' + S.L.toFixed(1) + ' m';
+    const p = Math.round(S.a/S.L*100); $('fracOut').textContent = p + '%';
+    btn.textContent = S.a < S.L*0.98 ? 'Unroll' : 'Roll up';
+  }
+
+  buildSwatches(name => { S.cw = name; build(); });
+
+  function loop(now){
+    if (anim) {
+      const k = Math.min(1, (now - anim.t0)/anim.dur), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2)/2;
+      setA(anim.from + (anim.to - anim.from)*e); if (k >= 1) anim = null;
+    }
+    if (dirty) { place(); renderer.render(scene, camera); dirty = false; }
+    requestAnimationFrame(loop);
+  }
+  applyTheme(); build(); fit(); resize(); requestAnimationFrame(loop);
+})();
+
+function buildSwatches(onPick){
+  const box = $('swatches');
+  const pick = name => {
+    box.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cw === name)));
+    const cw = COLOURWAYS.find(c => c[0] === name); $('cwName').textContent = cw[1];
+    try { history.replaceState(null, '', '#' + name); } catch(e) {}
+    onPick(name);
+  };
+  for (const [key, en, tr] of COLOURWAYS) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'sw'; b.dataset.cw = key; b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = `<i style="background-image:url(${TEX[key].src})"></i><span>${en}<small>${tr}</small></span>`;
+    b.addEventListener('click', () => pick(key)); box.appendChild(b);
+  }
+  const start = (location.hash || '').slice(1);
+  pick(TEX[start] ? start : 'red');
+}
+</script>
