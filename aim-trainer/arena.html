@@ -96,6 +96,10 @@ a { color: var(--amber); }
 .tiers .cleared .st { color: var(--teal); }
 .notes { margin: 12px 0 0; padding: 10px 0 0; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
 .notes b { color: var(--fg); font-weight: 500; }
+.routine { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--line); background: var(--panel-2); display: grid; gap: 8px; }
+.routine ol { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
+.routine ol b { color: var(--fg); font-weight: 500; }
+.focus { position: absolute; left: 50%; top: calc(40px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); font: 500 14px var(--font-data); color: var(--amber); text-shadow: 0 1px 2px #000; white-space: nowrap; }
 
 /* results */
 .res { max-width: 620px; }
@@ -114,6 +118,7 @@ a { color: var(--amber); }
 <div class="hud" id="hud" hidden>
   <div class="timebar" id="timebar"></div>
   <div class="hud-bar"><span id="hudL"></span><span id="hudR" class="dim"></span></div>
+  <div class="focus" id="focus" hidden></div>
   <div class="countdown" id="count" hidden></div>
   <div class="prompt" id="prompt" hidden>Hold left mouse to fire</div>
   <svg class="xh" id="xh" aria-hidden="true">
@@ -136,6 +141,15 @@ a { color: var(--amber); }
         <div class="start-row">
           <button class="btn primary" id="startBtn" type="button">Start run</button>
           <span class="keys"><kbd>Y</kbd> quick restart · <kbd>Esc</kbd> leave</span>
+        </div>
+        <div class="routine">
+          <h2 style="margin:0">15-minute routine · 3 × 5 min</h2>
+          <ol>
+            <li><b>Smooth Tracking</b> (Smoothbot / Ground Plaza): stay slightly ahead of the target.</li>
+            <li><b>Wall Flicks 6T</b> (1wall6targets / Tile Frenzy): brake as you land, not speed.</li>
+            <li><b>Switch Track</b> (Pasu / Popcorn): flick to a target, brake, track it, then flick to the next.</li>
+          </ol>
+          <div><button class="btn" id="routineBtn" type="button">Start 15-min routine</button></div>
         </div>
         <p class="msg" id="menuMsg" hidden></p>
         <div id="ladderBox" hidden>
@@ -214,6 +228,8 @@ a { color: var(--amber); }
   const RUN_S = 60, COUNTDOWN_S = 2, QUICK_S = 0.7, HZ = 120, STEP = 1 / HZ;
   const HAZARD_ROF = 1.75;                              // Bonespur volleys per second
   const lerp = (a, b, u) => a + (b - a) * u;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const POP_G = 9;   // gravity for the bouncing Switch Track targets (m/s^2)
 
   // ---------- storage + settings ----------
   const store = {
@@ -274,6 +290,7 @@ a { color: var(--amber); }
     orb: new THREE.SphereGeometry(0.35, 24, 16),
     frenzy: new THREE.SphereGeometry(0.28, 24, 16),
     dot: new THREE.CircleGeometry(0.06, 12),
+    tile: new THREE.SphereGeometry(0.22, 22, 14),
   };
   const DOT_MAT = new THREE.MeshBasicMaterial({ color: 0x33414f });
   const ent3d = []; // everything a run adds to the scene
@@ -328,6 +345,12 @@ a { color: var(--amber); }
     camera.position.copy(pos);
     camera.rotation.set(cam.pitch * D2R, -cam.yaw * D2R, 0);
     camera.updateMatrixWorld();
+  }
+  function angleTo(p) {
+    const y = cam.yaw * D2R, pt = cam.pitch * D2R;
+    const fx = Math.cos(pt) * Math.sin(y), fy = Math.sin(pt), fz = -Math.cos(pt) * Math.cos(y);
+    const dx = p.x - cam.pos.x, dy = p.y - cam.pos.y, dz = p.z - cam.pos.z, d = Math.hypot(dx, dy, dz);
+    return Math.acos(clamp((fx * dx + fy * dy + fz * dz) / d, -1, 1)) / D2R;
   }
   function aimAt(meshes) {
     if (!meshes.length) return null;
@@ -564,6 +587,118 @@ a { color: var(--amber); }
       },
     },
   };
+  Object.assign(MODES, {
+    smooth: {
+      name: 'Smooth Tracking', kind: 'track', tag: 'Tracking', lead: true,
+      focus: 'Stay slightly ahead of the target',
+      blurb: 'Smoothbot / Ground Plaza style: a hero-sized bot glides around a plaza 6–15 m away on smooth, curving paths, speeding up and easing off. Score: time on target, plus how often you stay slightly ahead of it.',
+      init(run) {
+        const g = addMesh(new THREE.Group());
+        const body = new THREE.Mesh(GEO.body, makeMat(COL.idle)); body.position.y = 0.7;
+        const head = new THREE.Mesh(GEO.head, makeMat(0xffd27a)); head.position.y = 1.55;
+        g.add(body, head);
+        const rng = rngFor(70);
+        const mv = makeMover(rng, new V3(0, 0, -10.5), null);
+        Object.assign(mv, { heading: rng() * 6.283, turn: 0, speedPhase: rng() * 6.283 });
+        run.ents = [{ g, mesh: body, parts: [body, head], mv }];
+      },
+      step(run, dt) {
+        const m = run.ents[0].mv, r = m.rng, cz = -10.5;
+        // smooth wander: the turn rate drifts gradually; speed swells and eases between 2.5 and 5.5 m/s
+        m.turn = clamp((m.turn + (r() * 2 - 1) * 6 * dt) * Math.exp(-dt * 0.8), -2.2, 2.2);
+        const edge = Math.max(Math.abs(m.pos.x) / 7, Math.abs(m.pos.z - cz) / 3.5);
+        if (edge > 0.55) {                    // curve back toward the middle near the plaza edges
+          const want = Math.atan2(cz - m.pos.z, -m.pos.x);
+          const d = ((want - m.heading + Math.PI * 3) % (2 * Math.PI)) - Math.PI;
+          m.heading += d * Math.min(1, (edge - 0.55) * 2.5) * 3.5 * dt;
+          m.turn *= Math.exp(-dt * 2 * (edge - 0.55));
+        }
+        m.heading += m.turn * dt;
+        m.speedPhase += dt * 0.9;
+        const sp = 4 + 1.5 * Math.sin(m.speedPhase);
+        m.vel.set(Math.cos(m.heading) * sp, 0, Math.sin(m.heading) * sp);
+        m.pos.addScaledVector(m.vel, dt);
+      },
+      targets: run => run.ents[0].parts,
+    },
+    tiles: {
+      name: 'Wall Flicks 6T', kind: 'click', tag: 'Clicking', rof: 0,
+      focus: 'Brake as you land, not speed',
+      blurb: '1wall6targets / Tile Frenzy style: six targets on a wall 10 m away; each one you hit is replaced at a random spot. Score: hits, plus how well you brake: crosshair speed at the click and overshoots.',
+      init(run) {
+        const wall = addMesh(new THREE.Mesh(new THREE.PlaneGeometry(8.4, 4.8), new THREE.MeshLambertMaterial({ color: 0x1b232b })));
+        wall.userData.dispose = true; wall.position.set(0, 2.3, -10.06);
+        run.rng = rngFor(80); run.ents = [];
+        for (let k = 0; k < 6; k++) this.spawn(run, -9);
+      },
+      spawn(run, t) {
+        let p;
+        for (let k = 0; k < 40; k++) {
+          p = new V3(lerp(-3.4, 3.4, run.rng()), lerp(0.6, 4.0, run.rng()), -10);
+          if (run.ents.every(e => !e.alive || e.mesh.position.distanceTo(p) > 0.9)) break;
+        }
+        const mesh = addMesh(new THREE.Mesh(GEO.tile, makeMat(COL.idle)));
+        mesh.position.copy(p);
+        const ent = { mesh, born: t, alive: true, popT: -9, wasOn: false, left: false };
+        mesh.userData.ent = ent;
+        run.ents = run.ents.filter(e => { const keep = e.alive || t - e.popT < 0.2; if (!keep) e.mesh.visible = false; return keep; });
+        run.ents.push(ent);
+      },
+      // overshoot = the crosshair passed over a target and off it again before the click that hit it
+      step(run) {
+        for (const e of run.ents) {
+          if (!e.alive) continue;
+          const on = angleTo(e.mesh.position) <= Math.atan(0.22 / e.mesh.position.distanceTo(cam.pos)) / D2R;
+          if (on) e.wasOn = true; else if (e.wasOn) e.left = true;
+        }
+      },
+      targets: run => run.ents.filter(e => e.alive).map(e => e.mesh),
+      shoot(run, t) {
+        const m = aimAt(this.targets(run));
+        if (!m) return null;
+        const e = m.userData.ent; e.alive = false; e.popT = t; run.st.hits++;
+        if (e.left) run.st.overs++;
+        run.st.clickSpeeds.push(run.aimSpeed);
+        for (const o of run.ents) { o.wasOn = false; o.left = false; }      // a new flick starts
+        this.spawn(run, t);
+        return 'body';
+      },
+    },
+    pasu: {
+      name: 'Switch Track', kind: 'track', tag: 'Switching', killTrack: true,
+      focus: 'Flick, brake, track, then flick to the next',
+      blurb: 'Pasu / Popcorn style: three targets strafe sideways and bounce in arcs 9–14 m away. Each takes about 1 s of tracking fire to kill, then a new one pops up from the floor. Score: kills, plus time on target and switch time.',
+      init(run) { run.rng = rngFor(90); run.ents = []; for (let k = 0; k < 3; k++) this.spawn(run, -9); },
+      spawn(run, t) {
+        const r = run.rng, x = lerp(-6, 6, r()), z = lerp(-14, -9, r());
+        const mesh = addMesh(new THREE.Mesh(GEO.orb, makeMat(COL.idle)));
+        const mv = makeMover(rngFor(200 + run.st.kills + run.ents.length), new V3(x, 0.35, z), { axes: ['x'], min: { x: -7 }, max: { x: 7 }, margin: 1.5, repel: 40,
+          speed: [1.5, 4.5], accel: [10, 40], interval: [0.4, 1.0] });
+        mesh.position.copy(mv.pos);
+        const ent = { mesh, mv, vy: Math.sqrt(2 * POP_G * lerp(2, 4.5, r())), hp: 1.0, born: t, alive: true, popT: -9 };
+        mesh.userData.ent = ent;
+        run.ents = run.ents.filter(e => { const keep = e.alive || t - e.popT < 0.2; if (!keep) e.mesh.visible = false; return keep; });
+        run.ents.push(ent);
+      },
+      step(run, dt, t) {
+        for (const e of run.ents) {
+          if (!e.alive) continue;
+          stepMover(e.mv, dt, t);
+          e.vy -= POP_G * dt; e.mv.pos.y += e.vy * dt;
+          if (e.mv.pos.y <= 0.35) { e.mv.pos.y = 0.35; e.vy = Math.sqrt(2 * POP_G * lerp(2, 4.5, e.mv.rng())); }   // bounce to a new height
+        }
+      },
+      targets: run => run.ents.filter(e => e.alive).map(e => e.mesh),
+      onTrack(run, mesh, dt, t) {
+        const e = mesh.userData.ent;
+        if (run.waitSwitch) { run.st.switchT.push(t - run.killT); run.waitSwitch = false; }
+        e.hp -= dt;
+        if (e.hp <= 0) { e.alive = false; e.popT = t; run.st.kills++; run.killT = t; run.waitSwitch = true; this.spawn(run, t); }
+      },
+    },
+  });
+  const ROUTINE = ['smooth', 'tiles', 'pasu'], ROUTINE_S = 300;
+
   // Flick Frenzy ranks by hits per second. "Casual" is 1+ per second, as in 3D Aim Trainer's flick ranks;
   // the higher thresholds are my own estimates.
   const FRENZY_RANKS = [[3.0, 'Elite'], [2.5, 'Expert'], [2.0, 'Advanced'], [1.5, 'Skilled'], [1.0, 'Casual']];
@@ -574,10 +709,12 @@ a { color: var(--amber); }
   // ---------- run lifecycle ----------
   let run = null;
   const posOf = e => e.mv ? e.mv.pos : null;
-  function newStats() { return { onT: 0, fireT: 0, hits: 0, shots: 0, heads: 0, kills: 0, ttk: [], spawned: 0, expired: 0 }; }
+  function newStats() { return { onT: 0, fireT: 0, hits: 0, shots: 0, heads: 0, kills: 0, ttk: [], spawned: 0, expired: 0, aheadT: 0, behindT: 0, overs: 0, clickSpeeds: [], switchT: [] }; }
+  let routine = null;   // { i, results } while the 15-minute routine is running
   function startRun(quick) {
     clearScene();
-    run = { mode: modeId, M: MODES[modeId], t: -(quick ? QUICK_S : COUNTDOWN_S), phase: 'countdown', st: newStats(), ents: [], lastShot: -9, lastHit: -9, lastHitHead: false, acc: 0 };
+    if (routine) modeId = ROUTINE[routine.i];
+    run = { len: routine ? ROUTINE_S : RUN_S, aimSpeed: 0, lastYaw: cam.yaw, lastPitch: cam.pitch, mode: modeId, M: MODES[modeId], t: -(quick ? QUICK_S : COUNTDOWN_S), phase: 'countdown', st: newStats(), ents: [], lastShot: -9, lastHit: -9, lastHitHead: false, acc: 0 };
     if (TRACK_IDS.includes(modeId)) { run.tier = playTier[modeId]; run.T = TIERS[run.tier - 1]; }
     cam.pos.set(0, EYE, 0); cam.prev.copy(cam.pos);
     run.M.init(run);
@@ -588,7 +725,7 @@ a { color: var(--amber); }
   function endRun() {
     run.phase = 'done';
     const r = summary(run);
-    const key = pbKey(run.mode, run.tier);
+    const key = pbKey(run.mode, run.tier, run.len);
     if (run.T) {
       // tier ladder: a run at your current tier that meets the required % unlocks the next one
       const T = run.T, p = progs[run.mode], passed = r.score >= T.req;
@@ -606,20 +743,38 @@ a { color: var(--amber); }
     const prev = PB[key];
     const isPB = !prev || r.score > prev.score || (r.score === prev.score && (r.acc || 0) > (prev.acc || 0));
     if (isPB) { PB[key] = { score: r.score, acc: r.acc, at: Date.now() }; store.set('pb', PB); }
-    $('resMode').textContent = `${run.M.name}${run.T ? ' · tier ' + run.tier : ''} · ${S.seeded ? 'seed ' + S.seed : 'random targets'}`;
+    $('resMode').textContent = `${routine ? `Routine ${routine.i + 1}/3 · ` : ''}${run.M.name}${run.T ? ' · tier ' + run.tier : ''} · ${run.len / 60} min · ${S.seeded ? 'seed ' + S.seed : 'random targets'}`;
     $('resBig').innerHTML = r.big;
     $('resPB').hidden = !isPB;
     const rows = [...r.rows, ['Personal best', isPB ? 'this run' : r.fmt(PB[key])]];
+    $('retryBtn').textContent = 'Retry (Y)';
+    if (routine) {
+      routine.results.push([run.M.name, r.big.replace(/<[^>]+>/g, '')]);
+      if (routine.i < ROUTINE.length - 1) $('retryBtn').textContent = `Next: ${MODES[ROUTINE[routine.i + 1]].name} (Y)`;
+      else { rows.push(...routine.results.map(([n, v]) => [n, v])); $('resMode').textContent = 'Routine complete · 15 min'; routine = null; }
+    }
     $('resKV').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
     $('hud').hidden = true; $('results').hidden = false;
     document.exitPointerLock?.();
     renderModes();
   }
-  const pbKey = (mode, tier) => `${mode}${tier ? '|t' + tier : ''}|${S.seeded ? 'seed ' + S.seed : 'random'}`;
+  const pbKey = (mode, tier, len = RUN_S) => `${mode}${tier ? '|t' + tier : ''}${len !== RUN_S ? '|' + len + 's' : ''}|${S.seeded ? 'seed ' + S.seed : 'random'}`;
   function summary(r) {
     const s = r.st, acc = s.shots ? s.hits / s.shots * 100 : 0;
+    if (r.mode === 'pasu') {
+      const tot = s.fireT ? s.onT / s.fireT * 100 : 0, sw = s.switchT.length ? s.switchT.reduce((a, b) => a + b, 0) / s.switchT.length : 0;
+      return { score: s.kills, acc: +tot.toFixed(1), fmt: p => `${p.score} kills · ${(p.acc || 0).toFixed(1)}% on target`,
+        big: `${s.kills} <small>kills · ${tot.toFixed(1)}% on target</small>`,
+        rows: [['Kills', s.kills], ['Time on target', tot.toFixed(1) + '%'], ['Average switch time', s.switchT.length ? sw.toFixed(2) + ' s' : '–']] };
+    }
     if (r.M.kind === 'track') {
       const tot = s.fireT ? s.onT / s.fireT * 100 : 0;
+      if (r.M.lead) {
+        const lead = s.aheadT + s.behindT ? s.aheadT / (s.aheadT + s.behindT) * 100 : 0;
+        return { score: +tot.toFixed(1), acc: null, fmt: p => p.score.toFixed(1) + '%',
+          big: `${tot.toFixed(1)}% <small>on target · ahead ${lead.toFixed(0)}%</small>`,
+          rows: [['On target', s.onT.toFixed(1) + ' s'], [S.fireGate ? 'Firing' : 'Run time', s.fireT.toFixed(1) + ' s'], ['Slightly ahead (vs behind)', lead.toFixed(0) + '%']] };
+      }
       return {
         score: +tot.toFixed(1), acc: null, fmt: p => p.score.toFixed(1) + '%',
         big: `${tot.toFixed(1)}% <small>time on target</small>`,
@@ -632,10 +787,13 @@ a { color: var(--amber); }
       rows.unshift(['Kills', s.kills]);
       rows.push(['Headshots', s.heads], ['Average time to kill', s.ttk.length ? ttk.toFixed(2) + ' s' : '–']);
       return { score: s.kills, acc: +acc.toFixed(1), fmt: p => `${p.score} kills · ${(p.acc || 0).toFixed(1)}%`, big: `${s.kills} <small>kills · ${acc.toFixed(1)}% accuracy</small>`, rows };
+    } else if (r.mode === 'tiles') {
+      const spd = s.clickSpeeds.length ? s.clickSpeeds.reduce((a, b) => a + b, 0) / s.clickSpeeds.length : 0;
+      rows.push(['Crosshair speed at click', s.clickSpeeds.length ? spd.toFixed(0) + '°/s' : '–'], ['Overshoots', s.hits ? `${s.overs} (${(s.overs / s.hits * 100).toFixed(0)}% of hits)` : '–']);
     } else if (r.mode === 'frenzy') {
-      const hps = s.hits / RUN_S;
+      const hps = s.hits / r.len;
       rows.unshift(['Hits per second', hps.toFixed(2)], ['Rank', frenzyRank(hps)]);
-      return { score: s.hits, acc: +acc.toFixed(1), fmt: p => `${p.score} hits (${(p.score / RUN_S).toFixed(2)}/s) · ${(p.acc || 0).toFixed(1)}%`,
+      return { score: s.hits, acc: +acc.toFixed(1), fmt: p => `${p.score} hits (${(p.score / r.len).toFixed(2)}/s) · ${(p.acc || 0).toFixed(1)}%`,
         big: `${hps.toFixed(2)} <small>hits/s · ${frenzyRank(hps)} · ${acc.toFixed(1)}% accuracy</small>`, rows };
     } else rows.push(['Targets spawned', s.spawned], ['Targets missed', s.expired]);
     return { score: s.hits, acc: +acc.toFixed(1), fmt: p => `${p.score} hits · ${(p.acc || 0).toFixed(1)}%`, big: `${s.hits} <small>hits · ${acc.toFixed(1)}% accuracy</small>`, rows };
@@ -664,17 +822,31 @@ a { color: var(--amber); }
     if (run.phase === 'countdown' && run.t >= 0) run.phase = 'run';
     run.M.step(run, dt, run.t);
     if (run.phase !== 'run') return;
+    // crosshair speed (deg/s), smoothed over a few steps: Wall Flicks reports it at each click to show braking
+    run.aimSpeed = run.aimSpeed * 0.6 + Math.hypot(cam.yaw - run.lastYaw, cam.pitch - run.lastPitch) / dt * 0.4;
+    run.lastYaw = cam.yaw; run.lastPitch = cam.pitch;
     if (run.M.kind === 'track') {
       syncSim();
       if (!S.fireGate || firing) {
         run.st.fireT += dt;
-        if (aimAt(run.M.targets(run))) {
+        const hitMesh = aimAt(run.M.targets(run));
+        if (hitMesh) {
           run.st.onT += dt;
           if (firing && run.t - run.lastHit > 0.1) { run.lastHit = run.t; run.lastHitHead = false; }
+          if (firing && run.M.onTrack) run.M.onTrack(run, hitMesh, dt, run.t);
         }
       }
+      if (run.M.lead) {
+        // ahead or behind: which side of the bot your crosshair sits on, along its sideways motion
+        const p = run.ents[0].mv.pos, az = Math.atan2(p.x - cam.pos.x, -(p.z - cam.pos.z)) / D2R;
+        if (run.prevAz !== undefined && (!S.fireGate || firing)) {
+          const rate = (az - run.prevAz) / dt, err = ((cam.yaw - az + 540) % 360) - 180;
+          if (Math.abs(rate) > 2 && Math.abs(err) < 2.5) { if (Math.sign(err) === Math.sign(rate)) run.st.aheadT += dt; else run.st.behindT += dt; }
+        }
+        run.prevAz = az;
+      }
     }
-    if (run.t >= RUN_S) endRun();
+    if (run.t >= run.len) endRun();
   }
   function shoot() {
     if (!run || run.phase !== 'run' || run.M.kind !== 'click') return;
@@ -718,7 +890,7 @@ a { color: var(--amber); }
       pendingQuick = false;
     } else {
       firing = false;
-      if (run && run.phase !== 'done') cancelRun('Run cancelled. The mouse was released before the 60 s were up.');
+      if (run && run.phase !== 'done') { const was = routine; routine = null; cancelRun(was ? 'Routine stopped. The mouse was released mid-drill.' : 'Run cancelled. The mouse was released before the time was up.'); }
     }
   });
   $('gl').addEventListener('mousedown', e => {
@@ -728,14 +900,16 @@ a { color: var(--amber); }
   });
   document.addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
   $('startBtn').addEventListener('click', () => { $('menuMsg').hidden = true; lock(); });
-  $('retryBtn').addEventListener('click', () => lock());
-  $('menuBtn').addEventListener('click', () => { $('results').hidden = true; $('menu').hidden = false; });
+  function nextOrRetry() { if (routine && run && run.phase === 'done') routine.i++; }
+  $('retryBtn').addEventListener('click', () => { nextOrRetry(); lock(); });
+  $('routineBtn').addEventListener('click', () => { $('menuMsg').hidden = true; routine = { i: 0, results: [] }; lock(); });
+  $('menuBtn').addEventListener('click', () => { routine = null; $('results').hidden = true; $('menu').hidden = false; });
   document.addEventListener('keydown', e => {
     if (e.key !== 'y' && e.key !== 'Y') return;
     if (e.target.closest && e.target.closest('input, select, textarea')) return;
     e.preventDefault();
     if (document.pointerLockElement === $('gl')) startRun(true);
-    else { pendingQuick = true; lock(); }
+    else { nextOrRetry(); pendingQuick = true; lock(); }
   });
 
   // ---------- settings UI ----------
@@ -765,7 +939,7 @@ a { color: var(--amber); }
       const M = MODES[id], tr = TRACK_IDS.includes(id), p = PB[pbKey(id, tr ? playTier[id] : 0)];
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'mode'; b.setAttribute('aria-pressed', String(id === modeId));
-      const pbText = (tr ? `Tier ${playTier[id]} · ` : '') + (p ? (tr ? `PB ${p.score.toFixed(1)}%` : id === 'switch' ? `PB ${p.score} kills · ${(p.acc || 0).toFixed(1)}%` : `PB ${p.score} hits · ${(p.acc || 0).toFixed(1)}%`) : 'no personal best yet');
+      const pbText = (tr ? `Tier ${playTier[id]} · ` : '') + (p ? (tr || id === 'smooth' ? `PB ${p.score.toFixed(1)}%` : id === 'switch' || id === 'pasu' ? `PB ${p.score} kills · ${(p.acc || 0).toFixed(1)}%` : id === 'switch' ? `PB ${p.score} kills · ${(p.acc || 0).toFixed(1)}%` : `PB ${p.score} hits · ${(p.acc || 0).toFixed(1)}%`) : 'no personal best yet');
       b.innerHTML = `<div class="top"><b>${M.name}</b><span class="tag">${M.tag}</span></div><p>${M.blurb}</p><span class="pb">${pbText}${S.seeded ? ' · seed ' + S.seed : ''}</span>`;
       b.addEventListener('click', () => { modeId = id; store.set('mode', id); renderModes(); });
       box.appendChild(b);
@@ -848,7 +1022,8 @@ a { color: var(--amber); }
       // visual states
       if (M.kind === 'track') {
         const on = run.phase === 'run' && (!S.fireGate || firing) && aimAt(M.targets(run));
-        setCol(run.ents[0].mesh, on ? COL.hit : COL.idle);
+        if (M.killTrack) for (const e of run.ents) setCol(e.mesh, on && on.userData.ent === e ? COL.hit : COL.idle);
+        else setCol(run.ents[0].mesh, on ? COL.hit : COL.idle);
         $('xh').classList.toggle('on', !!on);
       } else $('xh').classList.remove('on');
       if (run.mode === 'switch') for (const b of run.ents) {
@@ -857,7 +1032,7 @@ a { color: var(--amber); }
         const s = b.alive ? Math.min(1, (t - b.spawnT) / 0.15) : Math.max(0, 1 - (t - b.deathT) / 0.15);
         b.g.scale.setScalar(Math.max(0.001, s));
       }
-      if (run.mode === 'leap' || run.mode === 'frenzy') for (const e of run.ents) {
+      if (['leap', 'frenzy', 'tiles', 'pasu'].includes(run.mode)) for (const e of run.ents) {
         const s = e.alive ? Math.min(1, (t - e.born) / 0.12) : Math.max(0, 1 - (t - e.popT) / 0.12);
         e.mesh.scale.setScalar(Math.max(0.001, s));
         e.mesh.visible = s > 0.002;
@@ -874,15 +1049,18 @@ a { color: var(--amber); }
       $('count').hidden = run.phase !== 'countdown';
       if (run.phase === 'countdown') $('count').textContent = Math.max(1, Math.ceil(-t));
       $('prompt').hidden = !(M.kind === 'track' && S.fireGate && run.phase === 'run' && !firing);
-      $('timebar').style.width = (run.phase === 'run' ? Math.max(0, 1 - t / RUN_S) * 100 : 100) + '%';
+      $('timebar').style.width = (run.phase === 'run' ? Math.max(0, 1 - t / run.len) * 100 : 100) + '%';
+      $('focus').hidden = !M.focus; if (M.focus) $('focus').textContent = M.focus;
       if (now - hudAt > 100) {
         hudAt = now;
         const s = run.st;
         $('hudL').textContent = M.kind === 'track'
-          ? `${M.name} · tier ${run.tier} · ${(s.fireT ? s.onT / s.fireT * 100 : 0).toFixed(1)}% on target · need ${run.T.req}%`
+          ? (run.T ? `${M.name} · tier ${run.tier} · ${(s.fireT ? s.onT / s.fireT * 100 : 0).toFixed(1)}% on target · need ${run.T.req}%` : `${M.name} · ${(s.fireT ? s.onT / s.fireT * 100 : 0).toFixed(1)}% on target · ahead ${(s.aheadT + s.behindT ? s.aheadT / (s.aheadT + s.behindT) * 100 : 0).toFixed(0)}%`)
           : run.mode === 'switch' ? `${M.name} · ${s.kills} kills · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc`
-          : run.mode === 'frenzy' ? `${M.name} · ${s.hits} hits · ${(t > 0 ? s.hits / Math.min(t, RUN_S) : 0).toFixed(2)}/s · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc` : `${M.name} · ${s.hits} hits · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc · ${s.expired} missed`;
-        $('hudR').textContent = `${S.seeded ? 'seed ' + S.seed + ' · ' : ''}Y restart · ${Math.max(0, RUN_S - Math.max(0, t)).toFixed(1)} s`;
+          : run.mode === 'pasu' ? `${M.name} · ${s.kills} kills · ${(s.fireT ? s.onT / s.fireT * 100 : 0).toFixed(1)}% on target`
+          : run.mode === 'tiles' ? `${M.name} · ${s.hits} hits · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc · ${s.overs} overshoots`
+          : run.mode === 'frenzy' ? `${M.name} · ${s.hits} hits · ${(t > 0 ? s.hits / Math.min(t, run.len) : 0).toFixed(2)}/s · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc` : `${M.name} · ${s.hits} hits · ${(s.shots ? s.hits / s.shots * 100 : 0).toFixed(0)}% acc · ${s.expired} missed`;
+        $('hudR').textContent = `${routine ? `routine ${routine.i + 1}/3 · ` : ''}${S.seeded ? 'seed ' + S.seed + ' · ' : ''}Y restart · ${Math.max(0, run.len - Math.max(0, t)).toFixed(1)} s`;
       }
     } else poseCamera(cam.pos);
     renderer.render(scene, camera);
