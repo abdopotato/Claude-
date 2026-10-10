@@ -1,5 +1,24 @@
 # Business card (approved 2026-10-10)
 
+## Final print file: Canva
+
+**MosqueCarpetsCanada — Business Card (front + back)**: https://www.canva.com/d/a_oCg-enQ2pEiDP
+(page 1 front, page 2 back, 3.5 × 2 in). Everything is editable vector shapes or live text (EB Garamond, Work Sans);
+the only images are the faint background pattern (3150 px wide) and the QR code. Built from `card-front-canva.html`,
+`front-pattern.png` and `card-back-canva.html`. The separate front, back and old image-only designs are working copies.
+
+Checked 2026-10-10:
+- Both backgrounds extend 0.15 in past every trim edge (bleed), so trimming can't leave a white edge.
+- QR decoded from Canva's own render: `https://mosquecarpetscanada.myshopify.com/pages/contact`, the store's primary
+  domain and the published "Request a quote" page. **The store is still password-protected**, so a scan lands on the
+  password page until the store is opened (OPEN-QUESTIONS #32).
+- Text sits at least 0.18 in inside the trim on both sides. Tagline is 6 pt.
+- To print: Share → Download → PDF Print with "Crop marks and bleed", or order through Canva Print.
+
+Not changed (owner's layout, offered as options, OPEN-QUESTIONS #33): frame corners about 1 mm from the trim;
+"Scan for a free quote" is 4.3 pt; QR is 12 mm wide (20 mm recommended); a few hairlines are under 0.25 pt.
+
+
 - `card-front.png`: the approved front (masjid + name on the gold prayer carpet), 1260 × 717 px.
 - `card-back.png`: the back as supplied by the owner (name, title, phone, email, QR code), 1260 × 720 px.
 
@@ -38,8 +57,7 @@ The whole group (masjid, name, carpet, roll and tagline) is centred left to righ
 
 ## Check before printing
 
-- **Tagline size:** at real card size the tagline is only about **3.8 pt**. That's too small to print cleanly; make it
-  **6 pt or larger** (keep it centred and on one line, shortening the side rules if needed).
+- **Tagline size:** done in the Canva file (6 pt, side rules dropped).
 - **Fine lines:** the carpet's thinnest lines are about 0.07 mm. Ask the printer for a hard proof; if they fade, thicken
   the lines in `carpet-roll.svg` slightly.
 - Add 3 mm bleed on every side (the green background extends past the trim), keep text 3 mm inside the trim,

@@ -64,6 +64,8 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | # | Item | Status |
 |---|------|--------|
 | 28 | **Owner: "we no longer install."** The live site still offers installation in the hero, trust band, hall cards, FAQ, product page (installation option), Installation page, quote form ("supply + install"), footer and product descriptions. | Not changed yet: needs a preview and approval. Business card wording already updated ("Prayer-hall carpet · Supplied"). |
+| 32 | **Open the online store** (remove the storefront password). The business card QR opens the quote page, but while the password is on, anyone scanning sees Shopify's password screen. | Not changed: owner decision (Online Store → Preferences) |
+| 33 | Business card print safety: move both frames about 2 mm inward (corners are about 1 mm from the cut); "Scan for a free quote" 4.3 pt → 6 pt; QR 12 mm → about 20 mm; thicken hairlines under 0.25 pt. | Not changed: owner's layout, offered as an option |
 
 ## Answered
 
