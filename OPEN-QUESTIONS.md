@@ -59,6 +59,12 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | 30 | May we use the mill's catalogue artwork on the site, and can the mill send high-resolution pattern files? | Patterns cut from the catalogue page (soft detail) |
 | 31 | Do you want the 3D roll on product pages? It would load only when a buyer taps "View in 3D", so page speed stays the same | Standalone preview only; theme unchanged |
 
+## Business change (2026-10-10)
+
+| # | Item | Status |
+|---|------|--------|
+| 28 | **Owner: "we no longer install."** The live site still offers installation in the hero, trust band, hall cards, FAQ, product page (installation option), Installation page, quote form ("supply + install"), footer and product descriptions. | Not changed yet: needs a preview and approval. Business card wording already updated ("Prayer-hall carpet · Supplied"). |
+
 ## Answered
 
 _(none yet)_
