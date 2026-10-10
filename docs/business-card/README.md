@@ -29,7 +29,8 @@ The whole group (name, carpet, roll and tagline) is centred left to right and si
 | Name | HEX |
 |---|---|
 | Card green (background) | #11261E |
-| Gold (carpet border, arches, roll, tagline, pattern) | #C9AE72 |
+| Gold (carpet and roll, solid; tagline; pattern) | #C9AE72 |
+| Cut lines on the carpet and roll (border, rows, arches, highlights) | card green #11261E |
 | Cream (name) | #EEEFE6 |
 
 ## Check before printing
