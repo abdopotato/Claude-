@@ -8,9 +8,10 @@ everything kept inside the circle. `.svg` versions are the same art in vector fo
 - **B**: the masjid standing on the gold carpet and its roll, as on the card front.
 - **C**: gold masjid with cream crescent, gold ring.
 
-- **A-maple / B-maple**: A or B with a red maple leaf (the flag's leaf, #D52B1E) on a cream badge at the bottom of
-  the ring, kept fully inside Gmail's circle crop. It's the maple leaf only, not the Government of Canada wordmark,
-  which is reserved for federal use.
+- **A / B with a maple leaf** on a badge at the bottom of the ring, kept fully inside Gmail's circle crop:
+  `-maple-green` = card-green leaf on a cream badge; `-maple-gold` = gold leaf on a green badge (a gold leaf on cream
+  would be too faint). It's the maple leaf only, not the Government of Canada wordmark, which is reserved for federal
+  use. The earlier red-leaf versions are in git history.
 
 `options.png` and `options-maple.png` show each one at full size and at inbox sizes (72, 40 and 28 px).
 
