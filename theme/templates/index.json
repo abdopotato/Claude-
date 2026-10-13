@@ -12,7 +12,7 @@
             "title": "Musalla, small",
             "description": "For side rooms, sisters' prayer areas and overflow musallas. One roll cut to width, with no seams.",
             "include_1": "Single roll, cut to width",
-            "include_2": "Installation available, quoted with your order",
+            "include_2": "Prayer lines woven in at your spacing",
             "popular": false,
             "rows": "≈ 5 prayer rows at 95cm spacing",
             "price_text": "from $1,150 CAD",
@@ -28,7 +28,7 @@
             "title": "Main hall, mid-size",
             "description": "Two widths joined by a hidden seam between rows, so every saff line runs unbroken from wall to wall.",
             "include_1": "Hidden seam, lines matched",
-            "include_2": "Installation available, quoted with your order",
+            "include_2": "Roll layout drawing included",
             "popular": true,
             "rows": "≈ 10 prayer rows at 95cm spacing",
             "price_text": "from $3,650 CAD",
@@ -42,9 +42,9 @@
             "unit": "m hall",
             "arabic": "قاعة الجمعة",
             "title": "Jumu'ah hall, large",
-            "description": "For Jumu'ah and Eid halls. We visit, template your floor and plan every seam before a roll is cut.",
-            "include_1": "Site visit & floor template included",
-            "include_2": "Full professional installation",
+            "description": "For Jumu'ah and Eid halls. We plan every roll width and seam from your floor plan before a roll is cut.",
+            "include_1": "Roll layout planned from your floor plan",
+            "include_2": "Seams placed between prayer rows",
             "popular": false,
             "rows": "≈ 19 prayer rows at 95cm spacing",
             "price_text": "from $9,950 CAD",
@@ -69,8 +69,8 @@
         "faq_3": {
           "type": "faq",
           "settings": {
-            "question": "Is installation included?",
-            "answer": "Yes, if you'd like it. Every quote shows two prices, supply only and supply + installation, so your committee can compare. The Jumu'ah hall package always includes a site visit and floor template."
+            "question": "What exactly do you supply?",
+            "answer": "Luxury carpet rolls with the prayer lines woven in, cut to your hall's confirmed measurements and delivered to your mosque. We supply the carpet only, and every order comes with a roll layout showing where the seams and saff lines fall."
           }
         },
         "faq_4": {
@@ -97,15 +97,8 @@
         "faq_7": {
           "type": "faq",
           "settings": {
-            "question": "Will we miss Jumu'ah during the install?",
-            "answer": "No. We plan install days around salah times and Jumu'ah, and agree the dates with your committee in advance."
-          }
-        },
-        "faq_8": {
-          "type": "faq",
-          "settings": {
-            "question": "Do you remove the old carpet?",
-            "answer": "Yes. Removing the old carpet can be added to your quote as its own line, so your committee can see the cost."
+            "question": "How do we measure our hall?",
+            "answer": "Measure the width, wall to wall, and the length from the qibla wall to the back wall, in metres. Mark doors, pillars and any vents. A rough floor plan or a few photos help, and we confirm everything with you before anything is cut."
           }
         },
         "faq_9": {
@@ -124,7 +117,6 @@
         "faq_2",
         "faq_3",
         "faq_7",
-        "faq_8",
         "faq_4",
         "faq_5",
         "faq_6",

@@ -59,6 +59,25 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | 30 | May we use the mill's catalogue artwork on the site, and can the mill send high-resolution pattern files? | Patterns cut from the catalogue page (soft detail) |
 | 31 | Roll width: is one roll one prayer row (90–100 cm)? Product specs say roll widths 1.5–6 m | 3D roll shows one prayer row per roll; spec table unchanged |
 
+## Business change (2026-10-10)
+
+| # | Item | Status |
+|---|------|--------|
+| 28 | **Owner: "we no longer install."** | Preview of a supply-only site ready 2026-10-13 (CHANGE-PLAN Step H); not live yet. |
+| 32 | **Open the online store** (remove the storefront password). The business card QR opens the quote page, but while the password is on, anyone scanning sees Shopify's password screen. | Not changed: owner decision (Online Store → Preferences) |
+| 33 | Business card print safety: move both frames about 2 mm inward (corners are about 1 mm from the cut); "Scan for a free quote" 4.3 pt → 6 pt; QR 12 mm → about 20 mm; thicken hairlines under 0.25 pt. | Not changed: owner's layout, offered as an option |
+
 ## Answered
 
-_(none yet)_
+| # | Answer (2026-10-13) | Source |
+|---|---|---|
+| 15, 24 | Phone and WhatsApp: **+1 416-567-6602** | Owner: "use the business card for WhatsApp"; same number on flooringgta.com |
+| 21 (part) | Owner runs **Flooring GTA** (Ali's Floor Covering Inc.): "over three decades" of residential and commercial flooring in Toronto, incl. carpet and carpet tiles. Halls fitted: still unknown. | flooringgta.com (via search; page last indexed about 3 years ago) |
+
+| 15, 27 | Business email: **mosquecarpetscanada@gmail.com** (already on the business card). Shopify's store and contact email are still a personal Gmail, so quote-form messages go there until the owner changes Settings → Store details. | Owner, 2026-10-13 |
+| 28 | **Supply only**, no installation anywhere; experience "more than 30 years" without naming the other company; no address | Owner, 2026-10-13 |
+
+| # | New question (2026-10-13) | What the preview says for now |
+|---|---|---|
+| 34 | The Jumu'ah hall product said its price included a **site visit and floor template**. Is **$9,950** still right as supply only? | Price unchanged; description no longer mentions a visit |
+| 35 | Are **opening hours** Mon–Sat 9 am–5 pm (from flooringgta.com)? | Hours left off the site |

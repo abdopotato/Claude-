@@ -151,16 +151,32 @@
       [faceMesh, backMesh, edgeMesh].forEach(function (m) { m.geometry.attributes.position.needsUpdate = true; m.geometry.computeVertexNormals(); m.geometry.computeBoundingSphere(); });
       coreMesh.position.x = a; coreMesh.position.y = R; coreMesh.visible = a < L - 0.01;
       view.tx = group.position.x + (a + 2 * R) / 2;
-      S.R = R; dirty = true;
+      S.R = R; dirty = true; autoFit();
       if (opts.onChange) opts.onChange(a / L);
     }
-    function fit() { view.dist = Math.max(S.L * 0.5 * Math.max(1, 1.3 / camera.aspect), S.spacing * 3.5, 3.5); dirty = true; } // narrower frames step back
+    // Frame what is on the floor (flat part + roll) until the buyer zooms by hand.
+    var zoomed = false, corner = new THREE.Vector3();
+    function autoFit() {
+      if (zoomed || !camera.aspect) return;
+      var x0 = group.position.x, x1 = x0 + S.a + 2 * S.R, W = S.spacing / 2, lo = 1.2, hi = 60;
+      for (var it = 0; it < 22; it++) {
+        view.dist = (lo + hi) / 2; place(); camera.updateMatrixWorld();
+        var fits = true;
+        for (var c = 0; c < 8 && fits; c++) {
+          corner.set(c & 1 ? x1 : x0, c & 2 ? 2 * S.R : 0, c & 4 ? W : -W).project(camera);
+          if (Math.abs(corner.x) > 0.86 || Math.abs(corner.y) > 0.8 || corner.z > 1) fits = false;
+        }
+        if (fits) hi = view.dist; else lo = view.dist;
+      }
+      view.dist = hi; dirty = true;
+    }
+    function fit() { zoomed = false; autoFit(); }
     function place() {
       var ce = Math.cos(view.el);
       camera.position.set(view.tx + view.dist * ce * Math.sin(view.az), view.ty + view.dist * Math.sin(view.el), view.tz + view.dist * ce * Math.cos(view.az));
       camera.lookAt(view.tx, view.ty, view.tz);
     }
-    function resize() { var r = host.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix(); dirty = true; }
+    function resize() { var r = host.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix(); autoFit(); dirty = true; }
     var ro = new ResizeObserver(resize); ro.observe(host);
 
     // Drag the roll to unroll it; drag elsewhere to turn; wheel or pinch to zoom; arrow keys turn.
@@ -182,19 +198,19 @@
       var prev = pts.get(e.pointerId);
       if (!prev) { if (e.pointerType === 'mouse') host.style.cursor = onRoll(e) ? 'grab' : 'move'; return; }
       pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (mode === 'pinch' && pts.size === 2) { var v = Array.from(pts.values()); view.dist = clampDist(dist0 * pinch0 / Math.max(1, Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y))); dirty = true; }
+      if (mode === 'pinch' && pts.size === 2) { var v = Array.from(pts.values()); view.dist = clampDist(dist0 * pinch0 / Math.max(1, Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y))); zoomed = dirty = true; }
       else if (mode === 'orbit') orbit((e.clientX - prev.x) * -0.006, (e.clientY - prev.y) * 0.005);
       else if (mode === 'unroll') { var x = floorX(e); if (x != null) setA(x + grab); }
     });
     function end(e) { pts.delete(e.pointerId); if (!pts.size) { mode = null; host.style.cursor = ''; } else if (mode === 'pinch') mode = null; }
     on('pointerup', end); on('pointercancel', end);
-    on('wheel', function (e) { e.preventDefault(); view.dist = clampDist(view.dist * Math.exp(e.deltaY * 0.0012)); dirty = true; }, { passive: false });
+    on('wheel', function (e) { e.preventDefault(); view.dist = clampDist(view.dist * Math.exp(e.deltaY * 0.0012)); zoomed = dirty = true; }, { passive: false });
     on('dblclick', function () { view.az = 0.62; view.el = 0.36; fit(); });
     on('keydown', function (e) {
       var k = { ArrowLeft: [0.12, 0], ArrowRight: [-0.12, 0], ArrowUp: [0, 0.08], ArrowDown: [0, -0.08] }[e.key];
       if (k) { e.preventDefault(); orbit(k[0], k[1]); }
-      if (e.key === '+' || e.key === '=') { view.dist = clampDist(view.dist * 0.9); dirty = true; }
-      if (e.key === '-') { view.dist = clampDist(view.dist * 1.1); dirty = true; }
+      if (e.key === '+' || e.key === '=') { view.dist = clampDist(view.dist * 0.9); zoomed = dirty = true; }
+      if (e.key === '-') { view.dist = clampDist(view.dist * 1.1); zoomed = dirty = true; }
     });
 
     function loop(now) {

@@ -2,7 +2,9 @@
   "sections": {
     "main": {
       "type": "mosque-about",
-      "settings": {}
+      "settings": {
+        "founder_line": "Behind MosqueCarpetsCanada.ca are more than 30 years of supplying premium commercial and residential flooring across the GTA."
+      }
     }
   },
   "order": [

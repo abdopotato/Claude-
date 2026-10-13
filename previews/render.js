@@ -11,6 +11,9 @@ const OUT = path.join(__dirname, 'v3');
 fs.mkdirSync(OUT, { recursive: true });
 
 const engine = new Liquid({ root: THEME });
+// Optional proposed setting values (e.g. header/footer settings that live in Shopify, not in theme/)
+const SETTINGS_FILE = path.join(__dirname, 'settings.json');
+const PROPOSED = fs.existsSync(SETTINGS_FILE) ? JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')) : {};
 
 const money = (cents) => '$' + (cents / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 engine.registerFilter('asset_url', (f) => `../../theme/assets/${f}`);
@@ -78,9 +81,9 @@ const products = [
   mkProduct(1, 'musalla-carpet-roll-small-4-6-m', 'Musalla Carpet Roll, Small (4 × 6 m)', 115000, ['hall-size', 'musalla', 'small'],
     '<p>Sized for a side room, overflow musalla or women\'s prayer area. One continuous roll cut to your room\'s width, so there are no seams at all.</p>'),
   mkProduct(2, 'main-hall-carpet-roll-mid-size-8-12-m', 'Main Hall Carpet Roll, Mid-size (8 × 12 m)', 365000, ['hall-size', 'main-hall', 'mid-size'],
-    '<p>The configuration mosques order most. Two roll widths are joined with a hidden seam placed between prayer rows, so the join sits where no one kneels and the saff lines run straight across the hall.</p><p>Sourced from our partner mills, imported and inspected in Canada, and cut only after we\'ve confirmed your measurements.</p>'),
+    '<p>Sized for a mid-size main prayer hall. Two roll widths are joined with a hidden seam placed between prayer rows, so the join sits where no one kneels and the saff lines run straight across the hall.</p><p>Prayer lines are woven in at your chosen spacing, never printed.</p><p>Sourced from our partner mills, imported and inspected in Canada, and cut only after we\'ve confirmed your measurements.</p>'),
   mkProduct(3, 'jumuah-hall-carpet-roll-large-15-22-m', "Jumu'ah Hall Carpet Roll, Large (15 × 22 m)", 995000, ['hall-size', 'jumuah', 'large'],
-    '<p>For main Jumu\'ah and Eid halls. A multi-width installation planned from a site visit and floor template, both included in the price.</p>'),
+    '<p>For main Jumu\'ah and Eid halls. A multi-width layout planned from your floor plan, with every roll width chosen before anything is cut.</p>'),
 ];
 const byHandle = Object.fromEntries(products.map((p) => [p.handle, p]));
 
@@ -93,7 +96,7 @@ const globals = {
 
 async function renderSection(name, extra = {}, templateSection = null) {
   const { src, schema } = readSection(name);
-  const settings = { ...defaults(schema.settings), ...((templateSection && templateSection.settings) || {}) };
+  const settings = { ...defaults(schema.settings), ...((templateSection && templateSection.settings) || {}), ...(PROPOSED[name] || {}) };
   const blocks = [];
   if (templateSection && templateSection.blocks) {
     for (const id of templateSection.block_order || Object.keys(templateSection.blocks)) {
@@ -110,14 +113,14 @@ async function renderSection(name, extra = {}, templateSection = null) {
 const PAGES = [
   { file: 'index.html', label: 'Home', section: 'mosque-home', template: 'index.json', path: '/', pageType: 'index' },
   { file: 'product.html', label: 'Product page', section: 'mosque-product', path: '/products/x', pageType: 'product', extra: { product: products[1] } },
-  { file: 'installation.html', label: 'Installation', section: 'mosque-installation', path: '/pages/installation', extra: { page: { content: '' } } },
+  { file: 'installation.html', label: 'Hall planning', section: 'mosque-installation', path: '/pages/hall-planning', extra: { page: { content: '' } } },
   { file: 'about.html', label: 'About', section: 'mosque-about', path: '/pages/about', extra: { page: { content: '' } } },
   { file: 'quote.html', label: 'Request a quote', section: 'mosque-quote', path: '/pages/contact', extra: { page: { content: '' } } },
 ];
 
 function localLinks(html) {
   return html
-    .replace(/href="\/pages\/installation"/g, 'href="installation.html"')
+    .replace(/href="\/pages\/hall-planning([^"]*)"/g, 'href="installation.html$1"')
     .replace(/href="\/pages\/about"/g, 'href="about.html"')
     .replace(/href="\/pages\/contact([^"]*)"/g, 'href="quote.html$1"')
     .replace(/href="\/products\/[^"]*"/g, 'href="product.html"')

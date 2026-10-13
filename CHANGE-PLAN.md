@@ -128,7 +128,39 @@ Store data (separate approval): Main Hall product description "The configuration
 Not done (needs owner content): photos/pile close-ups, installer story and name, committee PDF pack, domain,
 business email, lead times, warranty. Screenshots: `previews/review/`.
 
-## Step H: 3D carpet roll on product pages — preview, awaiting approval (2026-10-13)
+## Step H: supply only, experience, phone and WhatsApp (approved and applied 2026-10-13)
+
+Applied: theme "Site update v9 (supply only)" (gid 131140517934, unpublished, 12 files from 9b64943, all checksums
+match); page renamed to Hall planning (`/pages/hall-planning`) with a redirect from `/pages/installation`; three
+product descriptions updated. Owner publishes v9.
+
+## Step I: remove all prices, quote-only ordering (owner chose "Quote only", 2026-10-13)
+
+Paused before any edit: the owner is moving the store to a different website. Price locations found: hall-card
+"from $… CAD" and per-m² line, product page price and variant prices, "other sizes" cards, fit calculator estimate,
+footer "Prices in CAD"; Shopify's cart and checkout always show prices while online buying is on.
+
+Owner: "we only supply luxury carpet rolls", remove every mention of installation, describe our experience without
+naming the other company, no address. Phone/WhatsApp from the business card.
+
+**H1. Theme files** (upload to an unpublished copy, one file per call, verify checksums):
+`sections/mosque-header.liquid`, `mosque-footer.liquid`, `mosque-home.liquid`, `mosque-product.liquid`,
+`mosque-quote.liquid`, `mosque-about.liquid`, `mosque-installation.liquid`, `templates/index.json`.
+- Installation page becomes **Hall planning** (same sections: steps, two columns, fit calculator, CTA), linked at
+  `/pages/hall-planning`. Product page loses the Installation option; hall card 3 button is "Get a quote first".
+- FAQ: "Is installation included?" → "What exactly do you supply?"; "Will we miss Jumu'ah during the install?" →
+  "How do we measure our hall?"; "Do you remove the old carpet?" removed. Site visits removed everywhere.
+- Trust strip: "Professional installation" → "30+ years in flooring".
+
+**H2. Theme settings** (values in `previews/settings.json`): header `whatsapp_number`, footer `phone`, quote page
+`contact_line`, About `founder_line`. Edit `sections/header-group.json`, `sections/footer-group.json`,
+`templates/page.contact.json`, `templates/page.about.json` on the same copy (read first, change only these keys).
+
+**H3. Store data (live immediately):** page "Installation" → title "Hall planning", handle `hall-planning`, plus a
+URL redirect `/pages/installation` → `/pages/hall-planning`; three product descriptions from
+`previews/products/descriptions-supply-only.json` (also fixes the Main Hall "order most" line).
+
+## Step J: 3D carpet roll on product pages — preview, awaiting approval (2026-10-13)
 
 Owner asked to put the 3D roll on the product pages; colourways matched to the nearest catalogue colour and
 renamed to the catalogue's own names (owner: no store names, no design code on the site).
