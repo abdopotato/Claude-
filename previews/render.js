@@ -168,11 +168,18 @@ process.on('beforeExit', () => {
     .map((f) => fs.readFileSync(path.join(THEME, 'assets', f), 'utf8')).join('\n');
   const fonts = '<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">';
   const nav = `<script>document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var m=a.getAttribute('href').match(/^(index|product|installation|about|quote)\\.html(.*)$/);if(!m)return;e.preventDefault();parent.postMessage({go:m[1],hash:m[2]},'*');});<\/script>`;
+  const inlineJs = [];
   const frames = PAGES.map((pg) => {
     let html = fs.readFileSync(path.join(OUT, pg.file), 'utf8')
       .replace(/<link rel="stylesheet" href="\.\.\/\.\.\/theme\/assets\/[^"]+">/g, '')
       .replace(/<div class="pv">[\s\S]*?<\/div>/, '')
       .replace('</head>', `${fonts}<style>${css}</style></head>`)
+      // Theme scripts go in inline: the artifact viewer refuses scripts loaded from data: URLs.
+      .replace(/data-script="\.\.\/\.\.\/theme\/assets\/([\w.-]+\.js)"/g, (m, f) => {
+        inlineJs.push(fs.readFileSync(path.join(THEME, 'assets', f), 'utf8').replace(/<\/script/gi, '<\\/script'));
+        return 'data-script=""';
+      })
+      .replace('</body>', () => inlineJs.splice(0).map((js) => `<script>${js}</script>`).join('') + '</body>')
       .replace(/\.\.\/\.\.\/theme\/assets\/([\w.-]+\.(?:js|jpg|png|svg))/g, (m, f) => {
         // other theme assets (3D roll script, pattern images) travel inside the file as data URIs
         const type = { js: 'text/javascript', jpg: 'image/jpeg', png: 'image/png', svg: 'image/svg+xml' }[f.split('.').pop()];
