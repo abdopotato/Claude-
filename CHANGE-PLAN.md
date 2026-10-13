@@ -128,7 +128,17 @@ Store data (separate approval): Main Hall product description "The configuration
 Not done (needs owner content): photos/pile close-ups, installer story and name, committee PDF pack, domain,
 business email, lead times, warranty. Screenshots: `previews/review/`.
 
-## Step H: supply only, experience, phone and WhatsApp (preview 2026-10-13, awaiting approval)
+## Step H: supply only, experience, phone and WhatsApp (approved and applied 2026-10-13)
+
+Applied: theme "Site update v9 (supply only)" (gid 131140517934, unpublished, 12 files from 9b64943, all checksums
+match); page renamed to Hall planning (`/pages/hall-planning`) with a redirect from `/pages/installation`; three
+product descriptions updated. Owner publishes v9.
+
+## Step I: remove all prices, quote-only ordering (owner chose "Quote only", 2026-10-13)
+
+Paused before any edit: the owner is moving the store to a different website. Price locations found: hall-card
+"from $… CAD" and per-m² line, product page price and variant prices, "other sizes" cards, fit calculator estimate,
+footer "Prices in CAD"; Shopify's cart and checkout always show prices while online buying is on.
 
 Owner: "we only supply luxury carpet rolls", remove every mention of installation, describe our experience without
 naming the other company, no address. Phone/WhatsApp from the business card.
