@@ -49,7 +49,7 @@
 <div class="mcc-strip mcc-trust-band">
   <div class="mcc-wrap">
     <div class="mcc-strip-item"><strong>Woven-in saff lines</strong>Woven in at 90, 95 or 100cm, so they never fade or peel</div>
-    <div class="mcc-strip-item"><strong>Professional installation</strong>Measured, seamed and fitted by our crew</div>
+    <div class="mcc-strip-item"><strong>30+ years in flooring</strong>Premium commercial and residential flooring across the GTA</div>
     <div class="mcc-strip-item"><strong>Fire rated</strong>{{ section.settings.fire_rating }}</div>
     <div class="mcc-strip-item"><strong>Committee invoicing</strong>{{ section.settings.payment_text }}</div>
   </div>
@@ -120,12 +120,12 @@
               <span class="mcc-price">{% if p != blank %}from {{ p.price_min | money_without_trailing_zeros }} {{ cart.currency.iso_code }}{% else %}{{ block.settings.price_text }}{% endif %}</span>
             </div>
             {%- if block.settings.quote_first -%}
-              <a class="mcc-btn-primary mcc-buy-btn" href="{{ quote_url }}{% if p != blank %}&{% else %}?{% endif %}need=site-visit">Get a quote &amp; site visit</a>
-              <p class="mcc-buy-note">We visit, template your floor and send an itemised quote before you pay anything.</p>
+              <a class="mcc-btn-primary mcc-buy-btn" href="{{ quote_url }}">Get a quote first</a>
+              <p class="mcc-buy-note">Send us your floor plan. We plan the roll layout and send an itemised quote before you pay anything.</p>
               {%- if p != blank and p.available -%}<a class="mcc-buy-quote" href="{{ p.url }}">Or buy online now</a>{%- endif -%}
             {%- elsif p != blank and p.available -%}
               <a class="mcc-btn-primary mcc-buy-btn" href="{{ p.url }}" aria-label="Buy now: {{ block.settings.title | escape }}">Buy now</a>
-              <p class="mcc-buy-note">Next: pick your row spacing, colour and installation.</p>
+              <p class="mcc-buy-note">Next: pick your row spacing and colour.</p>
               <a class="mcc-buy-quote" href="{{ quote_url }}">Prefer a quote first?</a>
             {%- else -%}
               <a class="mcc-btn-primary mcc-buy-btn" href="{{ quote_url }}">Request a quote</a>
@@ -302,16 +302,16 @@
   "name": "Mosque carpet home",
   "settings": [
     { "type": "header", "content": "Hero" },
-    { "type": "text", "id": "trust_text", "label": "Badge above heading", "default": "Prayer-hall carpet for Canadian mosques, supplied and installed" },
+    { "type": "text", "id": "trust_text", "label": "Badge above heading", "default": "Luxury prayer-hall carpet rolls for Canadian mosques" },
     { "type": "text", "id": "kicker", "label": "Kicker (hidden on homepage)", "default": "Chosen for the saff, not the showroom" },
-    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Luxury prayer carpet, chosen and fitted by professional installers" },
-    { "type": "textarea", "id": "text", "label": "Hero text", "default": "Wall-to-wall rolls from specialist mills, with prayer lines woven in at 90, 95 or 100cm. We import the carpet, measure your hall and fit it ourselves, so one team answers for the result, from quote to first salah." },
+    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Luxury prayer carpet rolls, chosen for the saff" },
+    { "type": "textarea", "id": "text", "label": "Hero text", "default": "Wall-to-wall rolls from specialist mills, with prayer lines woven in at 90, 95 or 100cm. We plan the roll layout from your hall's measurements and cut nothing until they're confirmed, backed by more than 30 years in commercial and residential flooring." },
     { "type": "text", "id": "stat_1_value", "label": "Stat 1 value (hidden on homepage)", "default": "3" },
     { "type": "text", "id": "stat_1_label", "label": "Stat 1 label", "default": "row spacings" },
     { "type": "text", "id": "stat_2_value", "label": "Stat 2 value (hidden on homepage)", "default": "1.5–6m" },
     { "type": "text", "id": "stat_2_label", "label": "Stat 2 label", "default": "roll widths" },
-    { "type": "text", "id": "stat_3_value", "label": "Stat 3 value (hidden on homepage)", "default": "Supply + fit" },
-    { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "one team, one invoice" },
+    { "type": "text", "id": "stat_3_value", "label": "Stat 3 value (hidden on homepage)", "default": "30+ years" },
+    { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "in commercial and residential flooring" },
     { "type": "text", "id": "cta_note", "label": "Note under quote buttons", "default": "Free and itemised, with no obligation." },
     { "type": "header", "content": "Trust strip" },
     { "type": "text", "id": "fire_rating", "label": "Fire rating text", "default": "CAN/ULC-S102 & ASTM E648 certified pile" },
@@ -324,15 +324,15 @@
     { "type": "text", "id": "sourcing_kicker", "label": "Kicker (hidden on homepage)", "default": "Sourced, not manufactured, and that's the point" },
     { "type": "text", "id": "sourcing_heading", "label": "Heading (hidden on homepage)", "default": "We source it. We check it. We bring it home." },
     { "type": "textarea", "id": "sourcing_text", "label": "Text (hidden on homepage)", "default": "We don't own a loom, so we're never tied to one factory's range. We work with specialist prayer-carpet mills overseas and choose each roll for pile density, colourfastness and how straight its lines run. Then we import it, inspect it in Canada and deliver it to your door." },
-    { "type": "header", "content": "Process & installation" },
+    { "type": "header", "content": "Process" },
     { "type": "text", "id": "lead_time_text", "label": "Step 3 badge (lead time) (hidden on homepage)", "default": "Lead time in your quote" },
-    { "type": "text", "id": "service_area", "label": "Service area (hidden on homepage)", "default": "Across Canada, with travel itemised" },
+    { "type": "text", "id": "service_area", "label": "Service area (hidden on homepage)", "default": "Supplied across Canada" },
     { "type": "header", "content": "Testimonial (hidden until filled in)" },
     { "type": "textarea", "id": "testimonial_quote", "label": "Quote (hidden on homepage)" },
     { "type": "text", "id": "testimonial_author", "label": "Attribution (hidden on homepage)" },
     { "type": "header", "content": "Closing call-to-action" },
     { "type": "text", "id": "cta_heading", "label": "Heading", "default": "Ready to re-carpet your prayer hall?" },
-    { "type": "textarea", "id": "cta_text", "label": "Text", "default": "Send your hall dimensions or a floor plan. We'll reply with a spacing recommendation, a roll layout and an itemised quote covering supply, import and installation." }
+    { "type": "textarea", "id": "cta_text", "label": "Text", "default": "Send your hall dimensions or a floor plan. We'll reply with a spacing recommendation, a roll layout and an itemised quote for the carpet and import." }
   ],
   "blocks": [
     {
@@ -347,7 +347,7 @@
         { "type": "text", "id": "include_1", "label": "Included line 1" },
         { "type": "text", "id": "include_2", "label": "Included line 2" },
         { "type": "checkbox", "id": "popular", "label": "Show \"Recommended\" tag", "default": false },
-        { "type": "checkbox", "id": "quote_first", "label": "Make \"Get a quote & site visit\" the main button", "default": false },
+        { "type": "checkbox", "id": "quote_first", "label": "Make \"Get a quote first\" the main button", "default": false },
         { "type": "text", "id": "rows", "label": "Rows line", "default": "≈ 5 prayer rows at 95cm spacing" },
         { "type": "text", "id": "price_text", "label": "Price text (used until a product is linked)", "default": "from $1,150 CAD" },
         { "type": "product", "id": "product", "label": "Linked product" }

@@ -128,20 +128,27 @@ Store data (separate approval): Main Hall product description "The configuration
 Not done (needs owner content): photos/pile close-ups, installer story and name, committee PDF pack, domain,
 business email, lead times, warranty. Screenshots: `previews/review/`.
 
-## Step H: phone, WhatsApp and who we are (preview 2026-10-13, awaiting approval)
+## Step H: supply only, experience, phone and WhatsApp (preview 2026-10-13, awaiting approval)
 
-Source: the business card (+1 416-567-6602) and flooringgta.com (same number; "over 30 years", Mon–Sat 9–5).
-Values are in `previews/settings.json`; they are theme *settings*, not file changes:
+Owner: "we only supply luxury carpet rolls", remove every mention of installation, describe our experience without
+naming the other company, no address. Phone/WhatsApp from the business card.
 
-| Where | Setting | Value |
-|---|---|---|
-| Header (every page) | `whatsapp_number` | +1 416 567 6602 (shows the "WhatsApp us" button) |
-| Footer | `phone` | Call or WhatsApp +1 416-567-6602 |
-| Quote page | `contact_line` | Prefer to talk? Call or WhatsApp Ali on +1 416-567-6602, Monday to Saturday, 9 am to 5 pm. |
-| About page | `founder_line` | MosqueCarpetsCanada.ca is run by Ali Jelal of Flooring GTA, a Toronto flooring company that has supplied carpet for homes and businesses for more than 30 years. |
+**H1. Theme files** (upload to an unpublished copy, one file per call, verify checksums):
+`sections/mosque-header.liquid`, `mosque-footer.liquid`, `mosque-home.liquid`, `mosque-product.liquid`,
+`mosque-quote.liquid`, `mosque-about.liquid`, `mosque-installation.liquid`, `templates/index.json`.
+- Installation page becomes **Hall planning** (same sections: steps, two columns, fit calculator, CTA), linked at
+  `/pages/hall-planning`. Product page loses the Installation option; hall card 3 button is "Get a quote first".
+- FAQ: "Is installation included?" → "What exactly do you supply?"; "Will we miss Jumu'ah during the install?" →
+  "How do we measure our hall?"; "Do you remove the old carpet?" removed. Site visits removed everywhere.
+- Trust strip: "Professional installation" → "30+ years in flooring".
 
-Apply by editing the theme's `sections/header-group.json`, `sections/footer-group.json`, `templates/page.contact.json`
-and `templates/page.about.json` on an unpublished copy (read each first, change only these keys, verify checksums).
+**H2. Theme settings** (values in `previews/settings.json`): header `whatsapp_number`, footer `phone`, quote page
+`contact_line`, About `founder_line`. Edit `sections/header-group.json`, `sections/footer-group.json`,
+`templates/page.contact.json`, `templates/page.about.json` on the same copy (read first, change only these keys).
+
+**H3. Store data (live immediately):** page "Installation" → title "Hall planning", handle `hall-planning`, plus a
+URL redirect `/pages/installation` → `/pages/hall-planning`; three product descriptions from
+`previews/products/descriptions-supply-only.json` (also fixes the Main Hall "order most" line).
 
 ## Step C: shipping (needs owner decision)
 

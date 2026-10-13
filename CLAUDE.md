@@ -1,6 +1,8 @@
 # MosqueCarpetsCanada.ca — Shopify store
 
-We supply (not manufacture) luxury carpet rolls, imported internationally, and offer an installation service.
+We supply (not manufacture) luxury carpet rolls, imported internationally. **Supply only: we do not install** (owner, 2026-10-13);
+never mention installation, site visits or fitting. Experience line: "more than 30 years supplying premium commercial and
+residential flooring". Don't name the owner's other flooring company and don't publish an address.
 Store: `tqtwwj-3a.myshopify.com` (Basic plan, CAD, Canada), accessed through the Shopify MCP connector.
 
 ## Working rules

@@ -6,7 +6,6 @@
   assign rows_line = ''
   assign coverage = ''
   assign price_note = section.settings.price_note
-  assign includes_visit = false
   if product.tags contains 'musalla'
     assign arabic = 'مصلى صغير'
     assign rows_line = '≈ 5 prayer rows at 95cm'
@@ -19,8 +18,7 @@
     assign arabic = 'قاعة الجمعة'
     assign rows_line = '≈ 19 prayer rows at 95cm'
     assign coverage = 'Approx. 15 × 22 m (330 m²)'
-    assign price_note = 'site visit & floor template included'
-    assign includes_visit = true
+    assign price_note = 'roll layout planned from your floor plan'
   endif
 -%}
 <div id="mcc-app">
@@ -95,12 +93,6 @@
           </div>
         </fieldset>
 
-        <fieldset class="mcc-opt-group">
-          <legend class="mcc-opt-label">Installation</legend>
-          <label class="mcc-radio"><input type="radio" name="properties[Installation]" value="Supply + installation"><div><strong>Supply + professional installation</strong><span>{% if includes_visit %}Site visit and floor template included. {% endif %}Installation is quoted after we measure. You aren't charged for it today.</span></div></label>
-          <label class="mcc-radio"><input type="radio" name="properties[Installation]" value="Supply only" checked><div><strong>Supply only</strong><span>Delivered to your mosque, ready for your own installer</span></div></label>
-        </fieldset>
-
         <div class="mcc-buy">
           <button type="submit" name="add" class="mcc-btn-primary" {% unless current.available %}disabled{% endunless %}>{% if current.available %}Add to cart{% else %}Currently unavailable{% endif %}</button>
           <a href="/pages/contact?product={{ product.handle | url_encode }}" class="mcc-btn-secondary">Request a quote instead</a>
@@ -125,7 +117,7 @@
           <tr><td>Fire rating</td><td>{{ section.settings.fire_rating }}</td></tr>
         </table></div></details>
         <details><summary>Delivery &amp; lead time</summary><div class="mcc-body"><p>{{ section.settings.delivery_text }}</p></div></details>
-        <details><summary>Installation</summary><div class="mcc-body"><p>Our crew squares the saff lines to the qibla wall, places seams between rows and works around your salah times. Removing the old carpet can be added to your quote. <a href="/pages/installation">How installation works →</a></p></div></details>
+        <details><summary>Hall planning</summary><div class="mcc-body"><p>We plan the roll widths from your measurements so seams fall between prayer rows and the saff lines run square to the qibla wall, and send the layout with your order. <a href="/pages/hall-planning">How we plan your hall →</a></p></div></details>
         <details><summary>Payment for committees</summary><div class="mcc-body"><p>{{ section.settings.payment_text }}</p></div></details>
       </div>
     </div>
@@ -192,7 +184,7 @@
 {
   "name": "Mosque product page",
   "settings": [
-    { "type": "text", "id": "price_note", "label": "Note next to price", "default": "carpet supply · installation quoted with your order" },
+    { "type": "text", "id": "price_note", "label": "Note next to price", "default": "carpet only · cut to your confirmed measurements" },
     { "type": "text", "id": "pile", "label": "Pile", "default": "Fire-rated wool blend" },
     { "type": "text", "id": "fire_rating", "label": "Fire rating", "default": "CAN/ULC-S102, ASTM E648" },
     { "type": "textarea", "id": "delivery_text", "label": "Delivery text", "default": "Your delivery window is confirmed in writing with your order, before anything is cut." },

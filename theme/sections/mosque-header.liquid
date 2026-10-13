@@ -27,16 +27,16 @@
     <a class="mcc-btn-primary mcc-btn-sm mcc-nav-quote" href="/pages/contact">Request a quote</a>
     {%- liquid
       assign p = request.path
-      assign on_install = false
+      assign on_planning = false
       assign on_about = false
-      if p contains '/pages/installation'
-        assign on_install = true
+      if p contains '/pages/hall-planning'
+        assign on_planning = true
       elsif p contains '/pages/about'
         assign on_about = true
       endif
     -%}
     <nav class="mcc-navlinks" aria-label="Main">
-      <a href="/pages/installation"{% if on_install %} aria-current="page"{% endif %}>Installation</a>
+      <a href="/pages/hall-planning"{% if on_planning %} aria-current="page"{% endif %}>Hall planning</a>
       <a href="/pages/about"{% if on_about %} aria-current="page"{% endif %}>About</a>
       <a href="{{ routes.root_url }}#faq">FAQ</a>
     </nav>
@@ -49,7 +49,7 @@
     </div>
   </div>
   <nav class="mcc-mobile-nav" aria-label="Main (mobile)">
-    <a href="/pages/installation"{% if on_install %} aria-current="page"{% endif %}>Installation</a>
+    <a href="/pages/hall-planning"{% if on_planning %} aria-current="page"{% endif %}>Hall planning</a>
     <a href="/pages/about"{% if on_about %} aria-current="page"{% endif %}>About</a>
     <a href="{{ routes.root_url }}#faq">FAQ</a>
   </nav>

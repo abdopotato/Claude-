@@ -63,7 +63,7 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 
 | # | Item | Status |
 |---|------|--------|
-| 28 | **Owner: "we no longer install."** The live site still offers installation in the hero, trust band, hall cards, FAQ, product page (installation option), Installation page, quote form ("supply + install"), footer and product descriptions. | Not changed yet: needs a preview and approval. Business card wording already updated ("Prayer-hall carpet · Supplied"). |
+| 28 | **Owner: "we no longer install."** | Preview of a supply-only site ready 2026-10-13 (CHANGE-PLAN Step H); not live yet. |
 | 32 | **Open the online store** (remove the storefront password). The business card QR opens the quote page, but while the password is on, anyone scanning sees Shopify's password screen. | Not changed: owner decision (Online Store → Preferences) |
 | 33 | Business card print safety: move both frames about 2 mm inward (corners are about 1 mm from the cut); "Scan for a free quote" 4.3 pt → 6 pt; QR 12 mm → about 20 mm; thicken hairlines under 0.25 pt. | Not changed: owner's layout, offered as an option |
 
@@ -74,6 +74,9 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | 15, 24 | Phone and WhatsApp: **+1 416-567-6602** | Owner: "use the business card for WhatsApp"; same number on flooringgta.com |
 | 21 (part) | Owner runs **Flooring GTA** (Ali's Floor Covering Inc.): "over three decades" of residential and commercial flooring in Toronto, incl. carpet and carpet tiles. Halls fitted: still unknown. | flooringgta.com (via search; page last indexed about 3 years ago) |
 
-Still to confirm from that source: **may the mosque site name Flooring GTA** and say "more than 30 years"? Are the
-hours **Mon–Sat 9 am–5 pm** current? Which address is current: **Unit 8, 120 Norfinch Dr, North York** (flooringgta.com)
-or **2080 Lawrence Ave E, Scarborough** (Chamber of Commerce listing)? The address is not used on the site yet.
+| 28 | **Supply only**, no installation anywhere; experience "more than 30 years" without naming the other company; no address | Owner, 2026-10-13 |
+
+| # | New question (2026-10-13) | What the preview says for now |
+|---|---|---|
+| 34 | The Jumu'ah hall product said its price included a **site visit and floor template**. Is **$9,950** still right as supply only? | Price unchanged; description no longer mentions a visit |
+| 35 | Are **opening hours** Mon–Sat 9 am–5 pm (from flooringgta.com)? | Hours left off the site |
