@@ -65,4 +65,4 @@ The whole group (masjid, name, carpet, roll and tagline) is centred left to righ
 - **Wording:** the tagline no longer mentions installation (the business no longer installs). The website still
   does; see `OPEN-QUESTIONS.md` #28.
 
-The back uses the owner's own design (`card-back.png`). Its email is the Gmail address; switch it to a business address once one exists.
+The back uses the owner's own design (`card-back.png`). Its email, mosquecarpetscanada@gmail.com, is the business email (confirmed 2026-10-13).

@@ -74,6 +74,7 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 | 15, 24 | Phone and WhatsApp: **+1 416-567-6602** | Owner: "use the business card for WhatsApp"; same number on flooringgta.com |
 | 21 (part) | Owner runs **Flooring GTA** (Ali's Floor Covering Inc.): "over three decades" of residential and commercial flooring in Toronto, incl. carpet and carpet tiles. Halls fitted: still unknown. | flooringgta.com (via search; page last indexed about 3 years ago) |
 
+| 15, 27 | Business email: **mosquecarpetscanada@gmail.com** (already on the business card). Shopify's store and contact email are still a personal Gmail, so quote-form messages go there until the owner changes Settings → Store details. | Owner, 2026-10-13 |
 | 28 | **Supply only**, no installation anywhere; experience "more than 30 years" without naming the other company; no address | Owner, 2026-10-13 |
 
 | # | New question (2026-10-13) | What the preview says for now |

@@ -22,7 +22,7 @@ marked ✏️ is still blank and needs your details before printing.
 | Title | ✏️ e.g. Owner / Founder / Installation Lead |
 | Phone | ✏️ business number, e.g. +1 (416) 555-0123 |
 | WhatsApp | ✏️ same as phone, or a separate number (add a small WhatsApp icon if it is) |
-| Email | ✏️ **a business address**, e.g. info@mosquecarpetscanada.ca. Don't print the personal Gmail the store uses now. |
+| Email | **mosquecarpetscanada@gmail.com** (the business email, confirmed 2026-10-13) |
 | Website | **mosquecarpetscanada.ca** (no "https://" or "www") |
 | Service area | "Serving mosques across Canada" (matches the site). Add your city if you'd like, e.g. "Based in ✏️, Ontario". |
 | What you do (one line) | "Prayer-hall carpet · Supply & installation" |
@@ -36,8 +36,7 @@ Keep it to these lines. Prices, fire ratings and spacing details belong on the w
 - [ ] **The .ca address works.** The store currently runs on `mosquecarpetscanada.myshopify.com`, and
       **mosquecarpetscanada.ca is not connected to it yet** (Shopify → Settings → Domains). Connect it, then open
       `mosquecarpetscanada.ca` on your phone to confirm the site loads before printing it on cards.
-- [ ] **The business email works.** It needs the .ca domain and an email service, e.g. Google Workspace or
-      Shopify Email forwarding. Send yourself a test email.
+- [ ] **The business email works.** Send a test email to mosquecarpetscanada@gmail.com from another account.
 - [ ] **The QR code works.** Scan it with two different phones; it should open the quote form.
 - [ ] **Phone and WhatsApp numbers** checked digit by digit.
 - [ ] **Store name** changed from "My Store" to "MosqueCarpetsCanada.ca" (Settings → Store details), so
