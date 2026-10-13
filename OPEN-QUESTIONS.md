@@ -69,4 +69,11 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 
 ## Answered
 
-_(none yet)_
+| # | Answer (2026-10-13) | Source |
+|---|---|---|
+| 15, 24 | Phone and WhatsApp: **+1 416-567-6602** | Owner: "use the business card for WhatsApp"; same number on flooringgta.com |
+| 21 (part) | Owner runs **Flooring GTA** (Ali's Floor Covering Inc.): "over three decades" of residential and commercial flooring in Toronto, incl. carpet and carpet tiles. Halls fitted: still unknown. | flooringgta.com (via search; page last indexed about 3 years ago) |
+
+Still to confirm from that source: **may the mosque site name Flooring GTA** and say "more than 30 years"? Are the
+hours **Mon–Sat 9 am–5 pm** current? Which address is current: **Unit 8, 120 Norfinch Dr, North York** (flooringgta.com)
+or **2080 Lawrence Ave E, Scarborough** (Chamber of Commerce listing)? The address is not used on the site yet.

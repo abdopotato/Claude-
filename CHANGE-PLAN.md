@@ -128,6 +128,21 @@ Store data (separate approval): Main Hall product description "The configuration
 Not done (needs owner content): photos/pile close-ups, installer story and name, committee PDF pack, domain,
 business email, lead times, warranty. Screenshots: `previews/review/`.
 
+## Step H: phone, WhatsApp and who we are (preview 2026-10-13, awaiting approval)
+
+Source: the business card (+1 416-567-6602) and flooringgta.com (same number; "over 30 years", Mon–Sat 9–5).
+Values are in `previews/settings.json`; they are theme *settings*, not file changes:
+
+| Where | Setting | Value |
+|---|---|---|
+| Header (every page) | `whatsapp_number` | +1 416 567 6602 (shows the "WhatsApp us" button) |
+| Footer | `phone` | Call or WhatsApp +1 416-567-6602 |
+| Quote page | `contact_line` | Prefer to talk? Call or WhatsApp Ali on +1 416-567-6602, Monday to Saturday, 9 am to 5 pm. |
+| About page | `founder_line` | MosqueCarpetsCanada.ca is run by Ali Jelal of Flooring GTA, a Toronto flooring company that has supplied carpet for homes and businesses for more than 30 years. |
+
+Apply by editing the theme's `sections/header-group.json`, `sections/footer-group.json`, `templates/page.contact.json`
+and `templates/page.about.json` on an unpublished copy (read each first, change only these keys, verify checksums).
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.

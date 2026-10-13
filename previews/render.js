@@ -11,6 +11,9 @@ const OUT = path.join(__dirname, 'v3');
 fs.mkdirSync(OUT, { recursive: true });
 
 const engine = new Liquid({ root: THEME });
+// Optional proposed setting values (e.g. header/footer settings that live in Shopify, not in theme/)
+const SETTINGS_FILE = path.join(__dirname, 'settings.json');
+const PROPOSED = fs.existsSync(SETTINGS_FILE) ? JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')) : {};
 
 const money = (cents) => '$' + (cents / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 engine.registerFilter('asset_url', (f) => `../../theme/assets/${f}`);
@@ -93,7 +96,7 @@ const globals = {
 
 async function renderSection(name, extra = {}, templateSection = null) {
   const { src, schema } = readSection(name);
-  const settings = { ...defaults(schema.settings), ...((templateSection && templateSection.settings) || {}) };
+  const settings = { ...defaults(schema.settings), ...((templateSection && templateSection.settings) || {}), ...(PROPOSED[name] || {}) };
   const blocks = [];
   if (templateSection && templateSection.blocks) {
     for (const id of templateSection.block_order || Object.keys(templateSection.blocks)) {
