@@ -36,6 +36,108 @@
     return (pile = { shade: shade, knot: knot, bump: bump });
   }
 
+
+  // ---- Masjid setting: qibla wall with mihrab, arched lattice windows, tile dado, marble floor, lanterns. ----
+  // Everything is painted on canvases at mount, so nothing extra downloads.
+  function arch(g, x0, x1, base, spring, apex) { // pointed (two-centred) arch outline
+    var xc = (x0 + x1) / 2, k = (spring - apex) * 0.55;
+    g.beginPath(); g.moveTo(x0, base); g.lineTo(x0, spring);
+    g.bezierCurveTo(x0, spring - k, xc - (x1 - x0) * 0.12, apex + (spring - apex) * 0.25, xc, apex);
+    g.bezierCurveTo(xc + (x1 - x0) * 0.12, apex + (spring - apex) * 0.25, x1, spring - k, x1, spring);
+    g.lineTo(x1, base); g.closePath();
+  }
+  function star(g, cx, cy, r) { // 8-point star from two squares
+    g.beginPath();
+    for (var i = 0; i < 16; i++) { var a = i * Math.PI / 8, rr = i % 2 ? r * 0.62 : r; g.lineTo(cx + rr * Math.cos(a), cy + rr * Math.sin(a)); }
+    g.closePath();
+  }
+  function canvasTexture(THREE, w, h, paint, aniso) {
+    var c = document.createElement('canvas'); c.width = w; c.height = h; paint(c.getContext('2d'), w, h);
+    var t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = aniso; return t;
+  }
+  var GOLD = '#C69A3E', TILE = '#1E5A61', TILE2 = '#2F8A8A', IVORY = '#F4ECDC', PLASTER = '#EDE3CE';
+  function buildMasjid(THREE, scene, aniso) {
+    var WALL_W = 40, WALL_H = 7.5, PX = 100; // canvas pixels per metre
+    var wallTex = canvasTexture(THREE, WALL_W * PX, WALL_H * PX, function (g, w, h) {
+      var y = function (m) { return h - m * PX; }, x = function (m) { return w / 2 + m * PX; };
+      var grd = g.createLinearGradient(0, 0, 0, h); grd.addColorStop(0, '#F6EFDF'); grd.addColorStop(1, PLASTER);
+      g.fillStyle = grd; g.fillRect(0, 0, w, h);
+      // tile dado, 0-1.1 m: teal ground, ivory 8-point stars, turquoise centres
+      g.fillStyle = TILE; g.fillRect(0, y(1.1), w, 1.1 * PX);
+      for (var cx = 15; cx < w; cx += 30) for (var cy = y(1.1) + 15; cy < h; cy += 30) {
+        g.fillStyle = IVORY; star(g, cx, cy, 12); g.fill();
+        g.fillStyle = TILE2; g.beginPath(); g.arc(cx, cy, 4, 0, 6.3); g.fill();
+      }
+      g.fillStyle = GOLD; g.fillRect(0, y(1.16), w, 6); g.fillRect(0, y(1.32), w, 3);
+      // running band of small arches near the ceiling
+      g.fillStyle = '#E2D3B2'; g.fillRect(0, y(7.1), w, 0.5 * PX);
+      g.strokeStyle = GOLD; g.lineWidth = 3;
+      for (var bx = 0; bx < w; bx += 40) { arch(g, bx + 6, bx + 34, y(6.65), y(6.85), y(7.05)); g.stroke(); }
+      // arched lattice windows every 3 m, leaving the middle for the mihrab
+      for (var m = -18; m <= 18; m += 3) {
+        if (Math.abs(m) < 2.5) continue;
+        var x0 = x(m - 0.55), x1 = x(m + 0.55);
+        arch(g, x0 - 10, x1 + 10, y(2.1), y(4.0), y(4.95)); g.fillStyle = '#E4D2AA'; g.fill();
+        arch(g, x0, x1, y(2.2), y(4.0), y(4.85));
+        var lg = g.createLinearGradient(0, y(4.85), 0, y(2.2)); lg.addColorStop(0, '#FFF8E6'); lg.addColorStop(1, '#F1DDAD');
+        g.fillStyle = lg; g.fill();
+        g.save(); g.clip(); g.strokeStyle = 'rgba(110,80,40,.55)'; g.lineWidth = 2; // mashrabiya lattice
+        for (var d = -300; d < 300; d += 14) { g.beginPath(); g.moveTo(x0 + d, y(2.2)); g.lineTo(x0 + d + 260, y(4.85)); g.moveTo(x1 - d, y(2.2)); g.lineTo(x1 - d - 260, y(4.85)); g.stroke(); }
+        g.restore();
+        arch(g, x0, x1, y(2.2), y(4.0), y(4.85)); g.strokeStyle = GOLD; g.lineWidth = 5; g.stroke();
+      }
+      // mihrab: tiled frame, gold border, deep shaded niche, columns, hood bands
+      var mx0 = x(-1.25), mx1 = x(1.25);
+      g.fillStyle = TILE; g.fillRect(mx0, y(5.6), mx1 - mx0, 5.6 * PX - 0);
+      for (var sx = mx0 + 15; sx < mx1; sx += 30) for (var sy = y(5.6) + 15; sy < y(0); sy += 30) { g.fillStyle = IVORY; star(g, sx, sy, 11); g.fill(); }
+      g.strokeStyle = GOLD; g.lineWidth = 10; g.strokeRect(mx0 + 5, y(5.6) + 5, mx1 - mx0 - 10, 5.6 * PX - 10);
+      arch(g, x(-0.95), x(0.95), y(0), y(3.3), y(5.05)); g.fillStyle = IVORY; g.fill();
+      arch(g, x(-0.8), x(0.8), y(0), y(3.25), y(4.8));
+      var ng = g.createRadialGradient(x(0), y(1.6), 10, x(0), y(2.2), 260); ng.addColorStop(0, '#C9B48A'); ng.addColorStop(1, '#6E5A3A');
+      g.fillStyle = ng; g.fill();
+      g.save(); g.clip(); g.strokeStyle = 'rgba(255,240,205,.35)'; g.lineWidth = 3; // fluted hood
+      for (var r = 0; r < 9; r++) { g.beginPath(); g.moveTo(x(0), y(3.3)); g.lineTo(x(-0.8 + r * 0.2), y(4.9)); g.stroke(); }
+      for (var bnd = 0; bnd < 3; bnd++) { g.fillStyle = bnd % 2 ? '#B9893A' : GOLD; g.fillRect(x(-0.8), y(3.3 - bnd * 0.08), 1.6 * PX, 6); }
+      g.restore();
+      arch(g, x(-0.8), x(0.8), y(0), y(3.25), y(4.8)); g.strokeStyle = GOLD; g.lineWidth = 8; g.stroke();
+      g.fillStyle = '#D9C49A'; g.fillRect(x(-0.93), y(3.25), 0.13 * PX, 3.25 * PX); g.fillRect(x(0.8), y(3.25), 0.13 * PX, 3.25 * PX);
+      g.fillStyle = GOLD; g.fillRect(x(-0.96), y(3.3), 0.19 * PX, 10); g.fillRect(x(0.77), y(3.3), 0.19 * PX, 10);
+    }, aniso);
+    var wall = new THREE.Mesh(new THREE.PlaneGeometry(WALL_W, WALL_H), new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.9 }));
+    wall.position.y = WALL_H / 2; scene.add(wall); // FrontSide only: from behind it disappears instead of blocking the view
+    // marble floor, 1 m tiles with soft veins
+    var floorTex = canvasTexture(THREE, 512, 512, function (g, w, h) {
+      g.fillStyle = '#E9E2D3'; g.fillRect(0, 0, w, h);
+      var rnd = function (s) { var v = Math.sin(s * 127.1) * 43758.5453; return v - Math.floor(v); };
+      for (var tY = 0; tY < 2; tY++) for (var tX = 0; tX < 2; tX++) {
+        g.fillStyle = (tX + tY) % 2 ? 'rgba(255,255,255,.08)' : 'rgba(150,130,100,.05)'; g.fillRect(tX * 256, tY * 256, 256, 256);
+        for (var v = 0; v < 5; v++) {
+          var sd = tX * 31 + tY * 17 + v * 7; g.strokeStyle = 'rgba(140,125,100,' + (0.08 + rnd(sd) * 0.1) + ')'; g.lineWidth = 1 + rnd(sd + 1) * 2;
+          g.beginPath(); g.moveTo(tX * 256 + rnd(sd + 2) * 256, tY * 256);
+          g.bezierCurveTo(tX * 256 + rnd(sd + 3) * 256, tY * 256 + 90, tX * 256 + rnd(sd + 4) * 256, tY * 256 + 170, tX * 256 + rnd(sd + 5) * 256, tY * 256 + 256); g.stroke();
+        }
+      }
+      g.strokeStyle = 'rgba(120,105,80,.35)'; g.lineWidth = 2;
+      for (var i = 0; i <= 512; i += 256) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, h); g.moveTo(0, i); g.lineTo(w, i); g.stroke(); }
+    }, aniso);
+    floorTex.wrapS = floorTex.wrapT = THREE.RepeatWrapping; floorTex.repeat.set(60, 60);
+    // brass lanterns either side of the mihrab
+    var brass = new THREE.MeshStandardMaterial({ color: 0xB8892F, metalness: 0.8, roughness: 0.35 });
+    var glow = new THREE.MeshStandardMaterial({ color: 0xFFE7B0, emissive: 0xFFC765, emissiveIntensity: 0.9 });
+    var lanterns = new THREE.Group();
+    [-1.9, 1.9].forEach(function (lx) {
+      var l = new THREE.Group();
+      var body = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.12, 0.38, 8, 1, true), glow);
+      var cap = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.22, 8), brass); cap.position.y = 0.3;
+      var base = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.16, 8), brass); base.rotation.x = Math.PI; base.position.y = -0.27;
+      var chain = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 3.6, 4), brass); chain.position.y = 0.41 + 1.8;
+      l.add(body, cap, base, chain); l.position.set(lx, 3.4, 0); lanterns.add(l);
+    });
+    scene.add(lanterns);
+    return { wall: wall, lanterns: lanterns, floorTex: floorTex,
+      place: function (zFront) { wall.position.z = zFront - 1.6; lanterns.position.z = zFront - 0.9; } };
+  }
+
   function mount(host, opts) {
     var THREE = window.THREE;
     var S = { spacing: opts.spacing || 0.95, L: opts.length || 10, a: (opts.length || 10) * 0.45, aspect: opts.aspect || 0.37 };
@@ -48,13 +150,15 @@
 
     var scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(35, 1, 0.02, 200), dirty = true, alive = true;
     var cs = getComputedStyle(host);
-    scene.background = new THREE.Color(cs.getPropertyValue('--plaster-dim').trim() || '#EAE2CF').convertSRGBToLinear();
+    var bgCol = new THREE.Color(cs.getPropertyValue('--plaster-dim').trim() || '#EAE2CF').convertSRGBToLinear();
+    scene.background = bgCol; scene.fog = new THREE.Fog(bgCol, 16, 42); // far floor and wall ends fade into the hall
     scene.add(new THREE.HemisphereLight(0xfff8ec, 0x6b5f48, 0.75));
     var sun = new THREE.DirectionalLight(0xffffff, 0.85);
     sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004;
     scene.add(sun, sun.target);
-    var floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ roughness: 1 }));
-    floor.material.color.set(cs.getPropertyValue('--line').trim() || '#DCD3BC').convertSRGBToLinear().multiplyScalar(0.62);
+    var masjid = buildMasjid(THREE, scene, maxAniso);
+    var floor = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), new THREE.MeshStandardMaterial({ map: masjid.floorTex, roughness: 0.55 }));
+    floor.material.color.setScalar(0.72); // keep the floor quieter than the carpet
     floor.rotation.x = -Math.PI / 2; floor.position.y = -0.0005; floor.receiveShadow = true; scene.add(floor);
 
     var P = makePile(THREE);
@@ -115,9 +219,9 @@
       var fuv = new Float32Array((N + 1) * 4), buv = new Float32Array((N + 1) * 4), euv = new Float32Array((N + 1) * 8);
       for (var i = 0; i <= N; i++) {
         var u = (i / N * S.L) / archW, ju = (i / N * S.L) * 18;
-        fuv.set([u, 0, u, 1], i * 4);
+        fuv.set([u, 1, u, 0], i * 4); // arch tips at the back edge, pointing at the mihrab
         buv.set([ju, 0, ju, W * 18], i * 4);
-        euv.set([u, 0.012, u, 0.012, u, 0.988, u, 0.988], i * 8);
+        euv.set([u, 0.988, u, 0.988, u, 0.012, u, 0.012], i * 8);
       }
       fg.setAttribute('uv', new THREE.BufferAttribute(fuv, 2)); bg.setAttribute('uv', new THREE.BufferAttribute(buv, 2)); eg.setAttribute('uv', new THREE.BufferAttribute(euv, 2));
       index(fg, 2, [[0, 1]]); index(bg, 2, [[1, 0]]); index(eg, 4, [[0, 1], [3, 2]]);
@@ -125,7 +229,7 @@
       coreMesh = new THREE.Mesh(new THREE.CylinderGeometry(CORE_R, CORE_R, W + 0.08, 40, 1, true), coreMat);
       coreMesh.rotation.x = Math.PI / 2; coreMesh.position.z = W / 2;
       [faceMesh, backMesh, edgeMesh, coreMesh].forEach(function (m) { m.castShadow = m.receiveShadow = true; group.add(m); });
-      group.position.set(-S.L / 2, 0, -W / 2);
+      group.position.set(-S.L / 2, 0, -W / 2); masjid.place(-W / 2);
       var k = Math.max(S.L, W) * 0.75;
       sun.shadow.camera.left = -k; sun.shadow.camera.right = k; sun.shadow.camera.top = k; sun.shadow.camera.bottom = -k;
       sun.shadow.camera.near = 0.5; sun.shadow.camera.far = k * 6; sun.shadow.camera.updateProjectionMatrix();
