@@ -128,6 +128,23 @@ Store data (separate approval): Main Hall product description "The configuration
 Not done (needs owner content): photos/pile close-ups, installer story and name, committee PDF pack, domain,
 business email, lead times, warranty. Screenshots: `previews/review/`.
 
+## Step H: 3D carpet roll on product pages — preview, awaiting approval (2026-10-13)
+
+Owner asked to put the 3D roll on the product pages; colourways matched to the nearest catalogue colour and
+renamed to the catalogue's own names (owner: no store names, no design code on the site).
+
+| File | Change |
+|------|--------|
+| `assets/mosque-roll-3d.js` (new) | Viewer: one roll = one prayer row, spiral roll on a core, woven pile, drag to unroll |
+| `assets/mosque-roll-{green,red,dark-blue,natural,cream}.jpg` (new) | Pattern repeat for each colourway |
+| `sections/mosque-product.liquid` | "View the roll in 3D" button under the photo (loads three.js from cdnjs only when tapped); roll follows the colourway and row-spacing choice; colourways renamed Green, Red, Dark blue, Natural, Cream |
+| `sections/mosque-home.liquid` | Colourway swatches renamed and shown with their woven pattern |
+| `sections/mosque-quote.liquid` | Colourway dropdown renamed |
+| `assets/mosque-update.css` | Styles for the 3D stage and controls |
+
+Upload to a new unpublished theme copy, one file per call, checksums verified. Owner publishes.
+Note: orders already placed keep the old colourway names in their line-item properties.
+
 ## Step C: shipping (needs owner decision)
 
 Default shipping profile still offers $12 Standard, a free Standard option and $20 Express on carpet rolls. See OPEN-QUESTIONS #20.

@@ -170,6 +170,11 @@ process.on('beforeExit', () => {
       .replace(/<link rel="stylesheet" href="\.\.\/\.\.\/theme\/assets\/[^"]+">/g, '')
       .replace(/<div class="pv">[\s\S]*?<\/div>/, '')
       .replace('</head>', `${fonts}<style>${css}</style></head>`)
+      .replace(/\.\.\/\.\.\/theme\/assets\/([\w.-]+\.(?:js|jpg|png|svg))/g, (m, f) => {
+        // other theme assets (3D roll script, pattern images) travel inside the file as data URIs
+        const type = { js: 'text/javascript', jpg: 'image/jpeg', png: 'image/png', svg: 'image/svg+xml' }[f.split('.').pop()];
+        return `data:${type};base64,` + fs.readFileSync(path.join(THEME, 'assets', f)).toString('base64');
+      })
       .replace('</body>', `${nav}</body>`);
     const id = pg.file.replace('.html', '');
     return `<iframe id="f-${id}" title="${pg.label}" srcdoc="${html.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}"${id === 'index' ? '' : ' hidden'}></iframe>`;

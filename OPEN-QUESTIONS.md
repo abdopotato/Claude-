@@ -54,10 +54,10 @@ Reply to any item and the preview gets updated. Once answered, move it to **Answ
 
 | # | Question | What the preview says for now |
 |---|----------|-------------------------------|
-| 28 | Is **CM 101** a design you'll sell, and in all ten colourways? Do the names (Red, Pink, Brick, Blue, Natural, Green, Copper red, Light green, Dark blue, Cream) replace the product page's current colourway names? | All ten shown, catalogue names in English and Turkish |
+| 28 | Colourway matches (old → new): Masjid Green → Green, Maroon → Red, Deep Indigo → Dark blue, Walnut Brown → Natural, Camel Gold → Cream. Right matches? Offer more of the ten catalogue colours? | These five, catalogue names, on product, home and quote pages |
 | 29 | Mill spec sheet for CM 101: total thickness, pile height, weight per m², width of one prayer space (arch), widths and maximum length per roll | Thickness slider defaults to 10 mm, marked "To confirm"; no weight or prayer-space count shown |
 | 30 | May we use the mill's catalogue artwork on the site, and can the mill send high-resolution pattern files? | Patterns cut from the catalogue page (soft detail) |
-| 31 | Do you want the 3D roll on product pages? It would load only when a buyer taps "View in 3D", so page speed stays the same | Standalone preview only; theme unchanged |
+| 31 | Roll width: is one roll one prayer row (90–100 cm)? Product specs say roll widths 1.5–6 m | 3D roll shows one prayer row per roll; spec table unchanged |
 
 ## Answered
 

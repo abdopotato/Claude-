@@ -94,7 +94,17 @@
               <text x="240" y="-10" font-family="Work Sans, sans-serif" font-size="12" fill="#5B6560" text-anchor="middle">qibla wall</text>
             </g>
             <text x="300" y="545" font-family="Amiri, serif" font-size="22" fill="#1B211E" text-anchor="middle" id="mccArtCap">Illustration</text>
-          </svg></div></div>
+          </svg><div class="mcc-3d-stage" id="mcc3dStage" tabindex="0" hidden aria-label="3D carpet roll. Drag the roll to unroll it, drag elsewhere to turn it, scroll or pinch to zoom. Arrow keys also turn it."><p class="mcc-3d-msg" id="mcc3dMsg">Loading the 3D roll…</p></div>
+      </div>
+      <div class="mcc-3d-bar" id="mcc3dBar" hidden data-script="../../theme/assets/mosque-roll-3d.js">
+        <button type="button" class="mcc-btn-secondary" id="mcc3dOpen" aria-controls="mcc3dStage" aria-expanded="false">View the roll in 3D</button>
+        <div class="mcc-3d-controls" id="mcc3dControls" hidden>
+          <button type="button" class="mcc-btn-secondary" id="mcc3dRoll">Unroll</button>
+          <input type="range" id="mcc3dFrac" min="0" max="1000" value="450" aria-label="How far the roll is unrolled">
+          <button type="button" class="mcc-btn-ghost" id="mcc3dClose">Back to photo</button>
+        </div>
+        <p class="mcc-3d-note" id="mcc3dNote" hidden>Drag the roll to unroll it. Drag the floor to turn it. One roll is one prayer row, <span id="mcc3dWidth">95</span>cm wide.</p>
+      </div></div>
 
     <div><div class="mcc-dims-ar" style="font-size:16px;">القاعة الرئيسية</div><h1>Main Hall Carpet Roll, Mid-size (8 × 12 m)</h1><div class="mcc-sub"><span>≈ 10 prayer rows at 95cm</span></div><div class="mcc-p-price"><span id="mccPrice">$3,650 CAD</span> <small>carpet supply · installation quoted with your order</small></div><form method="post" action="/cart/add" id="mcc-product-form" class="" onsubmit="event.preventDefault();"><fieldset class="mcc-opt-group">
             <legend class="mcc-opt-label">Row spacing <span>Not sure? 95cm suits most mosques</span></legend>
@@ -109,17 +119,17 @@
                   <b>100cm</b><small>Jumu'ah & Eid</small>
                 </label></div>
           </fieldset><fieldset class="mcc-opt-group">
-          <legend class="mcc-opt-label">Colourway <span id="mccCwName">Masjid Green</span></legend>
-          <div class="mcc-dots-row"><label class="mcc-cdot" style="background:#0F2822" title="Masjid Green">
-                <input type="radio" name="properties[Colourway]" value="Masjid Green" data-colour="#0F2822" checked aria-label="Masjid Green">
-              </label><label class="mcc-cdot" style="background:#5C2A2A" title="Maroon">
-                <input type="radio" name="properties[Colourway]" value="Maroon" data-colour="#5C2A2A"  aria-label="Maroon">
-              </label><label class="mcc-cdot" style="background:#1B2A4A" title="Deep Indigo">
-                <input type="radio" name="properties[Colourway]" value="Deep Indigo" data-colour="#1B2A4A"  aria-label="Deep Indigo">
-              </label><label class="mcc-cdot" style="background:#3B2A17" title="Walnut Brown">
-                <input type="radio" name="properties[Colourway]" value="Walnut Brown" data-colour="#3B2A17"  aria-label="Walnut Brown">
-              </label><label class="mcc-cdot" style="background:#8A6A2E" title="Camel Gold">
-                <input type="radio" name="properties[Colourway]" value="Camel Gold" data-colour="#8A6A2E"  aria-label="Camel Gold">
+          <legend class="mcc-opt-label">Colourway <span id="mccCwName">Green</span></legend>
+          <div class="mcc-dots-row"><label class="mcc-cdot" style="background:#256B51" title="Green">
+                <input type="radio" name="properties[Colourway]" value="Green" data-colour="#256B51" data-pattern="../../theme/assets/mosque-roll-green.jpg" data-aspect="0.3711" checked aria-label="Green">
+              </label><label class="mcc-cdot" style="background:#AC2931" title="Red">
+                <input type="radio" name="properties[Colourway]" value="Red" data-colour="#AC2931" data-pattern="../../theme/assets/mosque-roll-red.jpg" data-aspect="0.3926"  aria-label="Red">
+              </label><label class="mcc-cdot" style="background:#5883AE" title="Dark blue">
+                <input type="radio" name="properties[Colourway]" value="Dark blue" data-colour="#5883AE" data-pattern="../../theme/assets/mosque-roll-dark-blue.jpg" data-aspect="0.3711"  aria-label="Dark blue">
+              </label><label class="mcc-cdot" style="background:#BAB1AC" title="Natural">
+                <input type="radio" name="properties[Colourway]" value="Natural" data-colour="#BAB1AC" data-pattern="../../theme/assets/mosque-roll-natural.jpg" data-aspect="0.3711"  aria-label="Natural">
+              </label><label class="mcc-cdot" style="background:#F2E4C7" title="Cream">
+                <input type="radio" name="properties[Colourway]" value="Cream" data-colour="#F2E4C7" data-pattern="../../theme/assets/mosque-roll-cream.jpg" data-aspect="0.375"  aria-label="Cream">
               </label></div>
         </fieldset>
 
@@ -186,6 +196,40 @@
     }
     form.addEventListener('change', update);
     update();
+
+    // 3D roll: nothing loads until the buyer asks for it, so the page stays as fast as before.
+    var bar = document.getElementById('mcc3dBar'), stage = document.getElementById('mcc3dStage'), open = document.getElementById('mcc3dOpen');
+    var controls = document.getElementById('mcc3dControls'), note = document.getElementById('mcc3dNote'), msg = document.getElementById('mcc3dMsg');
+    var rollBtn = document.getElementById('mcc3dRoll'), frac = document.getElementById('mcc3dFrac'), viewer = null;
+    function webgl(){ try{ var c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl'))); }catch(e){ return false; } }
+    function load(src){ return new Promise(function(ok, fail){ var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); }); }
+    function spacing(){ var v = sel('id'); return v && v.dataset.spacing ? parseFloat(v.dataset.spacing) / 100 : 0.95; }
+    function show3d(on){
+      stage.hidden = !on; controls.hidden = !on; note.hidden = !on; open.hidden = on;
+      open.setAttribute('aria-expanded', on ? 'true' : 'false');
+    }
+    if(bar && webgl()){
+      bar.hidden = false;
+      open.addEventListener('click', function(){
+        show3d(true); msg.hidden = false; msg.textContent = 'Loading the 3D roll…';
+        var ready = window.THREE ? Promise.resolve() : load('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');
+        ready.then(function(){ return window.MCCRoll3D ? null : load(bar.dataset.script); }).then(function(){
+          if(viewer || stage.hidden) return;
+          var c = sel('properties[Colourway]');
+          viewer = MCCRoll3D.mount(stage, { texture: c.dataset.pattern, aspect: parseFloat(c.dataset.aspect), spacing: spacing(), length: 10,
+            onChange: function(f){ frac.value = Math.round(f * 1000); rollBtn.textContent = f < 0.98 ? 'Unroll' : 'Roll up'; } });
+          msg.hidden = true; document.getElementById('mcc3dWidth').textContent = Math.round(spacing() * 100); stage.focus();
+        }).catch(function(){ msg.textContent = 'The 3D roll could not load. Check your connection and try again.'; });
+      });
+      document.getElementById('mcc3dClose').addEventListener('click', function(){ if(viewer){ viewer.destroy(); viewer = null; } show3d(false); open.focus(); });
+      rollBtn.addEventListener('click', function(){ if(viewer) viewer.toggle(); });
+      frac.addEventListener('input', function(){ if(viewer) viewer.setFraction(frac.value / 1000); });
+      form.addEventListener('change', function(e){
+        if(!viewer) return;
+        if(e.target.name === 'properties[Colourway]') viewer.setPattern(e.target.dataset.pattern, parseFloat(e.target.dataset.aspect));
+        if(e.target.name === 'id'){ viewer.setSpacing(spacing()); document.getElementById('mcc3dWidth').textContent = Math.round(spacing() * 100); }
+      });
+    }
     form.addEventListener('submit', function(){
       var btn = form.querySelector('button[type="submit"]');
       if(btn){ btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Adding…'; }
