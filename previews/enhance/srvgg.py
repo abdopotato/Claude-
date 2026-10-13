@@ -20,7 +20,7 @@ def load_pth(path):
             _, stype, key, loc, n = pid
             return Storage(key, dt.get(stype if isinstance(stype, str) else stype, np.float32))
     sd = U(z.open(f'{root}/data.pkl')).load()
-    return sd.get('params', sd)
+    return sd.get('params_ema') or sd.get('params') or sd
 def conv3(x, w, b):  # x: C,H,W  w: O,C,3,3
     C, H, W = x.shape; p = np.pad(x, ((0, 0), (1, 1), (1, 1)), mode='edge')
     cols = np.stack([p[:, dy:dy + H, dx:dx + W] for dy in range(3) for dx in range(3)], 1)  # C,9,H,W
