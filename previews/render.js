@@ -17,6 +17,7 @@ const PROPOSED = fs.existsSync(SETTINGS_FILE) ? JSON.parse(fs.readFileSync(SETTI
 
 const money = (cents) => '$' + (cents / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 engine.registerFilter('asset_url', (f) => `../../theme/assets/${f}`);
+engine.registerFilter('asset_img_url', (f) => `../../theme/assets/${f}`);
 engine.registerFilter('stylesheet_tag', (u) => `<link rel="stylesheet" href="${u}">`);
 engine.registerFilter('money', money);
 engine.registerFilter('money_with_currency', (c) => money(c) + ' CAD');
@@ -174,6 +175,8 @@ process.on('beforeExit', () => {
       .replace(/<link rel="stylesheet" href="\.\.\/\.\.\/theme\/assets\/[^"]+">/g, '')
       .replace(/<div class="pv">[\s\S]*?<\/div>/, '')
       .replace('</head>', `${fonts}<style>${css}</style></head>`)
+      // srcsets would repeat each inlined picture three times; the preview only needs src
+      .replace(/ (?:srcset|data-design-set)="[^"]*theme\/assets[^"]*"/g, '')
       // Theme scripts go in inline: the artifact viewer refuses scripts loaded from data: URLs.
       .replace(/data-script="\.\.\/\.\.\/theme\/assets\/([\w.-]+\.js)"/g, (m, f) => {
         inlineJs.push(fs.readFileSync(path.join(THEME, 'assets', f), 'utf8').replace(/<\/script/gi, '<\\/script'));

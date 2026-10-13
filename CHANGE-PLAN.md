@@ -170,6 +170,8 @@ renamed to the catalogue's own names (owner: no store names, no design code on t
 | `assets/mosque-roll-3d.js` (new) | Viewer: one roll = one prayer row, spiral roll on a core, woven pile, drag to unroll |
 | `assets/mosque-roll-{green,red,dark-blue,natural,cream}.jpg` (new) | Pattern repeat for each colourway |
 | `sections/mosque-product.liquid` | "View the roll in 3D" button under the photo (loads three.js from cdnjs only when tapped); roll follows the colourway and row-spacing choice; colourways renamed Green, Red, Dark blue, Natural, Cream |
+| `assets/mosque-design-{green,red,dark-blue,natural,cream}.jpg` (new) | Square carpet-design picture per colourway (catalogue artwork, no catalogue text) |
+| `sections/mosque-product.liquid` (photo) | While a product has no photo, the photo box shows the carpet design in the chosen colourway instead of the drawn layout illustration; it swaps with the colour |
 | `sections/mosque-home.liquid` | Colourway swatches renamed and shown with their woven pattern |
 | `sections/mosque-quote.liquid` | Colourway dropdown renamed |
 | `assets/mosque-update.css` | Styles for the 3D stage and controls |
