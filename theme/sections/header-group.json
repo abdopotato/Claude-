@@ -1,0 +1,15 @@
+{
+  "type": "header",
+  "name": "t:names.header",
+  "sections": {
+    "mosque_header": {
+      "type": "mosque-header",
+      "settings": {
+        "whatsapp_number": "+1 416 567 6602"
+      }
+    }
+  },
+  "order": [
+    "mosque_header"
+  ]
+}

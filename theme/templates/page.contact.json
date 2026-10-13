@@ -2,7 +2,9 @@
   "sections": {
     "main": {
       "type": "mosque-quote",
-      "settings": {}
+      "settings": {
+        "contact_line": "Prefer to talk? Call or WhatsApp Ali on +1 416-567-6602."
+      }
     }
   },
   "order": [

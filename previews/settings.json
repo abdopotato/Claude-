@@ -1,7 +1,15 @@
 {
   "_note": "Proposed setting values shown in the preview only. Applied to the theme's settings after the owner approves.",
-  "mosque-header": { "whatsapp_number": "+1 416 567 6602" },
-  "mosque-footer": { "phone": "Call or WhatsApp +1&nbsp;416-567-6602" },
-  "mosque-quote": { "contact_line": "Prefer to talk? Call or WhatsApp Ali on +1&nbsp;416-567-6602." },
-  "mosque-about": { "founder_line": "Behind MosqueCarpetsCanada.ca are more than 30 years of supplying premium commercial and residential flooring across the GTA." }
+  "mosque-header": {
+    "whatsapp_number": "+1 416 567 6602"
+  },
+  "mosque-footer": {
+    "phone": "Call or WhatsApp +1 416-567-6602"
+  },
+  "mosque-quote": {
+    "contact_line": "Prefer to talk? Call or WhatsApp Ali on +1 416-567-6602."
+  },
+  "mosque-about": {
+    "founder_line": "Behind MosqueCarpetsCanada.ca are more than 30 years of supplying premium commercial and residential flooring across the GTA."
+  }
 }
