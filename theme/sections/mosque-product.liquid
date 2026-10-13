@@ -86,7 +86,7 @@
           <legend class="mcc-opt-label">Colourway <span id="mccCwName">Green</span></legend>
           <div class="mcc-dots-row">
             {%- comment -%} name : swatch colour : pattern file : pattern repeat width ÷ row depth {%- endcomment -%}
-            {%- assign cws = 'Green:#256B51:green:0.3711,Red:#AC2931:red:0.3926,Dark blue:#5883AE:dark-blue:0.3711,Natural:#BAB1AC:natural:0.3711,Cream:#F2E4C7:cream:0.375' | split: ',' -%}
+            {%- assign cws = 'Green:#256B51:green:0.3711,Red:#AC2931:red:0.3926,Dark blue:#5883AE:dark-blue:0.3711,Natural:#BAB1AC:natural:0.3711,Cream:#F2E4C7:cream:0.374' | split: ',' -%}
             {%- for cw in cws -%}
               {%- assign parts = cw | split: ':' -%}
               {%- assign pattern = 'mosque-roll-' | append: parts[2] | append: '.jpg' -%}
