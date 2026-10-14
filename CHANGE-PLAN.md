@@ -160,7 +160,12 @@ naming the other company, no address. Phone/WhatsApp from the business card.
 URL redirect `/pages/installation` → `/pages/hall-planning`; three product descriptions from
 `previews/products/descriptions-supply-only.json` (also fixes the Main Hall "order most" line).
 
-## Step J: 3D carpet roll on product pages — preview, awaiting approval (2026-10-13)
+## Step J: 3D carpet roll on product pages — uploaded 2026-10-14, owner publishes
+
+Owner: "let me publish it". Uploaded to **"MosqueCarpetsCanada — Site update v10 (3D roll)"**
+(gid://shopify/OnlineStoreTheme/131141074990, unpublished), duplicated from MAIN v9 (whose 4 changed files matched
+commit 9b64943 exactly). 15 files from commit 488409b, one per call by URL; all 15 checksums match. Colourway
+pictures are Red's drawing recoloured per colourway (`previews/enhance/replicate.py`).
 
 Owner asked to put the 3D roll on the product pages; colourways matched to the nearest catalogue colour and
 renamed to the catalogue's own names (owner: no store names, no design code on the site).
